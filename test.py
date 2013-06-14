@@ -1,9 +1,9 @@
-from getpass import getpass
+from coils import user_input
 from sqlalchemy import create_engine
 
-username = raw_input('Username: ')
-password = getpass('Password: ')
-dbname = raw_input('Database name: ')
+username = user_input('Username', default='root')
+password = user_input('Password', password=True)
+dbname = user_input('Database name')
 
 engine = create_engine(
     'mysql://{:}:{:}@localhost'.format(username, password),
