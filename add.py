@@ -18,10 +18,10 @@ Session = sessionmaker(bind=engine)
 session = Session()
 
 # Create the object.
-import datetime
+from datetime import datetime
 from Image import Image, Base
 Base.metadata.create_all(engine)
-image1 = Image(datetime.datetime.now())
+image1 = Image(datetime.now())
 
 # Persist the object.
 session.add(image1)
