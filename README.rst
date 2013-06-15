@@ -20,6 +20,12 @@ Now then, go ahead and set things up:
 
   python ./create.py
 
+Go ahead and add a couple timestamps:
+::
+
+  python ./test.py
+  python ./test.py
+
 And now tear them things down:
 ::
 
