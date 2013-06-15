@@ -1,7 +1,6 @@
 """Add a timestamp."""
 
-from sqlalchemy import create_engine, Column, DateTime, Integer
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 from coils import user_input, Config
