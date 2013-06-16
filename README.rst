@@ -1,7 +1,7 @@
 wabbit
 ======
 
-Playing with `SQLAlchemy <http://www.sqlalchemy.org>`_:
+Just learning `SQLAlchemy <http://www.sqlalchemy.org>`_.
 ::
 
   pip install SQLAlchemy
@@ -11,5 +11,6 @@ Playing with `SQLAlchemy <http://www.sqlalchemy.org>`_:
   python ./add.py
   python ./add.py
   python ./add.py
+  python ./record.py 0 640 480 3
   python ./dump.py
   python ./drop.py
