@@ -38,6 +38,43 @@ session = Session()
 # Monitor framerates for past few seconds.
 ticker = coils.RateTicker((1, 2, 5))
 
+def save2disk((tstamp, image)):
+
+    # Create destination directory.
+    dname = coils.time2dir(tstamp)
+    dname = os.path.join(config['pics_dir'], dname)
+    if not os.path.isdir(dname):
+        os.makedirs(dname)
+
+    # Save the file.
+    fname = os.path.join(dname, coils.time2fname(tstamp)) + '.png'
+    cv2.imwrite(fname, image)
+    return tstamp
+
+def write2db(tstamp):
+
+    # Create the object.
+    Base.metadata.create_all(engine)
+    image1 = Image(tstamp)
+
+    # Persist the object.
+    session.add(image1)
+
+    # Commit the transaction.
+    session.commit()
+
+def show(image):
+    """Display the image."""
+    cv2.imshow(title, image)
+    cv2.waitKey(1)
+
+from mpipe import OrderedStage, Pipeline
+stage1 = OrderedStage(save2disk, 5)
+stage2 = OrderedStage(write2db, 5)
+stage1.link(stage2)
+pipe1 = Pipeline(stage1)
+#pipe2 = Pipeline(OrderedStage(show))
+
 # Go into main loop.
 end = datetime.now() + timedelta(seconds=DURATION)
 while end > datetime.now():
@@ -46,38 +83,22 @@ while end > datetime.now():
     hello, image = cap.read()
     now = datetime.now()
 
-    # Create destination directory.
-    dname = coils.time2dir(now)
-    dname = os.path.join(config['pics_dir'], dname)
-    if not os.path.isdir(dname):
-        os.makedirs(dname)
+    pipe1.put((now, image))
 
-    # Save the file.
-    timer = coils.Timer()
-    fname = os.path.join(dname, coils.time2fname(now)) + '.png'
-    cv2.imwrite(fname, image)
-    t1 = timer.get().total_seconds()
-
-    # Create the object.
-    Base.metadata.create_all(engine)
-    image1 = Image(now)
-
-    # Persist the object.
-    session.add(image1)
-
-    # Commit the transaction.
-    session.commit()
-    t2 = timer.get().total_seconds()
+    #pipe2.put(image)
 
     # Display the image.
     cv2.imshow(title, image)
     cv2.waitKey(1)
 
-    print('{}, {}, {}  {:.3f}  {:.3f}'.format(
-            *ticker.tick() + (t1, t2)))
+    print('{}, {}, {}'.format(*ticker.tick()))
 
 # Close the session.
 conn.close()
+
+pipe1.put(None)
+#pipe2.put(None)
+
 
 
 
