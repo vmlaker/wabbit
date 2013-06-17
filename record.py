@@ -43,8 +43,10 @@ def save2disk((tstamp, image)):
     # Create destination directory.
     dname = coils.time2dir(tstamp)
     dname = os.path.join(config['pics_dir'], dname)
-    if not os.path.isdir(dname):
+    try: 
         os.makedirs(dname)
+    except OSError:
+        pass
 
     # Save the file.
     fname = os.path.join(dname, coils.time2fname(tstamp)) + '.png'
