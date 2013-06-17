@@ -63,17 +63,11 @@ def write2db(tstamp):
     # Commit the transaction.
     session.commit()
 
-def show(image):
-    """Display the image."""
-    cv2.imshow(title, image)
-    cv2.waitKey(1)
-
 from mpipe import OrderedStage, Pipeline
-stage1 = OrderedStage(save2disk, 5)
-stage2 = OrderedStage(write2db, 5)
+stage1 = OrderedStage(save2disk, 3)
+stage2 = OrderedStage(write2db, 3)
 stage1.link(stage2)
 pipe1 = Pipeline(stage1)
-#pipe2 = Pipeline(OrderedStage(show))
 
 # Go into main loop.
 end = datetime.now() + timedelta(seconds=DURATION)
@@ -85,11 +79,9 @@ while end > datetime.now():
 
     pipe1.put((now, image))
 
-    #pipe2.put(image)
-
     # Display the image.
-    cv2.imshow(title, image)
-    cv2.waitKey(1)
+    #cv2.imshow(title, image)
+    #cv2.waitKey(1)
 
     print('{}, {}, {}'.format(*ticker.tick()))
 
@@ -97,7 +89,6 @@ while end > datetime.now():
 conn.close()
 
 pipe1.put(None)
-#pipe2.put(None)
 
 
 
