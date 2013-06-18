@@ -20,8 +20,8 @@ cap.set(3, WIDTH)
 cap.set(4, HEIGHT)
 
 # Create the display window.
-title = 'wabbit'
-cv2.namedWindow(title, cv2.cv.CV_WINDOW_NORMAL)
+#title = 'wabbit'
+#cv2.namedWindow(title, cv2.cv.CV_WINDOW_NORMAL)
 
 # Load configuration file.
 config = coils.Config('wabbit.cfg')
