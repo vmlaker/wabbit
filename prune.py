@@ -11,10 +11,12 @@ from sqlalchemy.orm import sessionmaker
 
 from coils import Config, string2time, time2fname, time2levels
 
+# Read command-line parameters.
 SECONDS = float(sys.argv[1])
+CONFIG = sys.argv[2] if len(sys.argv)>=3 else 'wabbit.cfg'
 
 # Load configuration file.
-config = Config('wabbit.cfg')
+config = Config(CONFIG)
 
 # Connect to database engine and start a session.
 engine = create_engine(
@@ -57,4 +59,3 @@ for level in levels:
     os.chdir(level)
 
 os.chdir(saved)
-
