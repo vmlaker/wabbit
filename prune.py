@@ -1,15 +1,20 @@
-"""Prune database and disk of old images."""
+"""Prune database and disk of old images.
+Arguments:  seconds [cfg_file]
+  seconds   -  minimum age of removed items
+  cfg_file  -  config file
+Disk is pruned to the next 60 s boundary. 
+To prune all files use seconds value <= -60.
+"""
 
 from datetime import datetime, timedelta
 import os
 import sys
 import shutil
-import cv2
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from coils import Config, string2time, time2fname, time2levels
+from coils import Config, time2levels
 
 # Read command-line parameters.
 SECONDS = float(sys.argv[1])
@@ -34,12 +39,15 @@ then = now - delta
 # Remove from database.
 from Image import Image, Base
 Base.metadata.create_all(engine)
-session.query(Image).filter(Image.tstamp<then).delete()
+count = session.query(Image).filter(Image.tstamp<then).delete()
 session.commit()
+if count:
+    print('Deleted {} rows.'.format(count))
 
-# Delete from disk.
+# Remove from disk.
 levels = time2levels(then)
-saved = os.getcwd()
+dstack = list()  # Stack of descended subdirectories.
+saved = os.getcwd()  # Pushd.
 os.chdir(config['pics_dir'])
 for level in levels:
     
@@ -50,12 +58,23 @@ for level in levels:
             continue
         if int_entry < int(level):
             full = os.path.join(os.getcwd(), entry)
-            print('Erasing {}'.format(full))
             shutil.rmtree(full)
+            print('Removed {}'.format(full))
 
     # Skip if not a directory.
     if not os.path.isdir(level):
         break
-    os.chdir(level)
 
-os.chdir(saved)
+    # Descend into subdirectory.
+    os.chdir(level)  
+    dstack.append(level)
+
+# Delete empty subdirectories. 
+for entry in reversed(dstack):
+    if not os.listdir('.'):
+        os.chdir('..')
+        full = os.path.join(os.getcwd(), entry)
+        shutil.rmtree(full)
+        print('Removed {}'.format(full))
+        
+os.chdir(saved)  # Popd.
