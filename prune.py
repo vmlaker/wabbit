@@ -6,46 +6,40 @@ Disk is pruned to the next 60 s boundary.
 To prune all files use seconds value <= -60.
 """
 
-from datetime import datetime, timedelta
+import datetime as dt
 import os
 import sys
 import shutil
-
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
-
-from coils import Config, time2levels
+import sqlalchemy as sa
+import coils
+import tables
 
 # Read command-line parameters.
 SECONDS = float(sys.argv[1])
 CONFIG = sys.argv[2] if len(sys.argv)>=3 else 'wabbit.cfg'
 
 # Load configuration file.
-config = Config(CONFIG)
+config = coils.Config(CONFIG)
 
 # Connect to database engine and start a session.
-engine = create_engine(
+engine = sa.create_engine(
     'mysql://{}:{}@{}/{}'.format(
         config['username'], config['password'], 
         config['host'], config['db_name']))
 conn = engine.connect()
-session = sessionmaker(bind=engine)()
 
 # Compute the oldest timestamp allowed.
-now = datetime.now()
-delta = timedelta(seconds=SECONDS)
+now = dt.datetime.now()
+delta = dt.timedelta(seconds=SECONDS)
 then = now - delta
 
 # Remove from database.
-from Image import Image, Base
-Base.metadata.create_all(engine)
-count = session.query(Image).filter(Image.tstamp<then).delete()
-session.commit()
-if count:
-    print('Deleted {} rows.'.format(count))
+rem = tables.image.delete().where(tables.image.c.tstamp < then)
+result = conn.execute(rem)
+print('Deleted {} rows.'.format(result.rowcount))
 
 # Remove from disk.
-levels = time2levels(then)
+levels = coils.time2levels(then)
 dstack = list()  # Stack of descended subdirectories.
 saved = os.getcwd()  # Pushd.
 os.chdir(config['pics_dir'])
