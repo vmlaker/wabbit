@@ -52,7 +52,7 @@ for level in levels:
             continue
         if int_entry < int(level):
             full = os.path.join(os.getcwd(), entry)
-            shutil.rmtree(full)
+            shutil.rmtree(full, ignore_errors=True)
             print('Removed {}'.format(full))
 
     # Skip if not a directory.
