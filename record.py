@@ -24,12 +24,6 @@ cap.set(4, HEIGHT)
 # Load configuration file.
 config = coils.Config(CONFIG)
 
-# Connect to database engine.
-engine = sa.create_engine(
-    'mysql://{}:{}@{}/{}'.format(
-        config['username'], config['password'], 
-        config['host'], config['db_name']))
-
 # Monitor framerates for past few seconds.
 ticker = coils.RateTicker((1, 2, 5))
 
@@ -50,7 +44,13 @@ def save2disk((tstamp, image)):
 
 class DbWriter(mpipe.UnorderedWorker):
     def __init__(self):
+        """Connect to database engine."""
+        engine = sa.create_engine(
+            'mysql://{}:{}@{}/{}'.format(
+                config['username'], config['password'], 
+                config['host'], config['db_name']))
         self._conn = engine.connect()
+
     def doTask(self, tstamp):
         """Write timestamp to database."""
         ins = tables.image.insert().values(tstamp=coils.time2string(tstamp))
