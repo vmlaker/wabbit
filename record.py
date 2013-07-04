@@ -7,7 +7,7 @@ import cv2
 import sqlalchemy as sa
 import mpipe
 import coils
-import tables
+import mapping
 
 # Read command-line parameters.
 DEVICE = int(sys.argv[1])
@@ -44,18 +44,29 @@ def save2disk((tstamp, image)):
 
 class DbWriter(mpipe.UnorderedWorker):
     def __init__(self):
-        """Connect to database engine."""
+        """Connect to database engine and start a session."""
         engine = sa.create_engine(
             'mysql://{}:{}@{}/{}'.format(
                 config['username'], config['password'], 
                 config['host'], config['db_name']))
-        self._conn = engine.connect()
+        Session = sa.orm.sessionmaker(bind=engine)
+        self._sess = Session()
 
     def doTask(self, tstamp):
-        """Write timestamp to database."""
-        ins = tables.image.insert().values(tstamp=coils.time2string(tstamp))
-        self._conn.execute(ins)
-        return None
+        """Write to the database."""
+
+        # Add the item.
+        image = mapping.Image(dt.datetime.now())
+        self._sess.add(image)
+
+        # Increment the size.
+        self._sess.query(mapping.Datum).\
+            filter(mapping.Datum.name=='size').\
+            update({'value':mapping.Datum.value+1})
+
+        # Commit the transaction.
+        self._sess.commit()
+
 
 stage1 = mpipe.UnorderedStage(save2disk, 8)
 stage2 = mpipe.Stage(DbWriter, 8)

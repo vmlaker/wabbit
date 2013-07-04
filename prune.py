@@ -12,7 +12,7 @@ import sys
 import shutil
 import sqlalchemy as sa
 import coils
-import tables
+import mapping
 
 # Read command-line parameters.
 SECONDS = float(sys.argv[1])
@@ -26,7 +26,11 @@ engine = sa.create_engine(
     'mysql://{}:{}@{}/{}'.format(
         config['username'], config['password'], 
         config['host'], config['db_name']))
-conn = engine.connect()
+try:
+    conn = engine.connect()
+except sa.exc.OperationalError:
+    print('Failed to connect.')
+    sys.exit(1)
 
 # Compute the oldest timestamp allowed.
 now = dt.datetime.now()
@@ -34,9 +38,15 @@ delta = dt.timedelta(seconds=SECONDS)
 then = now - delta
 
 # Remove from database.
-rem = tables.image.delete().where(tables.image.c.tstamp < then)
-result = conn.execute(rem)
-print('Deleted {} rows.'.format(result.rowcount))
+Session = sa.orm.sessionmaker(bind=engine)
+session = Session()
+count = session.query(mapping.Image).filter(mapping.Image.time < then).delete()
+print('Deleted {} rows.'.format(count))
+# Decrement the size.
+session.query(mapping.Datum).\
+    filter(mapping.Datum.name=='size').\
+    update({'value':mapping.Datum.value-count})
+session.commit()
 
 # Remove from disk.
 levels = coils.time2levels(then)

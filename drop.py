@@ -13,7 +13,11 @@ root_u = coils.user_input('Admin username', default=config['admin'])
 root_p = coils.user_input('Admin password', password=True)
 engine = sa.create_engine(
         'mysql://{}:{}@{}'.format(root_u, root_p, config['host']))
-conn = engine.connect()
+try:
+    conn = engine.connect()
+except sa.exc.OperationalError:
+    print('Failed to connect.')
+    sys.exit(1)
 
 # Drop the user and database.
 try:

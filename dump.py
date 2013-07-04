@@ -1,9 +1,9 @@
-"""Dump the database."""
+"""Dump all images."""
 
 import sys
 import sqlalchemy as sa
 import coils
-import tables
+import mapping
 
 # Load configuration file.
 CONFIG = sys.argv[1] if len(sys.argv)>=2 else 'wabbit.cfg'
@@ -14,10 +14,13 @@ engine = sa.create_engine(
      'mysql://{}:{}@{}/{}'.format(
           config['username'], config['password'],
           config['host'], config['db_name']))
-conn = engine.connect()
+try:
+    conn = engine.connect()
+except sa.exc.OperationalError:
+    print('Failed to connect.')
+    sys.exit(1)
 
-# Select and print.
-s = sa.sql.select([tables.image])
-result = conn.execute(s)
-for row in result:
-     print(row)
+Session = sa.orm.sessionmaker(bind=engine)
+session = Session()
+for image in session.query(mapping.Image):
+     print(image)
