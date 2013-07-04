@@ -2,16 +2,14 @@ wabbit
 ======
 
 Something put together with
-`SQLAlchemy <http://www.sqlalchemy.org>`_, 
-`OpenCV <http://docs.opencv.org>`_,
 `MPipe <http://vmlaker.github.io/mpipe>`_,
+`OpenCV <http://docs.opencv.org>`_,
 `CoffeeScript <http://coffeescript.org>`_,
+`SQLAlchemy <http://www.sqlalchemy.org>`_, 
 and `Flask <http://flask.pocoo.org>`_.
 ::
 
-  pip install SQLAlchemy
-  pip install mpipe
-  pip install Flask
+  pip install -r requirements.txt
   git clone --recursive http://github.com/vmlaker/wabbit 
   cd wabbit
   python create.py
