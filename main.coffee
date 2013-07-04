@@ -7,7 +7,7 @@ info = ->
     # Make the AJAX server info request.
     ###
 
-    $.ajax '/info',
+    $.ajax 'info',
         dataType : 'json'
         cache    : false
         timeout  : 1000

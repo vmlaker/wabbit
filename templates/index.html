@@ -1,11 +1,17 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
 <html>
   <head>
-    <title>Wabbit</title>
 
+    <title>Wabbit</title>
     <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
-    <script type="text/javascript" src="/static/main.js"></script>
-    
+    <script 
+       type="text/javascript" 
+       src="{{ url_for('static', filename='main.js') }}">
+    </script>
+    <script type="text/javascript">
+      var $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+    </script>
+
   </head>
   <body>
     
