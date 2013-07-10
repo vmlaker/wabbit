@@ -38,17 +38,18 @@ call(cmd, shell=True)
 print('')
 print('Add the following to your httpd config, then restart httpd:')
 httpd = """
-    WSGIScriptAlias /wabbit/service {0}
-    <Location {1}>
+    WSGIScriptAlias /{0}/service {1}
+    <Location {2}>
         Allow from all
         Order allow,deny
     </Location>
-    <Location {2}>
+    <Location {3}>
         Options Indexes FollowSymLinks
         Allow from all
         Order allow,deny
     </Location>
 """.format(
+    config['db_name'],
     os.path.join(www_root, 'service', 'wabbit.wsgi'),
     os.path.join(www_root, 'service'),
     os.path.join(www_root, 'pics'),
