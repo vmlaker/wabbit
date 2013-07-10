@@ -1,7 +1,8 @@
 wabbit
 ======
 
-Something put together with
+Webcam snapshot recorder and web server,
+put together with
 `MPipe <http://vmlaker.github.io/mpipe>`_,
 `OpenCV <http://docs.opencv.org>`_,
 `CoffeeScript <http://coffeescript.org>`_,
@@ -19,10 +20,14 @@ and `Flask <http://flask.pocoo.org>`_.
   python dump.py
   python drop.py
 
-
-Also:
+For the server, first customize your installation by
+editing files ``wabbit.wsgi`` and ``wabbit.cfg``.
+Then, deploy the service and restart httpd: 
 ::
 
   npm install coffee-script
   coffee -o static -c main.coffee
-  python serve.py
+  python deploy.py /var/www/html/wabbit
+  systemctl restart httpd.service
+
+The app is visible at http://localhost/wabbit.

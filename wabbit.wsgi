@@ -1,10 +1,9 @@
 """
-This file contains the code mod_wsgi is executing 
-on startup to get the application object. 
+The code which mod_wsgi executesing upon startup.
 """
 
 # Change this to location of your app:
-WABBIT = '/var/www/wabbit'
+WABBIT = '/var/www/html/wabbit/service'
 
 # Add the application to the Python load path.
 import sys
