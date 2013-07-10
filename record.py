@@ -64,6 +64,11 @@ class DbWriter(mpipe.UnorderedWorker):
             filter(mapping.Datum.name=='size').\
             update({'value':mapping.Datum.value+1})
 
+        # Update latest timestamp.
+        self._sess.query(mapping.Datum).\
+            filter(mapping.Datum.name=='last_tstamp').\
+            update({'value': coils.time2string(tstamp)})
+
         # Commit the transaction.
         self._sess.commit()
 

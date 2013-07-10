@@ -29,9 +29,20 @@ def index():
 def info():
     """Return JSON of server info."""
     now = dt.datetime.now()
-    datum = db.session.query(mapping.Datum).\
+    size = db.session.query(mapping.Datum).\
         filter(mapping.Datum.name=='size')[0]
-    return flask.jsonify(server_time=now, db_size=datum.value)
+    last_tstamp = db.session.query(mapping.Datum).\
+        filter(mapping.Datum.name=='last_tstamp')[0]
+    last_url = coils.time2fname(
+        coils.string2time(
+            last_tstamp.value), full=True)
+    last_url = 'pics/{}.png'.format(last_url)
+    return flask.jsonify(
+        server_time=now, 
+        db_size=size.value, 
+        last_tstamp=last_tstamp.value,
+        last_url=last_url,
+        )
 
 if __name__ == '__main__':
     app.run()
