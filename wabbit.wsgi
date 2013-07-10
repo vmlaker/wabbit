@@ -1,5 +1,5 @@
 """
-The code which mod_wsgi executesing upon startup.
+The code which mod_wsgi executes upon startup.
 """
 
 # Change this to location of your app:
