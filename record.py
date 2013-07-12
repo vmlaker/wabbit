@@ -86,7 +86,7 @@ cap.set(3, WIDTH)
 cap.set(4, HEIGHT)
 
 # Monitor framerates for past few seconds.
-ticker = coils.RateTicker((10, 20, 50))
+ticker = coils.RateTicker((2, 5, 10))
 
 # Go into main loop.
 prev = dt.datetime.now()  # Keep track of previous snapshot time.
@@ -97,7 +97,7 @@ while end > dt.datetime.now():
     # Insert delay to observe maximum framerate limit.
     elapsed = (dt.datetime.now() - prev).total_seconds()
     sleep_time = min_interval - elapsed
-    sleep_time = abs(sleep_time)
+    sleep_time = max(0, sleep_time)
     time.sleep(sleep_time)
     prev = dt.datetime.now()
 
