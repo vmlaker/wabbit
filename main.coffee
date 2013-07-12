@@ -5,7 +5,7 @@
 # Timeout value, min/max limits and adjustment coefficient.
 tout_cur = 500
 tout_max = 1000
-tout_min = 50
+tout_min = 0
 tout_mod = 25
 
 # Previous timestamp, used to detect whether a new image

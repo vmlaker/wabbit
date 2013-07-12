@@ -1,12 +1,18 @@
 """Record video frames to disk, and mark the timestamps in database."""
 
+# Import standard modules.
 import datetime as dt
 import os
 import sys
+import time
+
+# Import 3rd party modules.
 import cv2
 import sqlalchemy as sa
 import mpipe
 import coils
+
+# Import local modules.
 import mapping
 
 # Read command-line parameters.
@@ -16,18 +22,12 @@ HEIGHT = int(sys.argv[3])
 DURATION = float(sys.argv[4])
 CONFIG = sys.argv[5] if len(sys.argv)>=6 else 'wabbit.cfg'
 
-# Create the OpenCV video capture object.
-cap = cv2.VideoCapture(DEVICE)
-cap.set(3, WIDTH)
-cap.set(4, HEIGHT)
-
 # Load configuration file.
 config = coils.Config(CONFIG)
 
-# Monitor framerates for past few seconds.
-ticker = coils.RateTicker((1, 2, 5))
-
 def save2disk((tstamp, image)):
+    """First stage of the pipeline;
+    saves the image to disk."""
 
     # Create destination directory.
     dname = coils.time2dir(tstamp)
@@ -43,6 +43,9 @@ def save2disk((tstamp, image)):
     return tstamp
 
 class DbWriter(mpipe.UnorderedWorker):
+    """Second stage of the pipeline; 
+    updates the SQL database."""
+
     def __init__(self):
         """Connect to database engine and start a session."""
         engine = sa.create_engine(
@@ -72,26 +75,42 @@ class DbWriter(mpipe.UnorderedWorker):
         # Commit the transaction.
         self._sess.commit()
 
-
+# Create the image post-processing pipeline.
 stage1 = mpipe.UnorderedStage(save2disk, 8)
 stage2 = mpipe.Stage(DbWriter, 8)
 pipe1 = mpipe.Pipeline(stage1.link(stage2))
 
+# Create the OpenCV video capture object.
+cap = cv2.VideoCapture(DEVICE)
+cap.set(3, WIDTH)
+cap.set(4, HEIGHT)
+
+# Monitor framerates for past few seconds.
+ticker = coils.RateTicker((10, 20, 50))
+
 # Go into main loop.
+prev = dt.datetime.now()  # Keep track of previous snapshot time.
+min_interval = 1/float(config['max_fps'])
 end = dt.datetime.now() + dt.timedelta(seconds=DURATION)
 while end > dt.datetime.now():
 
+    # Insert delay to observe maximum framerate limit.
+    elapsed = (dt.datetime.now() - prev).total_seconds()
+    sleep_time = min_interval - elapsed
+    sleep_time = abs(sleep_time)
+    time.sleep(sleep_time)
+    prev = dt.datetime.now()
+
     # Take a snapshot, mark the timestamp and put on pipeline.
     hello, image = cap.read()
-    now = dt.datetime.now()
-    pipe1.put((now, image))
+    pipe1.put((prev, image))
 
     # Display the image.
     #cv2.namedWindow('wabbit', cv2.cv.CV_WINDOW_NORMAL)
     #cv2.imshow('wabbit', image)
     #cv2.waitKey(1)
 
-    print('{}, {}, {}'.format(*ticker.tick()))
+    print('{:.2f}, {:.2f}, {:.2f}'.format(*ticker.tick()))
 
 # Stop the pipeline.
 pipe1.put(None)
