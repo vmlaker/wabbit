@@ -1,4 +1,5 @@
 mpipe
+wget
 SQLAlchemy
 Flask
 Flask-SQLAlchemy
