@@ -59,7 +59,7 @@ class DbWriter(mpipe.UnorderedWorker):
         """Write to the database."""
 
         # Add the item.
-        image = mapping.Image(dt.datetime.now())
+        image = mapping.Image(tstamp)
         self._sess.add(image)
 
         # Increment the size.
