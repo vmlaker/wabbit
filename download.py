@@ -4,6 +4,7 @@ Parameters:  <begin_time> <length_sec> <url> <dest_dir>
 
 import os
 import sys
+import urllib
 import urllib2
 import simplejson as json
 import mpipe
@@ -43,11 +44,11 @@ def download(tstamp):
 pipe = mpipe.Pipeline(mpipe.UnorderedStage(download, 8))
 
 # Retrieve timestamps from server.
-url = '{}/service/tstamps?begin={}&length={}'.format(
-    URL, BEGIN, LENGTH)
-print(url)
-f = urllib2.urlopen(url)
-result = json.loads(f.read())
+args = { 'begin' : BEGIN, 'length' : LENGTH }
+data = urllib.urlencode(args)
+url = '{}/service/tstamps?{}'.format(URL, data)
+response = urllib.urlopen(url)
+result = json.loads(response.read())
 times = result['images']
 
 # Operate the pipeline.

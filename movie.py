@@ -6,6 +6,7 @@ import os
 import sys
 import time
 import datetime as dt
+import urllib
 import urllib2
 import simplejson as json
 import sqlalchemy as sa
@@ -79,12 +80,14 @@ s2 = mpipe.Stage(Viewer)
 pipe = mpipe.Pipeline(s1.link(s2))
 
 if URL:
-    full_url = '{}/service/tstamps?begin={}&length={}'.format(
-        URL, BEGIN, LENGTH)
-    print(full_url)
-    f = urllib2.urlopen(full_url)
-    result = json.loads(f.read())
+    # Retrieve timestamps from server.
+    args = { 'begin' : BEGIN, 'length' : LENGTH }
+    data = urllib.urlencode(args)
+    url = '{}/service/tstamps?{}'.format(URL, data)
+    response = urllib.urlopen(url)
+    result = json.loads(response.read())
     times = result['images']
+
     print('Playing {} images.'.format(len(times)))
     for time in times:
         pipe.put(time)
@@ -114,7 +117,7 @@ images = session.query(mapping.Image.time).\
     filter(mapping.Image.time > begin).\
     filter(mapping.Image.time < end).\
     group_by(mapping.Image.time).all()
-times = [xx[0] for xx in images]
+times = [ii[0] for ii in images]
 print('Playing {} images.'.format(len(times)))
 
 # Process timestamps in the pipeline.
