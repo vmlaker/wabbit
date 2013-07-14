@@ -38,7 +38,7 @@ def save2disk((tstamp, image)):
         pass
 
     # Save the file.
-    fname = os.path.join(dname, coils.time2fname(tstamp)) + '.png'
+    fname = os.path.join(dname, coils.time2fname(tstamp)) + '.' + config['f_ext']
     cv2.imwrite(fname, image)
     return tstamp
 

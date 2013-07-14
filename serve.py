@@ -36,7 +36,7 @@ def info():
     last_url = coils.time2fname(
         coils.string2time(
             last_tstamp.value), full=True)
-    last_url = 'pics/{}.png'.format(last_url)
+    last_url = 'pics/{}.{}'.format(last_url, config['f_ext'])
     return flask.jsonify(
         server_time=now, 
         db_size=size.value, 

@@ -16,11 +16,15 @@ BEGIN = sys.argv[1]
 LENGTH = int(sys.argv[2])
 URL = sys.argv[3]
 DEST = sys.argv[4]
+CONFIG = sys.argv[5] if len(sys.argv)>=6 else 'wabbit.cfg'
+
+# Load configuration file.
+config = coils.Config(CONFIG)
 
 def download(tstamp):
     """Download image."""
     tstamp = coils.string2time(tstamp)
-    fname = coils.time2fname(tstamp) + '.png'
+    fname = coils.time2fname(tstamp) + '.' + config['f_ext']
     dest_dir = os.path.join(DEST, coils.time2dir(tstamp))
     dest_fname = os.path.join(
         dest_dir,
@@ -35,7 +39,11 @@ def download(tstamp):
         pass
     saved = os.getcwd()
     os.chdir(dest_dir)
-    url = '{}/pics/{}'.format(URL, coils.time2fname(tstamp, full=True) + '.png')
+    url = '{}/pics/{}.{}'.format(
+        URL, 
+        coils.time2fname(tstamp, full=True),
+        config['f_ext'],
+        )
     print(url)
     wget.download(url, bar=None)
     os.chdir(saved)

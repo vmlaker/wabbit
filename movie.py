@@ -32,7 +32,7 @@ config = coils.Config(CONFIG)
 def read(tstamp):
     """Read image from disk and propagate it downstream."""
     tstamp = coils.string2time(tstamp)
-    fname = coils.time2fname(tstamp, full=True) + '.png'
+    fname = coils.time2fname(tstamp, full=True) + '.' + config['f_ext']
     pics_dir = PICS_DIR if PICS_DIR else config['pics_dir']
     fname = os.path.join(pics_dir, fname)
     image = cv2.imread(fname)
