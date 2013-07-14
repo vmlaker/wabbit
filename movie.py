@@ -20,9 +20,10 @@ import mapping
 # Read command-line parameters.
 BEGIN = sys.argv[1]
 LENGTH = int(sys.argv[2])
-CONFIG = sys.argv[3] if len(sys.argv)==4 else 'wabbit.cfg'
-URL = sys.argv[3] if len(sys.argv) >=5 else None
-PICS_DIR = sys.argv[4] if len(sys.argv) >=5 else None
+SPEEDUP = float(sys.argv[3])
+CONFIG = sys.argv[4] if len(sys.argv) == 5 else 'wabbit.cfg'
+URL = sys.argv[4] if len(sys.argv) >= 6 else None
+PICS_DIR = sys.argv[5] if len(sys.argv) >= 6 else None
 
 # Load configuration file.
 config = coils.Config(CONFIG)
@@ -51,6 +52,7 @@ class Viewer(mpipe.OrderedWorker):
         self._prev_tstamp = tstamp
         diff_tstamp = diff_tstamp.total_seconds()
         diff_tstamp = max(0, diff_tstamp)
+        diff_tstamp /= SPEEDUP
 
         # Compute time elapsed since previous doTask().
         elapsed = dt.datetime.now() - self._prev_dotask
