@@ -19,18 +19,23 @@ DEST = sys.argv[4]
 def download(tstamp):
     """Download image."""
     tstamp = coils.string2time(tstamp)
-    dest = os.path.join(DEST, coils.time2dir(tstamp))
+    fname = coils.time2fname(tstamp) + '.png'
+    dest_dir = os.path.join(DEST, coils.time2dir(tstamp))
+    dest_fname = os.path.join(
+        dest_dir,
+        fname,
+        )
+    if os.path.exists(dest_fname):
+        print('Skipping {}'.format(dest_fname))
+        return    
     try:
-        os.makedirs(dest)
+        os.makedirs(dest_dir)
     except os.error:
         pass
     saved = os.getcwd()
-    os.chdir(dest)
-    fname = coils.time2fname(tstamp) + '.png'
-    if os.path.exists(fname):
-        return
-    fname = coils.time2fname(tstamp, full=True) + '.png'
-    url = '{}/pics/{}'.format(URL, fname)
+    os.chdir(dest_dir)
+    url = '{}/pics/{}'.format(URL, coils.time2fname(tstamp, full=True) + '.png')
+    print(url)
     wget.download(url, bar=None)
     os.chdir(saved)
 
