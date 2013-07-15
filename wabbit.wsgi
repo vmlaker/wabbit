@@ -14,5 +14,5 @@ import os
 os.chdir(WABBIT)
 
 # Set variable "application" to the app object.
-from serve import app as application
+from src.serve import app as application
 

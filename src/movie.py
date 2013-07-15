@@ -1,5 +1,5 @@
 """Create a movie.
-Parameters:  <begin_time> <length_sec> [<config> | <url> <dir>]
+Parameters:  <begin_time> <length_sec> <speedup> [<config> | <url> <dir>]
 """
 
 import os
