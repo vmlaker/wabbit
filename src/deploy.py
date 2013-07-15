@@ -15,7 +15,9 @@ cmd = 'mkdir {}'.format(www_root)
 print(cmd)
 call(cmd, shell=True)
 
-cmd = 'ln -s {} {}'.format(config['pics_dir'], www_root)
+cmd = 'ln -s {} {}'.format(
+    config['pics_dir'], 
+    os.path.join(www_root, 'pics'))
 print(cmd)
 call(cmd, shell=True)
 
