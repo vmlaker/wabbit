@@ -1,8 +1,8 @@
 wabbit
 ======
 
-Webcam snapshot recorder and web app,
-put together with
+Webcam image snapshot recorder and web app.
+Put together with
 `MPipe <http://vmlaker.github.io/mpipe>`_,
 `OpenCV <http://docs.opencv.org>`_,
 `CoffeeScript <http://coffeescript.org>`_,
@@ -21,7 +21,7 @@ Test drive:
 
   cd wabbit
   python src/create.py
-  python src/record.py 0 640 480 5
+  python src/record.py 5
   python src/dump.py
   python src/prune.py -60
   python src/dump.py
@@ -41,4 +41,9 @@ Then restart the server:
 
   systemctl restart httpd.service
 
+Edit file ``wabbit.cron`` and then schedule the jobs:
+::
+
+  crontab wabbit.cron
+ 
 The app is visible at http://localhost/wabbit.

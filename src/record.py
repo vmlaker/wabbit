@@ -1,4 +1,6 @@
-"""Record video frames to disk, and mark the timestamps in database."""
+"""Record video frames to disk, and mark the timestamps in database.
+Parameters:  <duration_sec> [<config_file>]
+"""
 
 # Import standard modules.
 import datetime as dt
@@ -16,11 +18,8 @@ import coils
 import mapping
 
 # Read command-line parameters.
-DEVICE = int(sys.argv[1])
-WIDTH = int(sys.argv[2])
-HEIGHT = int(sys.argv[3])
-DURATION = float(sys.argv[4])
-CONFIG = sys.argv[5] if len(sys.argv)>=6 else 'wabbit.cfg'
+DURATION = float(sys.argv[1])
+CONFIG = sys.argv[2] if len(sys.argv)>=3 else 'wabbit.cfg'
 
 # Load configuration file.
 config = coils.Config(CONFIG)
@@ -75,15 +74,18 @@ class DbWriter(mpipe.UnorderedWorker):
         # Commit the transaction.
         self._sess.commit()
 
+# Create the OpenCV video capture object.
+cap = cv2.VideoCapture(int(config['device']))
+if not cap.isOpened():
+    print('Cannot open device {}.'.format(int(config['device'])))
+    sys.exit(1)
+cap.set(3, int(config['width']))
+cap.set(4, int(config['height']))
+
 # Create the image post-processing pipeline.
 stage1 = mpipe.UnorderedStage(save2disk, 8)
 stage2 = mpipe.Stage(DbWriter, 8)
 pipe1 = mpipe.Pipeline(stage1.link(stage2))
-
-# Create the OpenCV video capture object.
-cap = cv2.VideoCapture(DEVICE)
-cap.set(3, WIDTH)
-cap.set(4, HEIGHT)
 
 # Monitor framerates for past few seconds.
 ticker = coils.RateTicker((2, 5, 10))
@@ -91,8 +93,8 @@ ticker = coils.RateTicker((2, 5, 10))
 # Go into main loop.
 prev = dt.datetime.now()  # Keep track of previous snapshot time.
 min_interval = 1/float(config['max_fps'])
-end = dt.datetime.now() + dt.timedelta(seconds=DURATION)
-while end > dt.datetime.now():
+end = dt.datetime.now() + dt.timedelta(seconds=abs(DURATION))
+while end > dt.datetime.now() or DURATION < 0:
 
     # Insert delay to observe maximum framerate limit.
     elapsed = (dt.datetime.now() - prev).total_seconds()
@@ -101,8 +103,18 @@ while end > dt.datetime.now():
     time.sleep(sleep_time)
     prev = dt.datetime.now()
 
-    # Take a snapshot, mark the timestamp and put on pipeline.
-    hello, image = cap.read()
+    # Take a snapshot, and bail out of loop if the snapshot failed.
+    # The only way I could detect camera disconnect was by
+    # thresholding the length of time to call read() method;
+    # for some reason return value of read() is always True, 
+    # even after disconnecting the camera.
+    timer = coils.Timer()
+    retval, image = cap.read()
+    if not retval or timer.get().total_seconds() < float(config['min_read']):
+        print('Failed to read from camera.')
+        break  # Bail out.
+
+    # Put image on the pipeline.
     pipe1.put((prev, image))
 
     # Display the image.

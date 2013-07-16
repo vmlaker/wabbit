@@ -1,0 +1,9 @@
+# m h  dom mon dow   command
+
+*/1 * * * * sleep  0; cd $HOME/work/git-wabbit; python src/record.py -1 >/dev/null 2>&1
+#*/1 * * * * sleep 20; cd $HOME/work/git-wabbit; python src/record.py -1 >/dev/null 2>&1
+#*/1 * * * * sleep 40; cd $HOME/work/git-wabbit; python src/record.py -1 >/dev/null 2>&1
+
+*/5 * * * * sleep  0;  cd $HOME/work/git-wabbit; python src/prune.py 300 >/dev/null 2>&1
+#*/5 * * * * sleep 20;  cd $HOME/work/git-wabbit; python src/prune.py 300 >/dev/null 2>&1
+#*/5 * * * * sleep 40;  cd $HOME/work/git-wabbit; python src/prune.py 300 >/dev/null 2>&1
