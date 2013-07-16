@@ -68,7 +68,7 @@ class DbWriter(mpipe.UnorderedWorker):
 
         # Update latest timestamp.
         self._sess.query(mapping.Datum).\
-            filter(mapping.Datum.name=='last_tstamp').\
+            filter(mapping.Datum.name=='latest_tstamp').\
             update({'value': coils.time2string(tstamp)})
 
         # Commit the transaction.

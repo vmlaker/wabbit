@@ -4,37 +4,35 @@
 
     <title>Wabbit</title>
     <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
-    <script type="text/javascript" src="main.js">
-    </script>
-    <!--
-    <script type="text/javascript">
-      $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
-    </script>
-    -->
+    <script type="text/javascript" src="main.js"></script>
     <link href="main.css" rel="stylesheet" type="text/css">
+
   </head>
   <body>
 
-    <div id="banner">
-      <img 
-         id="last_image" 
-         alt="Latest image" 
-         width="100%"
-         style="z-index: -1"
-         />
-      <span id="last_tstamp"/>
+    <div id="live_view">
+      <img id="latest_image" alt="Latest image"/>
+      <span id="latest_tstamp_hud"/>
     </div>
-    Server time: 
-    <span id="server_time"></span>
-    <br>
-    DB size:
-    <span id="db_size"></span>
-    <br>
-    Client timeout:
-    <span id="timeout"></span>
-    <br>
-    <a href="pics">Pics</a>
-    <br>
+
+    <div class="info_block">
+      Server time: 
+      <span id="server_time"></span>
+      <br>
+      Latest capture:
+      <span id="latest_tstamp"></span>
+      <br>
+      DB size:
+      <span id="db_size"></span>
+      <br>
+      Client timeout:
+      <span id="timeout"></span>
+    </div>
+
+    <div class="info_block">
+      Archive:
+      <a href="pics">Pics</a>
+    </div>
 
   </body>
 </html>

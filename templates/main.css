@@ -1,21 +1,35 @@
-#banner{
-    position:relative;
-    width      : 100%;
-    /*
-    background : green;
-    padding    : 10px;
-    */
+#live_view{
+    position  : relative;
+    max-width : 100%;
 }
 img{
+    max-width      : 100%;
     vertical-align : top;
+    border-radius  : 15px;
 }
-#last_tstamp{
-    position   : absolute;
-    padding    : 0 20px 0 20px;
-    bottom     : 4%;
-    right      : 4%;
-    font-size  : 250%;
+#latest_tstamp_hud{
+    position    : absolute;
+    padding     : 0 20px 0 20px;
+    bottom      : 10px;
+    right       : 10px;
+    font-size   : 40px;
+    font-weight : 700;
+
     color      : white;
-    background : red;
+    background : blue;
     opacity    : 0.4;
+
+    border-radius : 10px;
+    border-style  : solid;
+    border-width  : 2px;
+}
+.info_block{
+    padding    : 2px 10px 2px 10px;
+    margin-top : 10px;
+    font-size  : 120%;
+
+    border-radius : 10px;
+    border-style  : solid;
+    border-width  : 2px;
+    border-color  : gray;
 }

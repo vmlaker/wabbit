@@ -31,17 +31,17 @@ def info():
     now = dt.datetime.now()
     size = db.session.query(mapping.Datum).\
         filter(mapping.Datum.name=='size')[0]
-    last_tstamp = db.session.query(mapping.Datum).\
-        filter(mapping.Datum.name=='last_tstamp')[0]
-    last_url = coils.time2fname(
+    latest_tstamp = db.session.query(mapping.Datum).\
+        filter(mapping.Datum.name=='latest_tstamp')[0]
+    latest_url = coils.time2fname(
         coils.string2time(
-            last_tstamp.value), full=True)
-    last_url = 'pics/{}.{}'.format(last_url, config['f_ext'])
+            latest_tstamp.value), full=True)
+    latest_url = 'pics/{}.{}'.format(latest_url, config['f_ext'])
     return flask.jsonify(
         server_time=now, 
         db_size=size.value, 
-        last_tstamp=last_tstamp.value,
-        last_url=last_url,
+        latest_tstamp=latest_tstamp.value,
+        latest_url=latest_url,
         )
 
 @app.route('/tstamps', methods = ['GET','POST'])
