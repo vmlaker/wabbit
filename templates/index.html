@@ -11,35 +11,29 @@
       $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
     </script>
     -->
+    <link href="main.css" rel="stylesheet" type="text/css">
   </head>
   <body>
-    
-    Server time: 
-    <span id="server_time"></span>
-    <br>
-    
-    DB size:
-    <span id="db_size"></span>
-    <br>
 
-    Last snapshot:
-    <span id="last_tstamp"></span>
-    <br>
-
-    Client timeout:
-    <span id="timeout"></span>
-    <br>
-
-    <a href="pics">Pics</a>
-    <br>
-
-    <div style="width: 100%; ">
+    <div id="banner">
       <img 
          id="last_image" 
          alt="Latest image" 
          width="100%"
-         ></img>
+         style="z-index: -1"
+         />
+      <span id="last_tstamp"/>
     </div>
+    Server time: 
+    <span id="server_time"></span>
+    <br>
+    DB size:
+    <span id="db_size"></span>
+    <br>
+    Client timeout:
+    <span id="timeout"></span>
+    <br>
+    <a href="pics">Pics</a>
     <br>
 
   </body>

@@ -23,7 +23,7 @@ info = ->
         success  : (data) ->
             $('#server_time').text data.server_time
             $('#db_size').text data.db_size
-            $('#last_tstamp').text data.last_tstamp
+            $('#last_tstamp').text data.last_tstamp.slice(0, -7)  # Trim off ms.
             $('#timeout').text tout_cur
 
             # If a new image arrived, set the <img> src attribute,
@@ -35,8 +35,8 @@ info = ->
                 tryInfoAgain()            
         error : (data) ->
             $('#server_time').text 'Error'
-            $('#db_size').text 'Error'
-            $('#last_tstamp').text 'Error'
+            $('#db_size').text ''
+            $('#last_tstamp').text ''
             $('#timeout').text tout_cur
             tryInfoAgain()
 

@@ -1,0 +1,21 @@
+#banner{
+    position:relative;
+    width      : 100%;
+    /*
+    background : green;
+    padding    : 10px;
+    */
+}
+img{
+    vertical-align : top;
+}
+#last_tstamp{
+    position   : absolute;
+    padding    : 0 20px 0 20px;
+    bottom     : 4%;
+    right      : 4%;
+    font-size  : 250%;
+    color      : white;
+    background : red;
+    opacity    : 0.4;
+}

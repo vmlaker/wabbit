@@ -25,8 +25,8 @@ cmd = 'cp -r . {}'.format(os.path.join(www_root, 'service'))
 print(cmd)
 call(cmd, shell=True)
 
-cmd = 'ln -s {} {}'.format(
-    os.path.join('service', 'templates', 'index.html'),
+cmd = 'ln -sr {}/* {}'.format(
+    os.path.join(www_root, 'service', 'templates'),
     os.path.join(www_root))
 print(cmd)
 call(cmd, shell=True)
