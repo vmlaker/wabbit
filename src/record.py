@@ -110,6 +110,12 @@ while end > dt.datetime.now() or DURATION < 0:
     # even after disconnecting the camera.
     timer = coils.Timer()
     retval, image = cap.read()
+
+    # When timing the read() call, set min_read 
+    # config value to 0. Then trip the timer (and print
+    # the value) by uncommenting the line below.
+    #print(timer.get())  
+
     if not retval or timer.get().total_seconds() < float(config['min_read']):
         print('Failed to read from camera.')
         break  # Bail out.
