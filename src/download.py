@@ -1,55 +1,34 @@
 """Download images from remote server.
-Parameters:  <begin_time> <length_sec> <url> <dest_dir>
+Parameters:  <begin_time> <length_sec> <url> <config_file>
 """
 
+# Import standard modules.
 import os
 import sys
 import urllib
 import urllib2
 import simplejson as json
+
+# Import 3rd party modules.
 import mpipe
-import wget
 import coils
+
+# Import local modules.
+from mpipe_stages import Downloader, DbWriter
 
 # Read command-line parameters.
 BEGIN = sys.argv[1]
 LENGTH = int(sys.argv[2])
 URL = sys.argv[3]
-DEST = sys.argv[4]
-CONFIG = sys.argv[5] if len(sys.argv)>=6 else 'wabbit.cfg'
+CONFIG = sys.argv[4]
 
 # Load configuration file.
 config = coils.Config(CONFIG)
 
-def download(tstamp):
-    """Download image."""
-    tstamp = coils.string2time(tstamp)
-    fname = coils.time2fname(tstamp) + '.' + config['f_ext']
-    dest_dir = os.path.join(DEST, coils.time2dir(tstamp))
-    dest_fname = os.path.join(
-        dest_dir,
-        fname,
-        )
-    if os.path.exists(dest_fname):
-        print('Skipping {}'.format(dest_fname))
-        return    
-    try:
-        os.makedirs(dest_dir)
-    except os.error:
-        pass
-    saved = os.getcwd()
-    os.chdir(dest_dir)
-    url = '{}/pics/{}.{}'.format(
-        URL, 
-        coils.time2fname(tstamp, full=True),
-        config['f_ext'],
-        )
-    print(url)
-    wget.download(url, bar=None)
-    os.chdir(saved)
-
 # Assemble the pipeline.
-pipe = mpipe.Pipeline(mpipe.UnorderedStage(download, 8))
+pipe = mpipe.Pipeline(
+    mpipe.Stage(Downloader, 8, config=config, url=URL).link(
+        mpipe.Stage(DbWriter, 8, config=config)))
 
 # Retrieve timestamps from server.
 args = { 'begin' : BEGIN, 'length' : LENGTH }
@@ -60,7 +39,7 @@ result = json.loads(response.read())
 times = result['images']
 
 # Operate the pipeline.
-print('Downloading {} images to {}.'.format(len(times), DEST))
+print('Downloading {} images to {}.'.format(len(times), config['pics_dir']))
 for time in times:
     pipe.put(time)
 pipe.put(None)

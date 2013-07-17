@@ -10,12 +10,12 @@ import time
 
 # Import 3rd party modules.
 import cv2
-import sqlalchemy as sa
 import mpipe
 import coils
 
 # Import local modules.
-import mapping
+from mpipe_stages import DiskSaver, DbWriter
+
 
 # Read command-line parameters.
 DURATION = float(sys.argv[1])
@@ -23,56 +23,6 @@ CONFIG = sys.argv[2] if len(sys.argv)>=3 else 'wabbit.cfg'
 
 # Load configuration file.
 config = coils.Config(CONFIG)
-
-def save2disk((tstamp, image)):
-    """First stage of the pipeline;
-    saves the image to disk."""
-
-    # Create destination directory.
-    dname = coils.time2dir(tstamp)
-    dname = os.path.join(config['pics_dir'], dname)
-    try: 
-        os.makedirs(dname)
-    except OSError:
-        pass
-
-    # Save the file.
-    fname = os.path.join(dname, coils.time2fname(tstamp)) + '.' + config['f_ext']
-    cv2.imwrite(fname, image)
-    return tstamp
-
-class DbWriter(mpipe.UnorderedWorker):
-    """Second stage of the pipeline; 
-    updates the SQL database."""
-
-    def __init__(self):
-        """Connect to database engine and start a session."""
-        engine = sa.create_engine(
-            'mysql://{}:{}@{}/{}'.format(
-                config['username'], config['password'], 
-                config['host'], config['db_name']))
-        Session = sa.orm.sessionmaker(bind=engine)
-        self._sess = Session()
-
-    def doTask(self, tstamp):
-        """Write to the database."""
-
-        # Add the item.
-        image = mapping.Image(tstamp)
-        self._sess.add(image)
-
-        # Increment the size.
-        self._sess.query(mapping.Datum).\
-            filter(mapping.Datum.name=='size').\
-            update({'value':mapping.Datum.value+1})
-
-        # Update latest timestamp.
-        self._sess.query(mapping.Datum).\
-            filter(mapping.Datum.name=='latest_tstamp').\
-            update({'value': coils.time2string(tstamp)})
-
-        # Commit the transaction.
-        self._sess.commit()
 
 # Create the OpenCV video capture object.
 cap = cv2.VideoCapture(int(config['device']))
@@ -83,9 +33,9 @@ cap.set(3, int(config['width']))
 cap.set(4, int(config['height']))
 
 # Create the image post-processing pipeline.
-stage1 = mpipe.UnorderedStage(save2disk, 8)
-stage2 = mpipe.Stage(DbWriter, 8)
-pipe1 = mpipe.Pipeline(stage1.link(stage2))
+pipe1 = mpipe.Pipeline(
+    mpipe.Stage(DiskSaver, 8, config=config).link(
+        mpipe.Stage(DbWriter, 8, config=config)))
 
 # Monitor framerates for past few seconds.
 ticker = coils.RateTicker((2, 5, 10))

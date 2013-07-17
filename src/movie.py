@@ -1,13 +1,11 @@
 """Create a movie.
-Parameters:  <begin_time> <length_sec> <speedup> [<config> | <url> <dir>]
+Parameters:  <begin_time> <length_sec> <speedup> <config_file>
 """
 
 import os
 import sys
 import time
 import datetime as dt
-import urllib
-import urllib2
 import simplejson as json
 import sqlalchemy as sa
 import sqlalchemy.orm as orm 
@@ -22,9 +20,7 @@ import mapping
 BEGIN = sys.argv[1]
 LENGTH = int(sys.argv[2])
 SPEEDUP = float(sys.argv[3])
-CONFIG = sys.argv[4] if len(sys.argv) == 5 else 'wabbit.cfg'
-URL = sys.argv[4] if len(sys.argv) >= 6 else None
-PICS_DIR = sys.argv[5] if len(sys.argv) >= 6 else None
+CONFIG = sys.argv[4]
 
 # Load configuration file.
 config = coils.Config(CONFIG)
@@ -33,7 +29,7 @@ def read(tstamp):
     """Read image from disk and propagate it downstream."""
     tstamp = coils.string2time(tstamp)
     fname = coils.time2fname(tstamp, full=True) + '.' + config['f_ext']
-    pics_dir = PICS_DIR if PICS_DIR else config['pics_dir']
+    pics_dir = config['pics_dir']
     fname = os.path.join(pics_dir, fname)
     image = cv2.imread(fname)
     return tstamp, image
@@ -78,21 +74,6 @@ class Viewer(mpipe.OrderedWorker):
 s1 = mpipe.OrderedStage(read,8)
 s2 = mpipe.Stage(Viewer)
 pipe = mpipe.Pipeline(s1.link(s2))
-
-if URL:
-    # Retrieve timestamps from server.
-    args = { 'begin' : BEGIN, 'length' : LENGTH }
-    data = urllib.urlencode(args)
-    url = '{}/service/tstamps?{}'.format(URL, data)
-    response = urllib.urlopen(url)
-    result = json.loads(response.read())
-    times = result['images']
-
-    print('Playing {} images.'.format(len(times)))
-    for time in times:
-        pipe.put(time)
-    pipe.put(None)
-    sys.exit(0)
 
 # Connect to database engine and start a session.
 engine = sa.create_engine(
