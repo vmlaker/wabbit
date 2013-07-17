@@ -5,38 +5,39 @@ import os
 import sys
 import coils
 
-www_root = sys.argv[1]
+# Read command-line parameters.
+WWW_ROOT = sys.argv[1]
+CONFIG = sys.argv[2] if len(sys.argv)>=3 else 'wabbit.cfg'
 
 # Load configuration file.
-CONFIG = sys.argv[2] if len(sys.argv)>=3 else 'wabbit.cfg'
 config = coils.Config(CONFIG)
 
-cmd = 'mkdir {}'.format(www_root)
-print(cmd)
-call(cmd, shell=True)
+# Create destination directories.
+cmd = 'mkdir -p {}'.format(os.path.join(WWW_ROOT, 'service'))
+print(cmd); call(cmd, shell=True)
 
+# Create the pics/ link.
 cmd = 'ln -s {} {}'.format(
     config['pics_dir'], 
-    os.path.join(www_root, 'pics'))
-print(cmd)
-call(cmd, shell=True)
+    os.path.join(WWW_ROOT, 'pics'))
+print(cmd); call(cmd, shell=True)
 
-cmd = 'cp -r . {}'.format(os.path.join(www_root, 'service'))
-print(cmd)
-call(cmd, shell=True)
-
-cmd = 'ln -sr {}/* {}'.format(
-    os.path.join(www_root, 'service', 'templates'),
-    os.path.join(www_root))
-print(cmd)
-call(cmd, shell=True)
-
-cmd = 'ln -s {} {}'.format(
+# Copy source code.
+dest = os.path.join(WWW_ROOT, 'service')
+for item in ('src', 'templates', 'static', 'wabbit.cfg', 'wabbit.wsgi'):
+    cmd = 'cp -r {} {}'.format(item, dest)
+    print(cmd); call(cmd, shell=True)
+ 
+# Make soft links.
+for item in (
+    os.path.join('service', 'templates', 'index.html'),
+    os.path.join('service', 'templates', 'main.css'),
     os.path.join('service', 'static', 'main.js'),
-    os.path.join(www_root))
-print(cmd)
-call(cmd, shell=True)
-
+    ):
+    cmd = 'ln -s {} {}'.format(item, WWW_ROOT)
+    print(cmd); call(cmd, shell=True)
+    
+# Print HTTPD configuration snippet.
 print('')
 print('Add the following to your httpd config, then restart httpd:')
 httpd = """
@@ -52,9 +53,9 @@ httpd = """
     </Location>
 """.format(
     config['db_name'],
-    os.path.join(www_root, 'service', 'wabbit.wsgi'),
-    os.path.join(www_root, 'service'),
-    os.path.join(www_root, 'pics'),
+    os.path.join(WWW_ROOT, 'service', 'wabbit.wsgi'),
+    os.path.join(WWW_ROOT, 'service'),
+    os.path.join(WWW_ROOT, 'pics'),
 
     )
-print httpd
+print(httpd)
