@@ -1,3 +1,11 @@
+/*
+a:link {
+    text-decoration : none;
+}
+a:hover {
+    text-decoration : underline;
+}
+*/
 #live_view{
     position  : relative;
     max-width : 100%;
@@ -32,4 +40,7 @@ img{
     border-style  : solid;
     border-width  : 2px;
     border-color  : gray;
+}
+.footer{
+    text-align : center;
 }

@@ -33,6 +33,7 @@ for item in (
     os.path.join('service', 'templates', 'index.html'),
     os.path.join('service', 'templates', 'main.css'),
     os.path.join('service', 'static', 'main.js'),
+    os.path.join('service', 'static', 'logo_small.png'),
     ):
     cmd = 'ln -s {} {}'.format(item, WWW_ROOT)
     print(cmd); call(cmd, shell=True)

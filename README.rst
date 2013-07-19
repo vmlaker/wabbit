@@ -1,15 +1,17 @@
-.. image:: logo.png
+.. image:: static/logo.png
 
 wabbit
 ======
 
-Webcam image snapshot recorder and web app.
+A tiny webcam snapshot recorder and web app.
 Put together with
 `MPipe <http://vmlaker.github.io/mpipe>`_,
 `OpenCV <http://docs.opencv.org>`_,
 `CoffeeScript <http://coffeescript.org>`_,
 `SQLAlchemy <http://www.sqlalchemy.org>`_, 
 and `Flask <http://flask.pocoo.org>`_.
+
+See live installation running at http://vmlaker.org/wabbit.
 
 Install requirements and get Wabbit:
 ::
@@ -47,5 +49,3 @@ Edit file ``wabbit.cron`` and then schedule the jobs:
 ::
 
   crontab wabbit.cron
- 
-The app is visible at http://localhost/wabbit.

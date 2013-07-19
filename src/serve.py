@@ -2,6 +2,7 @@
 Flask server app.
 """
 
+import os
 import datetime as dt
 import sys
 import flask
@@ -37,11 +38,13 @@ def info():
         coils.string2time(
             latest_tstamp.value), full=True)
     latest_url = 'pics/{}.{}'.format(latest_url, config['f_ext'])
+    load_avg = os.getloadavg()
     return flask.jsonify(
         server_time=now, 
         db_size=size.value, 
         latest_tstamp=latest_tstamp.value,
         latest_url=latest_url,
+        load_avg='{:.2f}, {:.2f}, {:.2f}'.format(*load_avg),
         )
 
 @app.route('/tstamps', methods = ['GET','POST'])

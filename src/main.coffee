@@ -25,6 +25,7 @@ info = ->
             short_tstamp = short_tstamp.substring(11)  # Trim off date.
             $('#latest_tstamp_hud').text short_tstamp
             $('#server_time').text data.server_time
+            $('#load_avg').text data.load_avg
             $('#db_size').text data.db_size
             $('#latest_tstamp').text data.latest_tstamp
             $('#timeout').text tout_cur
@@ -49,6 +50,7 @@ info = ->
                 
         error : (data) ->
             $('#server_time').text 'Error'
+            $('#load_avg').text ''
             $('#db_size').text ''
             $('#latest_tstamp').text ''
             $('#timeout').text tout_cur
