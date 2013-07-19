@@ -1,3 +1,5 @@
+.. image:: logo.png
+
 wabbit
 ======
 
