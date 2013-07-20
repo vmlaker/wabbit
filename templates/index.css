@@ -1,0 +1,42 @@
+tr.indexbreakrow{
+    visibility : hidden;
+    display    : none;
+}
+#indextitle{
+    white-space: nowrap;
+    font-size  : 120%;
+}
+#indexlist{
+    white-space : nowrap;
+    width       : 100%;
+    padding     : 10px;
+    
+    border-spacing : 0;
+    border-style   : solid;
+    border-radius  : 10px;
+    border-width   : 2px;
+}
+td {
+    padding    : 0 10px 0 0; 
+    text-align : left;
+}
+th {
+    text-align : left;
+}
+
+/* The three columns. */
+td.indexcolicon{ 
+    size  : 0px;
+}
+td.indexcolname{ 
+    width : 0px;
+}
+td.indexcolsize{
+    width : 100%;
+}
+
+/* All the links. */
+a:link    {text-decoration:none;}
+a:visited {text-decoration:none;}
+a:hover   {text-decoration:underline;}
+a:active  {text-decoration:underline;}

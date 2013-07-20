@@ -32,6 +32,7 @@ for item in ('src', 'templates', 'static', 'wabbit.cfg', 'wabbit.wsgi'):
 for item in (
     os.path.join('service', 'templates', 'index.html'),
     os.path.join('service', 'templates', 'main.css'),
+    os.path.join('service', 'templates', 'index.css'),
     os.path.join('service', 'static', 'main.js'),
     os.path.join('service', 'static', 'logo_small.png'),
     ):
@@ -43,20 +44,27 @@ print('')
 print('Add the following to your httpd config, then restart httpd:')
 httpd = """
     WSGIScriptAlias /{0}/service {1}
-    <Location {2}>
-        Allow from all
+    <Directory {2}>
         Order allow,deny
-    </Location>
-    <Location {3}>
-        Options Indexes FollowSymLinks
         Allow from all
+    </Directory>
+    <Directory {3}>
+        Options +Indexes
         Order allow,deny
-    </Location>
+        Allow from all
+        IndexStyleSheet /{4}
+        IndexOptions HTMLTable
+        IndexOptions NameWidth=*
+        IndexOptions FancyIndexing
+        IndexOptions SuppressDescription
+        IndexOptions SuppressLastModified
+        IndexOptions IconsAreLinks
+    </Directory>
 """.format(
     config['db_name'],
     os.path.join(WWW_ROOT, 'service', 'wabbit.wsgi'),
     os.path.join(WWW_ROOT, 'service'),
     os.path.join(WWW_ROOT, 'pics'),
-
+    os.path.join(config['db_name'], 'index.css'),
     )
 print(httpd)
