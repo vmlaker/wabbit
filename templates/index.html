@@ -13,7 +13,13 @@
     <div style="text-align: center;">
     <div id="live_outer">
       <div id="live_image">
-        <img id="latest_image" alt="Latest image"/>
+        <img 
+           id="latest_image" 
+           alt="Latest image" 
+           onload="window.wabbitOnImageLoad()"
+           onerror="window.wabbitOnImageLoad()"
+           onload="window.wabbitOnImageLoad()"           
+           />
       </div>
       <span id="latest_tstamp_hud"/>
     </div>
@@ -25,20 +31,23 @@
       <br>
       Load average:
       <span id="load_avg"></span>
-      <br>
-      Client timeout:
-      <span id="timeout"></span>
     </div>
 
     <div class="info_block">
-      Archive:
+      Image archive:
       <a href="pics">click here</a>
       <br>
-      Size:
+      Image count:
       <span id="db_size"></span>
       <br>
       Latest capture:
       <span id="latest_tstamp"></span>
+      <br>
+      Response time:
+      <span id="response_time"></span>
+      <br>
+      Client timeout:
+      <span id="set_timeout"></span>
     </div>
 
     <br>
