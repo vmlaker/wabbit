@@ -21,46 +21,76 @@
            onload="window.wabbitOnImageLoad()"           
            />
       </div>
-      <span id="latest_tstamp_hud"/>
+      <span id="live_time_hud"/>
     </div>
     </div>
 
-    <div class="info_block">
-      Server time: 
-      <span id="server_time"></span>
-      <br>
-      Load average:
-      <span id="load_avg"></span>
+    <div class="info_block">      
+      <div class="table_table">
+        <div class="table_row">
+          <span class="table_cell">Server time:</span>
+          <span class="table_cell" id="server_time"></span>
+        </div>
+        <div class="table_row">
+          <span class="table_cell">Latest capture:</span>
+          <span class="table_cell" id="latest_tstamp"></span>
+        </div>
+        <div class="table_row">
+          <span class="table_cell">Load average:</span>
+          <span class="table_cell" id="load_avg"></span>
+        </div>
+        <div class="table_row">
+          <span class="table_cell">Image archive:</span>
+          <span class="table_cell">
+            <a href="pics/">click here</a>
+            (<span id="db_size"></span> images)
+          </span>
+        </div>
+      </div>
     </div>
 
-    <div class="info_block">
-      Image archive:
-      <a href="pics">click here</a>
-      <br>
-      Image count:
-      <span id="db_size"></span>
-      <br>
-      Latest capture:
-      <span id="latest_tstamp"></span>
-      <br>
-      Response time:
-      <span id="response_time"></span>
-      <br>
-      Client timeout:
-      <span id="set_timeout"></span>
+    <div class="info_block">      
+      <div class="table_table">
+        <div class="table_row">
+          <span class="table_cell">Response time:</span>
+          <span class="table_cell" id="response_time"></span>
+        </div>
+        <div class="table_row">
+          <span class="table_cell">Callback time:</span>
+          <span class="table_cell" id="callback_time"></span>
+        </div>
+        <div class="table_row">
+          <span class="table_cell">Image load time:</span>
+          <span class="table_cell" id="image_load_time"></span>
+        </div>
+        <div class="table_row">
+          <span class="table_cell">Image interval:</span>
+          <span class="table_cell" id="image_interval"></span>
+        </div>
+        <div class="table_row">
+          <span class="table_cell">Set timeout:</span>
+          <span class="table_cell" id="set_timeout"></span>
+        </div>
+        <div class="table_row">
+          <span class="table_cell">Requests/earlies:</span>
+          <span class="table_cell">
+            <span id="request_count"></span>
+            <span>/</span>
+            <span id="early_count"></span>
+            <span>=</span>
+            <span id="request_early_ratio"></span>
+            (<span id="error_count"></span> errors)
+          </span>
+        </div>
+      </div>
     </div>
-
-    <br>
 
     <div class="footer">
-      This website, including camera and database server is created using
-      V. Mlaker's
+      This website, including camera and database server is created using V. Mlaker's
       <a href="http://github.com/vmlaker/wabbit">Wabbit code</a>.
-      <br>
       <br>
       <a href="http://github.com/vmlaker/wabbit">
         <img src="logo_small.png"></a>
-      <br>
     </div>
 
   </body>
