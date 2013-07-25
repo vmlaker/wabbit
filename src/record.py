@@ -1,4 +1,5 @@
 """Record video frames to disk, and mark the timestamps in database.
+
 Parameters:  <duration_sec> [<config_file>]
 """
 
@@ -7,6 +8,7 @@ import datetime as dt
 import os
 import sys
 import time
+import logging
 
 # Import 3rd party modules.
 import cv2
@@ -15,11 +17,19 @@ import coils
 
 # Import local modules.
 from mpipe_stages import DiskSaver, DbWriter
-
+from log_format import getFormat
 
 # Read command-line parameters.
 DURATION = float(sys.argv[1])
 CONFIG = sys.argv[2] if len(sys.argv)>=3 else 'wabbit.cfg'
+
+# Configure logging and get the logger object.
+logging.basicConfig(
+    stream=sys.stdout,
+    format=getFormat(),
+    level=logging.DEBUG,
+    )
+logger = logging.getLogger('prune')
 
 # Load configuration file.
 config = coils.Config(CONFIG)
@@ -27,8 +37,9 @@ config = coils.Config(CONFIG)
 # Create the OpenCV video capture object.
 cap = cv2.VideoCapture(int(config['device']))
 if not cap.isOpened():
-    print('Cannot open device {}.'.format(int(config['device'])))
+    logger.error('Cannot open device {}.'.format(int(config['device'])))
     sys.exit(1)
+logger.info('Opened device {}.'.format(int(config['device'])))
 cap.set(3, int(config['width']))
 cap.set(4, int(config['height']))
 
@@ -61,13 +72,12 @@ while end > dt.datetime.now() or DURATION < 0:
     timer = coils.Timer()
     retval, image = cap.read()
 
-    # When timing the read() call, set min_read 
-    # config value to 0. Then trip the timer (and print
-    # the value) by uncommenting the line below.
-    #print(timer.get())  
+    # When timing the read() call, set min_read config value to 0. 
+    # Then trip the timer (and dump the value) by uncommenting the line below.
+    #logger.debug(timer.get())  
 
     if not retval or timer.get().total_seconds() < float(config['min_read']):
-        print('Failed to read from camera.')
+        logger.error('Failed to read from camera.')
         break  # Bail out.
 
     # Put image on the pipeline.
@@ -78,7 +88,7 @@ while end > dt.datetime.now() or DURATION < 0:
     #cv2.imshow('wabbit', image)
     #cv2.waitKey(1)
 
-    print('{:.2f}, {:.2f}, {:.2f}'.format(*ticker.tick()))
+    logger.debug('{:.2f}, {:.2f}, {:.2f}'.format(*ticker.tick()))
 
 # Stop the pipeline.
 pipe1.put(None)
