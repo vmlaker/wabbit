@@ -30,6 +30,7 @@ def index():
 def info():
     """Return system information."""
     now = dt.datetime.now()
+    now = coils.time2string(now)
     size = db.session.query(mapping.Datum).\
         filter(mapping.Datum.name=='size')[0]
     latest_tstamp = db.session.query(mapping.Datum).\
