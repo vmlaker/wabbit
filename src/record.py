@@ -76,9 +76,15 @@ while end > dt.datetime.now() or DURATION < 0:
     # Then trip the timer (and dump the value) by uncommenting the line below.
     #logger.debug(timer.get())  
 
-    if not retval or timer.get().total_seconds() < float(config['min_read']):
+    if not retval:
         logger.error('Failed to read from camera.')
         break  # Bail out.
+
+    elapsed = timer.get().total_seconds()
+    if elapsed < float(config['min_read']):
+        logger.error('Read time failed to meet threshold, {} < {}'.format(
+                elapsed, float(config['min_read'])))
+        break  # Bail out.                     
 
     # Put image on the pipeline.
     pipe1.put((prev, image))
