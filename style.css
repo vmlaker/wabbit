@@ -12,7 +12,6 @@ body{
     background-color: #FAEFD2;
     background-image:  url(bg_top.png);
     background-repeat: repeat-x; 
-
 }
 
 .logo{
@@ -21,10 +20,10 @@ body{
 
 .main_block{
     min-width:  400px;
-    max-width:  640px;
+    max-width:  800px;
 
     margin: auto;
-    padding: 40px 30px 60px 30px;
+    padding: 40px 30px;
     
     border-style: solid;
     border-width: 0 1px;
@@ -38,7 +37,6 @@ body{
 }
 
 .demo_link{
-    
     font-size: 120%;
     font-style: italic;
 
@@ -47,19 +45,31 @@ body{
 }
 
 code{
-    background-color: #FFF7E3;
-    padding: 1px;
+    padding: 0px 3px;
 
+    background-color: #FFF4D7;
+
+    border-style: solid;
+    border-width: 1px;
+    border-color: #EFD694;
 }
 
 .code_block{
     margin: 0;
     white-space: pre;
-    background-color: #FFF7E3;
     font: 1em, 'Courier', Courier, Fixed;
+
+    background-color: #FFF4D7;
 
     border-radius: 10px;
     border-style: solid;
     border-width: 1px;
-    border-color: #FAEFD2;
+    border-color: #EFD694;
+}
+
+.footer{
+    margin: 50px 15px 50px 15px;
+    text-align: center;
+    font-size: 75%;
+    font-style: italic;
 }
