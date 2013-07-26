@@ -1,20 +1,17 @@
 """Download images from remote server.
+
 Parameters:  <begin_time> <length_sec> <url> <config_file>
 """
 
-# Import standard modules.
-import os
 import sys
 import urllib
-import urllib2
 import simplejson as json
 
-# Import 3rd party modules.
 import mpipe
 import coils
 
-# Import local modules.
 from mpipe_stages import Downloader, DbWriter
+
 
 # Read command-line parameters.
 BEGIN = sys.argv[1]

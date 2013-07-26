@@ -1,79 +1,28 @@
 """Create a movie.
-Parameters:  <begin_time> <length_sec> <speedup> <config_file>
+
+Parameters:  <begin_time> <length_sec> <config_file> [<speedup>]
 """
 
-import os
 import sys
-import time
 import datetime as dt
-import simplejson as json
+
+import mpipe
 import sqlalchemy as sa
 import sqlalchemy.orm as orm 
 
-import cv2
-import mpipe
-
 import coils
 import mapping
+from mpipe_stages import DiskReader, Viewer
+
 
 # Read command-line parameters.
 BEGIN = sys.argv[1]
 LENGTH = int(sys.argv[2])
-SPEEDUP = float(sys.argv[3])
-CONFIG = sys.argv[4]
+CONFIG = sys.argv[3]
+SPEEDUP = float(sys.argv[4]) if len(sys.argv)>=5 else 1.0
 
 # Load configuration file.
 config = coils.Config(CONFIG)
-
-def read(tstamp):
-    """Read image from disk and propagate it downstream."""
-    tstamp = coils.string2time(tstamp)
-    fname = coils.time2fname(tstamp, full=True) + '.' + config['f_ext']
-    pics_dir = config['pics_dir']
-    fname = os.path.join(pics_dir, fname)
-    image = cv2.imread(fname)
-    return tstamp, image
-
-cv2.namedWindow('wabbit', cv2.cv.CV_WINDOW_NORMAL)
-class Viewer(mpipe.OrderedWorker):
-    """Displays image in a window."""
-
-    def __init__(self):
-        self._prev_tstamp = dt.datetime.max
-        self._prev_dotask = dt.datetime.max
-
-    def doTask(self, (tstamp, image)):
-
-        # Compute time difference between timestamps.
-        diff_tstamp = tstamp - self._prev_tstamp
-        self._prev_tstamp = tstamp
-        diff_tstamp = diff_tstamp.total_seconds()
-        diff_tstamp = max(0, diff_tstamp)
-        diff_tstamp /= SPEEDUP
-
-        # Compute time elapsed since previous doTask().
-        elapsed = dt.datetime.now() - self._prev_dotask
-        elapsed = elapsed.total_seconds()
-        elapsed = max(0, elapsed)
-        
-        # Pause to match real framerate.
-        sleep_time = diff_tstamp - elapsed
-        if sleep_time < 0:
-            self._prev_dotask = dt.datetime.now()
-            return
-        time.sleep(sleep_time)
-        self._prev_dotask = dt.datetime.now()
-
-        try:
-            cv2.imshow('wabbit', image)
-            cv2.waitKey(1)
-        except:
-            print('Error in viewer !!!')
-
-# Assemble the pipeline.
-s1 = mpipe.OrderedStage(read,8)
-s2 = mpipe.Stage(Viewer)
-pipe = mpipe.Pipeline(s1.link(s2))
 
 # Connect to database engine and start a session.
 engine = sa.create_engine(
@@ -87,6 +36,11 @@ except sa.exc.OperationalError:
     sys.exit(1)
 Session = sa.orm.sessionmaker(bind=engine)
 session = Session()
+
+# Assemble the pipeline.
+pipe = mpipe.Pipeline(
+    mpipe.Stage(DiskReader, 8, config=config).link(
+        mpipe.Stage(Viewer, speedup=SPEEDUP)))
 
 # Compute the end time.
 delta = dt.timedelta(seconds=LENGTH)

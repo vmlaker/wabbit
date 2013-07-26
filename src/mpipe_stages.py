@@ -1,16 +1,36 @@
 """Various MPipe stages."""
 
 import os
+import time
+import datetime as dt
+
 import cv2
 import sqlalchemy as sa
 import wget
 import mpipe
+
 import coils
 import mapping
 
 
+class DiskReader(mpipe.OrderedWorker):
+    """Reads image from disk."""
+
+    def __init__(self, config):
+        """Initialize the object."""
+        self._config = config
+
+    def doTask(self, tstamp):
+        """Read image from disk and propagate it downstream."""
+        tstamp = coils.string2time(tstamp)
+        fname = coils.time2fname(tstamp, full=True) + '.' + self._config['f_ext']
+        fname = os.path.join(self._config['pics_dir'], fname)
+        image = cv2.imread(fname)
+        return tstamp, image
+
+
 class DiskSaver(mpipe.UnorderedWorker):
-    """Saves file to disk."""
+    """Saves image to disk."""
 
     def __init__(self, config):
         """Initialize the object."""
@@ -46,6 +66,10 @@ class DbWriter(mpipe.UnorderedWorker):
             'mysql://{}:{}@{}/{}'.format(
                 self._config['username'], self._config['password'], 
                 self._config['host'], self._config['db_name']))
+
+        # Raises exception upon failed connect.
+        engine.connect()  
+
         Session = sa.orm.sessionmaker(bind=engine)
         self._sess = Session()
 
@@ -107,3 +131,41 @@ class Downloader(mpipe.UnorderedWorker):
 
         # Propagate timestamp downstream.
         return tstamp
+
+
+class Viewer(mpipe.OrderedWorker):
+    """Displays image in a window."""
+
+    def __init__(self, speedup=1.0):
+        self._speedup = speedup
+        self._prev_tstamp = dt.datetime.max
+        self._prev_dotask = dt.datetime.max
+        cv2.namedWindow('wabbit', cv2.cv.CV_WINDOW_NORMAL)
+
+    def doTask(self, (tstamp, image)):
+
+        # Compute time difference between timestamps.
+        diff_tstamp = tstamp - self._prev_tstamp
+        self._prev_tstamp = tstamp
+        diff_tstamp = diff_tstamp.total_seconds()
+        diff_tstamp = max(0, diff_tstamp)
+        diff_tstamp /= self._speedup
+
+        # Compute time elapsed since previous doTask().
+        elapsed = dt.datetime.now() - self._prev_dotask
+        elapsed = elapsed.total_seconds()
+        elapsed = max(0, elapsed)
+        
+        # Pause to match real framerate.
+        sleep_time = diff_tstamp - elapsed
+        if sleep_time < 0:
+            self._prev_dotask = dt.datetime.now()
+            return
+        time.sleep(sleep_time)
+        self._prev_dotask = dt.datetime.now()
+
+        try:
+            cv2.imshow('wabbit', image)
+            cv2.waitKey(1)
+        except:
+            print('Error in viewer !!!')
