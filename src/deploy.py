@@ -42,17 +42,24 @@ for item in (
 # Print HTTPD configuration snippet.
 print('')
 print('Add the following to your httpd config, then restart httpd:')
-httpd = """
-    WSGIScriptAlias /{0}/service {1}
-    <Directory {2}>
+text = """
+    ################################
+    # Wabbit configuration.
+    ################################
+    WSGIDaemonProcess {db_name} \\
+        home={service_dir} \\
+        python-path={service_dir}
+    WSGIProcessGroup {db_name}
+    WSGIScriptAlias /{db_name}/service {service_dir}/wabbit.wsgi
+    <Directory {service_dir}>
         Order allow,deny
         Allow from all
     </Directory>
-    <Directory {3}>
+    <Directory {pics_dir}>
         Options +Indexes
         Order allow,deny
         Allow from all
-        IndexStyleSheet /{4}
+        IndexStyleSheet /{db_name}/index.css
         IndexOptions HTMLTable
         IndexOptions NameWidth=*
         IndexOptions FancyIndexing
@@ -61,10 +68,8 @@ httpd = """
         IndexOptions IconsAreLinks
     </Directory>
 """.format(
-    config['db_name'],
-    os.path.join(WWW_ROOT, 'service', 'wabbit.wsgi'),
-    os.path.join(WWW_ROOT, 'service'),
-    os.path.join(WWW_ROOT, 'pics'),
-    os.path.join(config['db_name'], 'index.css'),
+    db_name=config['db_name'],
+    service_dir=os.path.join(WWW_ROOT, 'service'),
+    pics_dir=os.path.join(WWW_ROOT, 'pics'),
     )
-print(httpd)
+print(text)
