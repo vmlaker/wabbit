@@ -7,9 +7,6 @@ a:hover {
 }
 */
 #live_outer{
-    /*
-    margin-top: 10px;
-    */
     display: inline-block;
     position: relative;
     /*
@@ -17,21 +14,14 @@ a:hover {
     border-color: blue;
     */
 }
-#live_image{
-    width: 100%;
-    height: auto;
-    /*
-    border-color: red;
-    border-style: solid;
-    */
-}
-#live_image img{
+#live_outer img{
     /* Get rid of extra space below image. */
     vertical-align: bottom;
 
-    border-radius: 15px;
     width: 100%;
-    height: 100%;
+    height: auto;
+
+    border-radius: 15px;
 }
 #live_time_hud{
     position    : absolute;
@@ -66,7 +56,7 @@ a:hover {
     background    : azure;
     border-radius : 10px;
     border-style  : solid;
-    border-width  : 2px;
+    border-width  : 1px;
     border-color  : gray;
 }
 
