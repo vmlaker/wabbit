@@ -60,6 +60,13 @@ session.query(mapping.Datum).\
     update({'value':mapping.Datum.value-count})
 session.commit()
 
+# Define an error handler for deletion of entire directory tree.
+def on_rmtree_error(func, path, excinfo):
+    """Error handler for shutil.rmtree -- simply log the error details."""
+    logger.error('rmtree error: func    {}'.format(str(func)))
+    logger.error('              path    {}'.format(path))
+    logger.error('              excinfo {}'.format(excinfo))
+    
 # Remove from disk.
 levels = coils.time2levels(then)
 dstack = list()  # Stack of descended subdirectories.
@@ -74,7 +81,7 @@ for level in levels:
             continue
         if int_entry < int(level):
             full = os.path.join(os.getcwd(), entry)
-            shutil.rmtree(full, ignore_errors=True)
+            shutil.rmtree(full, ignore_errors=False, onerror=on_rmtree_error)
             logger.info('Removed {}'.format(full))
 
     # Skip if not a directory.
