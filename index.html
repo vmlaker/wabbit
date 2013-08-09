@@ -47,7 +47,7 @@
       <a href="http://www.sqlalchemy.org">SQLAlchemy</a> (running on MySQL engine.)
       The web app itself is powered by <a href="http://flask.pocoo.org">Flask</a>.
       AJAX calls are done with
-      <a href="http://jquery.org">JQuery</a>.
+      <a href="http://jquery.org">jQuery</a>.
     </p>
 
     <p>
@@ -118,13 +118,26 @@
     </div>
 
     <p>
-      The second command above dumps a configuration snippet for HTTPD 
-      -- use it to configure your web server. 
-      Then restart:
+      The second command above dumps a configuration snippet for HTTPD.
+      Cut-n-paste the snippet into your HTTPD .conf file.
+      Then restart the server:
     </p>
       
     <div class="code_block">
       systemctl restart httpd.service
+    </div>
+
+    <p>
+      If you're running SELinux, 
+      keep in mind that default security policies may forbid 
+      HTTPD from reading your pictures directory
+      (as configured with <code>pics_dir</code> variable in file <code>wabbit.cfg</code>.)
+      If that's the case, 
+      change the SELinux security context of the path:
+    </p>
+
+    <div class="code_block">
+      sudo chcon -R -t httpd_sys_content_t /path/to/pics
     </div>
 
     <p>
