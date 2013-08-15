@@ -49,16 +49,32 @@ delta = dt.timedelta(seconds=SECONDS)
 then = now - delta
 logger.debug('Removing older than {}s ==> {}'.format(SECONDS, then))
 
-# Remove from database.
+
+# Update the database.
+# First remove rows from the image table,
+# and then update size entry in the info table.
 Session = sa.orm.sessionmaker(bind=engine)
 session = Session()
-count = session.query(mapping.Image).filter(mapping.Image.time < then).delete()
-logger.info('Deleted {} rows.'.format(count))
-# Decrement the size.
-session.query(mapping.Datum).\
-    filter(mapping.Datum.name=='size').\
-    update({'value':mapping.Datum.value-count})
+timer = coils.Timer()
+try:
+
+    # Remove the images.
+    count = session.query(mapping.Image).filter(mapping.Image.time < then).delete()
+    logger.info('Deleted {} rows.'.format(count))
+
+    # Decrement the size.
+    session.query(mapping.Datum).\
+        filter(mapping.Datum.name=='size').\
+        update({'value':mapping.Datum.value-count})
+
+except sa.exc.OperationalError, ee:
+
+    logger.error('Failed to delete records.')
+    logger.error('Exception: {}'.format(str(ee)))
+
+logger.debug('Elapsed {}'.format(timer.get().total_seconds()))
 session.commit()
+
 
 # Define an error handler for deletion of entire directory tree.
 def on_rmtree_error(func, path, excinfo):
