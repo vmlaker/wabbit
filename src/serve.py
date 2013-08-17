@@ -88,6 +88,8 @@ def tstamps():
 def nearest():
     """Return timestamp nearest to given time."""
 
+    timer = coils.Timer()
+
     # Parse the URL parameter "time".
     errors = list()
     try:
@@ -105,7 +107,7 @@ def nearest():
     try:
         image_left = db.session.query(mapping.Image.time).\
             filter(mapping.Image.time <= tstamp).\
-            group_by(mapping.Image.time.desc()).limit(1)
+            order_by(mapping.Image.time.desc()).limit(1)
         image_left = image_left[0].time
     except:
         image_left = None
@@ -113,7 +115,7 @@ def nearest():
     try:
         image_right = db.session.query(mapping.Image.time).\
             filter(mapping.Image.time >= tstamp).\
-            group_by(mapping.Image.time).limit(1)
+            order_by(mapping.Image.time).limit(1)
         image_right = image_right[0].time
     except:
         image_right = None
@@ -121,6 +123,7 @@ def nearest():
     return flask.jsonify(
         left=image_left,
         right=image_right,
+        elapsed=timer.get().total_seconds(),
         )
 
 if __name__ == '__main__':
