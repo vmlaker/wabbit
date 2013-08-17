@@ -52,17 +52,17 @@
 
     <p>
       All these softwares are open source and easily obtainable.
-      Start by getting the essentials:
+      Let's start by getting the essentials:
     </p>
 
     <div class="code_block">
       pip install -r requirements.txt
-      npm install coffee-script
       git clone --recursive http://github.com/vmlaker/wabbit 
     </div>
 
     <p>
-      You will also need OpenCV Python bindings, and MySQL.
+      Additionally, you will also need OpenCV and MySQL,
+      and their respective Python bindings.
       To run the web app on Apache HTTPD, you're gonna need mod_wsgi.
     </p>
 
@@ -104,7 +104,8 @@
     </p>
 
     <div class="code_block">
-      coffee -o static -c src/main.coffee
+      npm install coffee-script
+      node_modules/coffee-script/bin/coffee -o static -c src/main.coffee
     </div>
 
     <p>
