@@ -84,5 +84,44 @@ def tstamps():
         images=images,
         )
 
+@app.route('/nearest', methods = ['GET','POST'])
+def nearest():
+    """Return timestamp nearest to given time."""
+
+    # Parse the URL parameter "time".
+    errors = list()
+    try:
+        query = flask.request.args.get('time')
+        tstamp = coils.string2time(query)
+        assert tstamp != None
+    except:
+        errors.append('Failed to parse "time" parameter.')
+
+    # Bail on any errors.
+    if errors:
+        return flask.jsonify(errors=errors)
+
+    # Retrieve image timestamps.
+    try:
+        image_left = db.session.query(mapping.Image.time).\
+            filter(mapping.Image.time <= tstamp).\
+            group_by(mapping.Image.time.desc()).limit(1)
+        image_left = image_left[0].time
+    except:
+        image_left = None
+        
+    try:
+        image_right = db.session.query(mapping.Image.time).\
+            filter(mapping.Image.time >= tstamp).\
+            group_by(mapping.Image.time).limit(1)
+        image_right = image_right[0].time
+    except:
+        image_right = None
+        
+    return flask.jsonify(
+        left=image_left,
+        right=image_right,
+        )
+
 if __name__ == '__main__':
     app.run()
