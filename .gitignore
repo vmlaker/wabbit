@@ -1,2 +1,3 @@
 *.pyc
 static/main.js
+node_modules
