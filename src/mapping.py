@@ -14,8 +14,9 @@ class Image(Base):
 
     __tablename__ = 'images'
     id = sa.Column(sa.Integer, primary_key=True)
-    time = sa.Column(sa.String(
-            len(coils.time2string(dt.datetime.now()))))
+    time = sa.Column(
+        sa.String(len(coils.time2string(dt.datetime.now()))),
+        unique=True)
 
     def __init__(self, tstamp):
         self.time = coils.time2string(tstamp)
