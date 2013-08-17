@@ -99,13 +99,13 @@
     <h2>Deployment</h2>
 
     <p>
-      Client-side script for the web page is written in CoffeeScript,
-      so first compile it to JavaScript:
+      Client-side scripts for the web pages are written in CoffeeScript,
+      so first compile them to JavaScript:
     </p>
 
     <div class="code_block">
       npm install coffee-script
-      node_modules/coffee-script/bin/coffee -o static -c src/main.coffee
+      node_modules/coffee-script/bin/coffee -o static -c src/*.coffee
     </div>
 
     <p>
