@@ -1,0 +1,165 @@
+<html>
+
+<head>
+  <title>Wabbit</title>
+  <link href="style.css" rel="stylesheet" type="text/css">
+
+  <a href="https://github.com/vmlaker/wabbit"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_orange_ff7600.png" alt="Fork me on GitHub"></a>
+
+</head>
+
+<body>
+
+  <div class="main_block">
+
+    <div style="float: left;">
+      <h1>Wabbit</h1>
+    </div>
+
+    <div style="float: left;">
+      <div class="logo">
+        <image src="logo.png"/>
+      </div>
+    </div>
+
+    <div style="clear: left;">
+    </div>
+
+    <p>
+      A webcam recorder that takes continuous snapshots,
+      stores images on disk and maintains archive index in a relational database.
+      Comes with a web app and a status page displaying current snapshot and server info.
+      Check out the live demo:
+      <div class="demo_link">
+        <a href="http://vmlaker.org/wabbit">http://vmlaker.org/wabbit</a>
+      </div>
+    </p>
+
+    <h2>Installation</h2>
+
+    <p>
+      The code is written in Python, with a little
+      <a href="http://coffeescript.org">CoffeeScript</a> for the status page.
+      <a href="http://docs.opencv.org">OpenCV</a> is used to interact with the camera.
+      Parallel processing is implemented with the 
+      <a href="http://vmlaker.github.io/mpipe">MPipe</a> module.
+      Database is accessed with
+      <a href="http://www.sqlalchemy.org">SQLAlchemy</a> (running on MySQL engine.)
+      The web app itself is powered by <a href="http://flask.pocoo.org">Flask</a>.
+      AJAX calls are done with
+      <a href="http://jquery.org">jQuery</a>.
+    </p>
+
+    <p>
+      All these softwares are open source and easily obtainable.
+      Start by getting the essentials:
+    </p>
+
+    <div class="code_block">
+      pip install -r requirements.txt
+      npm install coffee-script
+      git clone --recursive http://github.com/vmlaker/wabbit 
+    </div>
+
+    <p>
+      You will also need OpenCV Python bindings, and MySQL.
+      To run the web app on Apache HTTPD, you're gonna need mod_wsgi.
+    </p>
+
+    <h2>Usage</h2>
+
+    <p>
+      Customize your configuration by editing file <code>wabbit.cfg</code>.
+      Then create the database, tables, user and privileges
+      (you're gonna need to know your MySQL admin password):
+    </p>
+
+    <div class="code_block">
+      cd wabbit
+      python src/create.py
+    </div>
+
+    <p>
+      If, at a later time, you want to undo changes to your MySQL,
+      run <code>python src/drop.py</code>.
+      This will remove (clean up) everything created by the previous command.
+    </p>
+
+    <p>
+      With the database initialized, you can now test the recorder and pruner:
+    </p>
+
+    <div class="code_block">
+      python src/record.py 10
+      python src/dump.py
+      python src/prune.py -60
+      python src/dump.py
+    </div>
+
+    <h2>Deployment</h2>
+
+    <p>
+      Client-side script for the web page is written in CoffeeScript,
+      so first compile it to JavaScript:
+    </p>
+
+    <div class="code_block">
+      coffee -o static -c src/main.coffee
+    </div>
+
+    <p>
+      Then, deploy to your web server. For Apache HTTPD just run the following
+      (assuming your <code>DocumentRoot</code> is <code>/var/www/html</code>):
+    </p>
+
+    <div class="code_block">
+      rm -rf /var/www/html/wabbit
+      python src/deploy.py /var/www/html/wabbit
+    </div>
+
+    <p>
+      The second command above dumps a configuration snippet for HTTPD.
+      Cut-n-paste the snippet into your HTTPD .conf file.
+      Then restart the server:
+    </p>
+      
+    <div class="code_block">
+      systemctl restart httpd.service
+    </div>
+
+    <p>
+      If you're running SELinux, 
+      keep in mind that default security policies may forbid 
+      HTTPD from reading your pictures directory
+      (as configured with <code>pics_dir</code> variable in file <code>wabbit.cfg</code>.)
+      If that's the case, 
+      change the SELinux security context of the path:
+    </p>
+
+    <div class="code_block">
+      sudo chcon -R -t httpd_sys_content_t /path/to/pics
+    </div>
+
+    <p>
+      Your page is visible at 
+      <a href="http://localhost/wabbit">http://localhost/wabbit</a>.
+    </p>
+
+    <p>
+      Consider automating the recorder and pruner 
+      by scheduling them as cron jobs. 
+      An example crontab file <code>wabbit.cron</code> is provided
+      as a starting point for your custom setup.
+    </p>
+
+    <div class="footer">
+      This page is built with 
+      <a href="http://www.w3.org/html">HTML</a> and 
+      <a href="http://www.w3.org/style/css">CSS</a>.
+    </div>
+
+  </div>
+
+</body>
+
+</html>
