@@ -31,9 +31,11 @@ for item in ('src', 'templates', 'static', 'wabbit.cfg', 'wabbit.wsgi'):
 # Make soft links.
 for item in (
     os.path.join('service', 'templates', 'index.html'),
+    os.path.join('service', 'templates', 'browser.html'),
     os.path.join('service', 'templates', 'main.css'),
     os.path.join('service', 'templates', 'index.css'),
     os.path.join('service', 'static', 'main.js'),
+    os.path.join('service', 'static', 'browser.js'),
     os.path.join('service', 'static', 'logo_small.png'),
     ):
     cmd = 'ln -s {} {}'.format(item, WWW_ROOT)
