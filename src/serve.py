@@ -84,47 +84,148 @@ def tstamps():
         images=images,
         )
 
-@app.route('/nearest', methods = ['GET','POST'])
-def nearest():
-    """Return timestamp nearest to given time."""
-
+@app.route('/slide', methods = ['GET','POST'])
+def slide():
+    """Return image of given slider time."""
+    
+    # Time this functions.
     timer = coils.Timer()
 
     # Parse the URL parameter "time".
     errors = list()
     try:
-        query = flask.request.args.get('time')
-        tstamp = coils.string2time(query)
-        assert tstamp != None
+        query = flask.request.args.get('time1')
+        tstamp1 = coils.string2time(query)
+        assert tstamp1 != None
+    except:
+        errors.append('Failed to parse "time1" parameter.')
+
+    try:
+        query = flask.request.args.get('time2')
+        tstamp2 = coils.string2time(query)
+        assert tstamp2 != None
+    except:
+        errors.append('Failed to parse "time2" parameter.')
+
+    try:
+        query = flask.request.args.get('amount')
+        amount = float(query)
+    except:
+        errors.append('Failed to parse "amount" parameter.')
+
+    # Bail on any errors.
+    if errors:
+        return flask.jsonify(errors=errors)
+
+    # Compute target time.
+    diff = (tstamp2 - tstamp1).total_seconds()
+    delta = dt.timedelta(seconds=diff*amount)
+    tstamp3 = tstamp1 + delta
+
+    # Get time closest to target time.
+    result_time = getNearestTime(tstamp3)
+
+    # Convert time to url.
+    if result_time:
+        result_url = coils.time2fname(coils.string2time(result_time), full=True)
+        result_url = 'pics/{}.{}'.format(result_url, config['f_ext'])
+    else:
+        result_url = None
+
+    return flask.jsonify(
+        result_time=result_time,
+        result_url=result_url,
+        elapsed=timer.get().total_seconds(),
+        )
+
+
+@app.route('/nearest', methods = ['GET','POST'])
+def nearest():
+    """Return timestamp nearest to given time."""
+
+    # Time this functions.
+    timer = coils.Timer()
+
+    # Parse the URL parameter "time".
+    errors = list()
+    try:
+        tstamp_query = flask.request.args.get('time')
+        time_query = coils.string2time(tstamp_query)
+        assert time_query != None
     except:
         errors.append('Failed to parse "time" parameter.')
 
     # Bail on any errors.
     if errors:
         return flask.jsonify(errors=errors)
+        
+    return flask.jsonify(
+        result=getNearestTime(time_query),
+        elapsed=timer.get().total_seconds(),
+        )
+
+@app.route('/range', methods = ['GET','POST'])
+def range():
+    """Return timestamp range of given amount (since latest.)"""
+
+    # Time this functions.
+    timer = coils.Timer()
+
+    # Parse the URL parameter "amount".
+    errors = list()
+    try:
+        amount = flask.request.args.get('amount')
+        amount = float(amount)
+    except:
+        errors.append('Failed to parse "amount" parameter.')
+
+    # Bail on any errors.
+    if errors:
+        return flask.jsonify(errors=errors)
+
+
+    latest_tstring = db.session.query(mapping.Datum).\
+        filter(mapping.Datum.name=='latest_tstamp')[0].value
+    latest_time = coils.string2time(latest_tstring)
+    start_time = latest_time - dt.timedelta(seconds=amount)
+    start_tstring = getNearestTime(start_time)
+    
+    return flask.jsonify(
+        begin_time=start_tstring,
+        end_time=latest_tstring,
+        )
+
+def getNearestTime(time_query):
+    """Given a datetime object, return the nearest time in 
+    the database (in string format), or None if empty."""
+
+    # Convert datetime object to string, for lookup in database.
+    tstamp_query = coils.time2string(time_query)
 
     # Retrieve image timestamps.
     try:
-        image_left = db.session.query(mapping.Image.time).\
-            filter(mapping.Image.time <= tstamp).\
+        tstamp_left = db.session.query(mapping.Image.time).\
+            filter(mapping.Image.time <= tstamp_query).\
             order_by(mapping.Image.time.desc()).limit(1)
-        image_left = image_left[0].time
+        tstamp_left = tstamp_left[0].time
+        delta_left = abs(coils.string2time(tstamp_left) - time_query)
     except:
-        image_left = None
+        tstamp_left = None
+        delta_left = dt.timedelta.max
         
     try:
-        image_right = db.session.query(mapping.Image.time).\
-            filter(mapping.Image.time >= tstamp).\
+        tstamp_right = db.session.query(mapping.Image.time).\
+            filter(mapping.Image.time >= tstamp_query).\
             order_by(mapping.Image.time).limit(1)
-        image_right = image_right[0].time
+        tstamp_right = tstamp_right[0].time
+        delta_right = abs(coils.string2time(tstamp_right) - time_query)
     except:
-        image_right = None
+        tstamp_right = None
+        delta_right = dt.timedelta.max
         
-    return flask.jsonify(
-        left=image_left,
-        right=image_right,
-        elapsed=timer.get().total_seconds(),
-        )
+    # The nearest value has the smallest delta from the query.
+    result = tstamp_left if (delta_left < delta_right) else tstamp_right
+    return result
 
 if __name__ == '__main__':
     app.run()
