@@ -17,6 +17,13 @@
 
     <div style="text-align: center;">
       <div id="live_outer">
+        <img 
+           id="latest_image" 
+           alt="Latest image" 
+           onload="window.wabbitOnImageLoad()"
+           onerror="window.wabbitOnImageLoad()"
+           onload="window.wabbitOnImageLoad()"           
+           />
       </div>
     </div>
 
@@ -25,8 +32,24 @@
     <div class="info_block">      
       <div class="table_table">
         <div class="table_row">
+          <span class="table_cell">Current</span>
+          <span class="table_cell" id="current_time"></span>
+        </div>
+        <div class="table_row">
+          <span class="table_cell">Begin</span>
+          <span class="table_cell" id="begin_time"></span>
+        </div>
+        <div class="table_row">
+          <span class="table_cell">End</span>
+          <span class="table_cell" id="end_time"></span>
+        </div>
+        <div class="table_row">
           <span class="table_cell">Value</span>
           <span class="table_cell" id="slider_value"></span>
+        </div>
+        <div class="table_row">
+          <span class="table_cell">Amount</span>
+          <span class="table_cell" id="slider_amount"></span>
         </div>
         <div class="table_row">
           <span class="table_cell">Min</span>
