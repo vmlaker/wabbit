@@ -4,7 +4,7 @@
 
 begin_time = null
 end_time = null
-slider_ticks = 1000
+slider_ticks = 100000
 
 info = ->
     ###
@@ -32,12 +32,14 @@ onImageLoad = ->
     ###
     null
     
-on_slide = (value) ->
+on_slide = (amount) ->
     ###
     # Do AJAX associated with slider movement.
     ###
 
-    url = 'service/slide?time1=' + begin_time + '&time2=' + end_time + '&amount=' + value
+    $('#slider_amount').text amount.toFixed(3)
+
+    url = 'service/slide?time1=' + begin_time + '&time2=' + end_time + '&amount=' + amount
     $.ajax url,
         async    : false
         dataType : 'json'
@@ -60,17 +62,12 @@ create_slider = ->
         max: slider_ticks-1
         value: slider_ticks/2
         create: (event, ui) ->
-            $('#slider_value').text parseInt(slider_ticks/2)
-            $('#slider_min').text 0
-            $('#slider_max').text slider_ticks-1
             on_slide(0.5)
         slide: (event, ui) ->
-            amount = ui.value/slider_ticks
-            on_slide(amount)
-            $('#slider_value').text ui.value
-            $('#slider_amount').text amount
-
-                        
+            on_slide(ui.value/(slider_ticks-1))
+    $('#slider').bind 'keydown', (event) ->
+        null
+        
 $ ->
     ###
     # Run when document has loaded.
