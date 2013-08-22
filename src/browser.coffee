@@ -39,6 +39,7 @@ on_slide = (value) ->
 
     url = 'service/slide?time1=' + begin_time + '&time2=' + end_time + '&amount=' + value
     $.ajax url,
+        async    : false
         dataType : 'json'
         cache    : false
         timeout  : 2000
