@@ -69,6 +69,8 @@ text = """
         IndexOptions SuppressLastModified
         IndexOptions IconsAreLinks
     </Directory>
+    RewriteEngine on	
+    RewriteRule /{db_name}/browser$ /{db_name}/browser.html
 """.format(
     db_name=config['db_name'],
     service_dir=os.path.join(WWW_ROOT, 'service'),
