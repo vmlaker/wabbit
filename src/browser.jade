@@ -1,0 +1,61 @@
+html
+
+  head
+
+    title Wabbit
+
+    script(src='http://code.jquery.com/jquery.min.js', type='text/javascript')
+    script(
+      src='http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js', 
+      type='text/javascript'
+      )
+    link(
+      href='http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/themes/smoothness/jquery-ui.css',
+      rel='stylesheet',
+      type='text/css'
+      )
+    script(type='text/javascript', src='browser.js')
+    link(href='main.css', rel='stylesheet', type='text/css')
+
+  body
+    
+    div(style='text-align: center;')
+      div(id='live_outer')
+        img(
+          id='latest_image',
+          alt='Latest image',
+          onload='window.wabbitOnImageLoad()',
+          onerror='window.wabbitOnImageLoad()',
+          onload='window.wabbitOnImageLoad()'
+          )
+        span(id='live_time_hud')
+
+    div(id='slider')
+
+    div(class='info_block')      
+      div(class='table_table')
+        div(class='table_row')
+          span(class='table_cell') Current
+          span(class='table_cell', id='current_time')
+        div(class='table_row')
+          span(class='table_cell') Begin
+          span(class='table_cell', id='begin_time')
+        div(class='table_row')
+          span(class='table_cell') End
+          span(class='table_cell', id='end_time')
+        div(class='table_row')
+          span(class='table_cell') Amount
+          span(class='table_cell')
+            span(id='slider_amount')
+            |  (
+            a(href='live') live
+            | )
+
+    div(class='footer')
+      | This website, including camera and database server,
+      | is powered by V.Mlaker's 
+      a(href='http://vmlaker.github.io/wabbit') Wabbit
+      | .
+      br
+      a(href='http://vmlaker.github.io/wabbit')
+        img(src='logo_small.png')

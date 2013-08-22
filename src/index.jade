@@ -1,0 +1,82 @@
+html
+
+  head
+
+    title Wabbit
+    script(src='http://code.jquery.com/jquery-1.10.1.min.js')
+    script(src='main.js', type='text/javascript')
+    link(href='main.css', type='text/css', rel='stylesheet')
+
+  body
+    
+    div(style='text-align: center;')
+      div(id='live_outer')
+        img(
+          id='latest_image',
+          alt='Latest image',
+          onload='window.wabbitOnImageLoad()',
+          onerror='window.wabbitOnImageLoad()',
+          onload='window.wabbitOnImageLoad()'
+          )
+        span(id='live_time_hud')
+
+    div(class='info_block')
+      div(class='table_table')
+        div(class='table_row')
+          span(class='table_cell') Server time
+          span(class='table_cell', id='server_time')
+        div(class='table_row')
+          span(class='table_cell') Latest capture
+          span(class='table_cell', id='latest_tstamp')
+        div(class='table_row')
+          span(class='table_cell') Archive size
+          span(class='table_cell')
+            span(id='db_size')
+            |  (
+            a(href='pics') archive
+            | ) (
+            a(href='browser') browser
+            | )
+
+    div(class='info_block')      
+      div(class='table_table')
+        div(class='table_row')
+          span(class='table_cell') Response time
+          span(class='table_cell', id='response_time')
+        div(class='table_row')
+          span(class='table_cell') Callback time
+          span(class='table_cell' id='callback_time')
+        div(class='table_row')
+          span(class='table_cell') Image load time
+          span(class='table_cell' id='image_load_time')
+        div(class='table_row')
+          span(class='table_cell') Image interval
+          span(class='table_cell' id='image_interval')
+        div(class='table_row')
+          span(class='table_cell') Set timeout
+          span(class='table_cell' id='set_timeout')
+        div(class='table_row')
+          span(class='table_cell') Requests/earlies
+          span(class='table_cell')
+            span(id='request_count')
+            span 
+              | / 
+            span(id='early_count')
+            span 
+              | = 
+            span(id='request_early_ratio')
+            |  (
+            span(id='error_count')
+            |  errors)
+        div(class='table_row')
+          span(class='table_cell') Load average
+          span(class='table_cell' id='load_avg')
+
+    div(class='footer')
+      | This website, including camera and database server,
+      | is powered by V.Mlaker's 
+      a(href='http://vmlaker.github.io/wabbit') Wabbit
+      | .
+      br
+      a(href='http://vmlaker.github.io/wabbit')
+        img(src='logo_small.png')
