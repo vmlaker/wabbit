@@ -45,8 +45,8 @@ cap.set(4, int(config['height']))
 
 # Create the image post-processing pipeline.
 pipe1 = mpipe.Pipeline(
-    mpipe.Stage(DiskSaver, 8, config=config).link(
-        mpipe.Stage(DbWriter, 8, config=config)))
+    mpipe.Stage(DiskSaver, int(config['workers_per_stage']), config=config).link(
+        mpipe.Stage(DbWriter, int(config['workers_per_stage']), config=config)))
 
 # Monitor framerates for past few seconds.
 ticker = coils.RateTicker((2, 5, 10))
