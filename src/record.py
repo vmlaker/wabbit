@@ -4,6 +4,7 @@ Parameters:  <duration_sec> [<config_file>]
 """
 
 # Import standard modules.
+from multiprocessing import Process
 import datetime as dt
 import os
 import sys
@@ -34,7 +35,21 @@ logger = logging.getLogger('prune')
 # Load configuration file.
 config = coils.Config(CONFIG)
 
-# Create the OpenCV video capture object.
+# Connecting to video device may hang.
+# Therefore let's first test-connect to the device 
+# in a separate process which, in case the connection hangs, 
+# we can terminate. The hang is detected when the join()
+# method times out.
+proc = Process(target=cv2.VideoCapture, args=(int(config['device']),))
+proc.daemon = False
+proc.start()
+proc.join(int(config['test_timeout']))
+if proc.is_alive():
+    logger.error('Failed test-opening device {}.'.format(int(config['device'])))
+    proc.terminate()
+    sys.exit(1)
+
+# Now then, let's create the permanent OpenCV video capture object.
 cap = cv2.VideoCapture(int(config['device']))
 if not cap.isOpened():
     logger.error('Cannot open device {}.'.format(int(config['device'])))
