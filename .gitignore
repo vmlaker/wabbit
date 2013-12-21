@@ -1,3 +1,4 @@
 *.pyc
 static/*.js
 node_modules
+.sconsign.dblite
