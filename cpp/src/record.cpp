@@ -18,6 +18,7 @@
 #include "Classifier.hpp"
 #include "Deallocator.hpp"
 #include "Displayer.hpp"
+#include "DiskSaver.hpp"
 
 int main (int argc, char** argv)
 {
@@ -44,31 +45,47 @@ int main (int argc, char** argv)
         (float)atoi(config["max_fps"].c_str())
         );
 
-    // Assign the capture output queue.
-    bites::ConcurrentQueue <cv::Mat*> frame_queue;
-    captor.addOutput (frame_queue);
+    // Assign the displayer queue.
+    bites::ConcurrentQueue <cv::Mat*> displayer_queue;
+    captor.addOutput (displayer_queue);
+
+    // Assign the saver queue.
+    bites::ConcurrentQueue <cv::Mat*> saver_queue;
+    captor.addOutput (saver_queue);
+
+    // Create the global "done" queue.
+    bites::ConcurrentQueue <cv::Mat*> done_queue;
+
+    // Create the disk saver.
+    sherlock::DiskSaver saver(
+        config["pics_dir"],
+        saver_queue,
+        done_queue
+        );
 
     // Create the output displayer.
     bites::ConcurrentQueue <sherlock::Classifier::RectColor> rect_colors;
-    bites::ConcurrentQueue <cv::Mat*> done_queue;
     sherlock::Displayer displayer(
-        frame_queue,
+        displayer_queue,
         done_queue,
         rect_colors,
         captor
         );
 
     // Create the frame deallocation object.
+    // The trigger count is 2, one each for displayer and disk saver.
     sherlock::Deallocator deallocator (done_queue);
-    deallocator.setTrigger (1);
+    deallocator.setTrigger (2);
 
     // Start the threads.
     captor.start();
+    saver.start();
     displayer.start();
     deallocator.start();
 
     // Join the threads.
     captor.join();
+    saver.join();
     displayer.join();
 
     done_queue.push(NULL);

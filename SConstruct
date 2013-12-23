@@ -10,7 +10,8 @@ SConscript('sherlock/SConstruct')
 
 # Build the programs.
 sources = (
-    'src/cpp/record.cpp',
+    'cpp/src/record.cpp',
+    'cpp/src/DiskSaver.cpp',
 )
 libs = (
 #    'boost_filesystem',
@@ -27,15 +28,12 @@ libs = (
     'bites',
 )
 env = Environment(
-    CPPPATH=('sherlock/bites/include', 'sherlock/include'),
+    CPPPATH=('sherlock/bites/include', 'sherlock/include', 'cpp/include'),
     LIBPATH=('sherlock/bites/lib', 'sherlock/lib'),
     LIBS=libs,
     CXXFLAGS='-std=c++11',
 ) 
 if debug: env.Append(CXXFLAGS = ' -g')
-for source in sources:
-    target = source[:source.rfind('.')]
-    target = os.path.basename(target)
-    target = os.path.join('bin', target)
-    prog = env.Program(target, source)
-    Default(prog)  # Program is built by default.
+target = os.path.join('bin', 'record')
+prog = env.Program(target, sources)
+Default(prog)  # Program is built by default.
