@@ -5,8 +5,26 @@ import os
 # Retrieve the debug flag, if set.
 debug = bool(int(ARGUMENTS.get('debug', False)))
 
-# Build the Sherlock library.
-SConscript('sherlock/SConstruct')
+# Retrieve the Bites installation path.
+bites_path = ARGUMENTS.get('bites', None)
+if not bites_path:
+    print('Please specify path to Bites installation, e.g. "bites=../bites"')
+    exit(1)
+
+# Retrieve the Sherlock installation path.
+sherlock_path = ARGUMENTS.get('sherlock', None)
+if not sherlock_path:
+    print('Please specify path to Sherlock C++ installation, e.g. "sherlock=../sherlock-cpp"')
+    exit(1)
+
+# Build the Sherlock library (if not already done.)
+SConscript(os.path.join(sherlock_path, 'SConstruct'))
+
+# Assemble Bites and Sherlock include and library paths.
+bites_inc_path = os.path.join(bites_path, 'include')
+bites_lib_path = os.path.join(bites_path, 'lib')
+sherlock_inc_path = os.path.join(sherlock_path, 'include')
+sherlock_lib_path = os.path.join(sherlock_path, 'lib')
 
 # Build the programs.
 sources = (
@@ -28,8 +46,8 @@ libs = (
     'bites',
 )
 env = Environment(
-    CPPPATH=('sherlock/bites/include', 'sherlock/include', 'cpp/include'),
-    LIBPATH=('sherlock/bites/lib', 'sherlock/lib'),
+    CPPPATH=(bites_inc_path, sherlock_inc_path, 'cpp/include'),
+    LIBPATH=(bites_lib_path, sherlock_lib_path),
     LIBS=libs,
     CXXFLAGS='-std=c++11',
 ) 

@@ -1,6 +1,3 @@
 [submodule "src/coils"]
 	path = src/coils
 	url = http://github.com/vmlaker/coils
-[submodule "sherlock"]
-	path = sherlock
-	url = http://github.com/vmlaker/sherlock-cpp
