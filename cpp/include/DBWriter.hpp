@@ -1,5 +1,5 @@
-#ifndef __DISKSAVER_HPP__
-#define __DISKSAVER_HPP__
+#ifndef __DBWRITER_HPP__
+#define __DBWRITER_HPP__
 
 // Include standard headers.
 #include <vector>
@@ -14,9 +14,9 @@
 namespace wabbit {
 
 /**
-   Disk saving thread.
+   Database writer thread.
 */
-class DiskSaver : public bites::Thread 
+class DBWriter : public bites::Thread 
 {
 public:
     /**
@@ -24,22 +24,16 @@ public:
 
        @param  root_dir  Top directory for saving the pics to.
     */
-    DiskSaver(
-        const boost::filesystem::path& root_dir,
+    DBWriter(
         bites::ConcurrentQueue <cv::Mat*>& input_queue,
-        bites::ConcurrentQueue <cv::Mat*>& writer_queue,
         bites::ConcurrentQueue <cv::Mat*>& done_queue
         ):
-        m_root_dir (root_dir),
         m_input_queue (input_queue),
-        m_writer_queue (writer_queue),
         m_done_queue (done_queue)
         {/* Empty. */}
 
 private:
-    boost::filesystem::path m_root_dir;
     bites::ConcurrentQueue <cv::Mat*>& m_input_queue;
-    bites::ConcurrentQueue <cv::Mat*>& m_writer_queue;
     bites::ConcurrentQueue <cv::Mat*>& m_done_queue;
 
     /**
@@ -50,4 +44,4 @@ private:
 
 }  // namespace wabbit.
 
-#endif  // __DISKSAVER_HPP__
+#endif  // __DBWRITER_HPP__

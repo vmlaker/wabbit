@@ -30,6 +30,7 @@ sherlock_lib_path = os.path.join(sherlock_path, 'lib')
 sources = (
     'cpp/src/record.cpp',
     'cpp/src/DiskSaver.cpp',
+    'cpp/src/DBWriter.cpp',
 )
 libs = (
 #    'boost_filesystem',

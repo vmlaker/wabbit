@@ -19,6 +19,7 @@
 #include "Deallocator.hpp"
 #include "Displayer.hpp"
 #include "DiskSaver.hpp"
+#include "DBWriter.hpp"
 
 int main (int argc, char** argv)
 {
@@ -35,6 +36,16 @@ int main (int argc, char** argv)
 
     // Load the configuration file.
     bites::Config config (CONFIG);
+
+    /////////////////////////////////////////////////////////////////////
+    //
+    //  Assemble the pipeline:
+    //
+    //    captor  --+-->  disk saver  -->  DB writer  --+
+    //              |                                   |
+    //              +-->  displayer   ------------------+-->  deallocator
+    //
+    /////////////////////////////////////////////////////////////////////
 
     // Create the video capture object.
     sherlock::Captor captor(
@@ -53,41 +64,60 @@ int main (int argc, char** argv)
     bites::ConcurrentQueue <cv::Mat*> saver_queue;
     captor.addOutput (saver_queue);
 
-    // Create the global "done" queue.
-    bites::ConcurrentQueue <cv::Mat*> done_queue;
+    // Create the writer queue.
+    bites::ConcurrentQueue <cv::Mat*> writer_queue;
+
+    // Create the global deallocation queue.
+    // Each thread will enqueue the frame
+    // after it is finished processing the image.
+    // The deallocation thread will free the frame memory
+    // when every thread is finished with the given frame.
+    bites::ConcurrentQueue <cv::Mat*> dealloc_queue;
 
     // Create the disk saver.
-    sherlock::DiskSaver saver(
+    wabbit::DiskSaver saver (
         config["pics_dir"],
         saver_queue,
-        done_queue
+        writer_queue,
+        dealloc_queue
+        );
+
+    // Create the database writer.
+    wabbit::DBWriter writer (
+        writer_queue,
+        dealloc_queue
         );
 
     // Create the output displayer.
     bites::ConcurrentQueue <sherlock::Classifier::RectColor> rect_colors;
-    sherlock::Displayer displayer(
+    sherlock::Displayer displayer (
         displayer_queue,
-        done_queue,
+        dealloc_queue,
         rect_colors,
         captor
         );
 
     // Create the frame deallocation object.
-    // The trigger count is 2, one each for displayer and disk saver.
-    sherlock::Deallocator deallocator (done_queue);
-    deallocator.setTrigger (2);
+    // The trigger count is 3, one each for:
+    //    1) disk saver,
+    //    2) database writer, and
+    //    3) displayer.
+    sherlock::Deallocator deallocator (dealloc_queue);
+    deallocator.setTrigger (3);
 
     // Start the threads.
     captor.start();
     saver.start();
+    writer.start();
     displayer.start();
     deallocator.start();
 
     // Join the threads.
     captor.join();
     saver.join();
+    writer.join();
     displayer.join();
 
-    done_queue.push(NULL);
+    dealloc_queue.push(NULL);
     deallocator.join();        
 }
