@@ -1,5 +1,5 @@
-#ifndef __DISKSAVER_HPP__
-#define __DISKSAVER_HPP__
+#ifndef WABBIT_DISKSAVER_HPP_INCLUDED
+#define WABBIT_DISKSAVER_HPP_INCLUDED
 
 // Include standard headers.
 #include <vector>
@@ -50,4 +50,4 @@ private:
 
 }  // namespace wabbit.
 
-#endif  // __DISKSAVER_HPP__
+#endif  // WABBIT_DISKSAVER_HPP_INCLUDED

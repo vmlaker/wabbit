@@ -29,6 +29,7 @@ sherlock_lib_path = os.path.join(sherlock_path, 'lib')
 # Build the programs.
 sources = (
     'cpp/src/record.cpp',
+    'cpp/src/Captor.cpp',
     'cpp/src/DiskSaver.cpp',
     'cpp/src/DBWriter.cpp',
 )

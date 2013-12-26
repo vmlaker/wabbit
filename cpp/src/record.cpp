@@ -12,14 +12,12 @@
 // Include 3rd party headers
 #include <opencv2/opencv.hpp>
 #include <bites.hpp>
+#include <sherlock.hpp>
 
 // Include application headers.
 #include "Captor.hpp"
-#include "Classifier.hpp"
-#include "Deallocator.hpp"
-#include "Displayer.hpp"
-#include "DiskSaver.hpp"
 #include "DBWriter.hpp"
+#include "DiskSaver.hpp"
 
 int main (int argc, char** argv)
 {
@@ -48,7 +46,7 @@ int main (int argc, char** argv)
     /////////////////////////////////////////////////////////////////////
 
     // Create the video capture object.
-    sherlock::Captor captor(
+    wabbit::Captor captor(
         (int)atoi(config["device"].c_str()),
         (int)atoi(config["width"].c_str()),
         (int)atoi(config["height"].c_str()),
@@ -94,7 +92,7 @@ int main (int argc, char** argv)
         displayer_queue,
         dealloc_queue,
         rect_colors,
-        captor
+        std::bind(&wabbit::Captor::getFramerate, &captor)
         );
 
     // Create the frame deallocation object.

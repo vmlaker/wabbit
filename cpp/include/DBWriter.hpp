@@ -1,5 +1,5 @@
-#ifndef __DBWRITER_HPP__
-#define __DBWRITER_HPP__
+#ifndef WABBIT_DBWRITER_HPP_INCLUDED
+#define WABBIT_DBWRITER_HPP_INCLUDED
 
 // Include standard headers.
 #include <vector>
@@ -44,4 +44,4 @@ private:
 
 }  // namespace wabbit.
 
-#endif  // __DBWRITER_HPP__
+#endif  // WABBIT_DBWRITER_HPP_INCLUDED
