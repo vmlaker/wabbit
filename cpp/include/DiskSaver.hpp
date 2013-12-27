@@ -11,6 +11,9 @@
 #include <opencv2/opencv.hpp>
 #include <bites.hpp>
 
+// Include application headers.
+#include "Captor.hpp"
+
 namespace wabbit {
 
 /**
@@ -26,8 +29,8 @@ public:
     */
     DiskSaver(
         const boost::filesystem::path& root_dir,
-        bites::ConcurrentQueue <cv::Mat*>& input_queue,
-        bites::ConcurrentQueue <cv::Mat*>& writer_queue,
+        bites::ConcurrentQueue <Captor::FrameAndTime>& input_queue,
+        bites::ConcurrentQueue <Captor::FrameAndTime>& writer_queue,
         bites::ConcurrentQueue <cv::Mat*>& done_queue
         ):
         m_root_dir (root_dir),
@@ -38,8 +41,8 @@ public:
 
 private:
     boost::filesystem::path m_root_dir;
-    bites::ConcurrentQueue <cv::Mat*>& m_input_queue;
-    bites::ConcurrentQueue <cv::Mat*>& m_writer_queue;
+    bites::ConcurrentQueue <Captor::FrameAndTime>& m_input_queue;
+    bites::ConcurrentQueue <Captor::FrameAndTime>& m_writer_queue;
     bites::ConcurrentQueue <cv::Mat*>& m_done_queue;
 
     /**

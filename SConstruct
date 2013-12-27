@@ -34,7 +34,7 @@ sources = (
     'cpp/src/DBWriter.cpp',
 )
 libs = (
-#    'boost_filesystem',
+    'boost_filesystem',
     'boost_thread',
     'boost_system',
     'opencv_core',

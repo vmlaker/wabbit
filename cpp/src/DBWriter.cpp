@@ -2,20 +2,24 @@
 #include <bites.hpp>
 
 // Include application headers.
+#include "Captor.hpp"
 #include "DBWriter.hpp"
 
 namespace wabbit {
 
 void DBWriter::run ()
 {
-    // Pull from the queue while there are valid matrices.
+    // Pull from the queue while there are valid tasks.
+    Captor::FrameAndTime task;
     cv::Mat* frame;
-    m_input_queue.wait_and_pop(frame);
-    while(frame)
+    m_input_queue.wait_and_pop(task);
+    while(task.first)
     {
-        // Signal done, and pull the next frame.
-        m_done_queue.push(frame);
-        m_input_queue.wait_and_pop(frame);
+        // Signal done.
+        m_done_queue.push (task.first);
+
+        // Pull the next frame.
+        m_input_queue.wait_and_pop (task);
     } 
 }
 

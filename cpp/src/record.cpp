@@ -45,25 +45,10 @@ int main (int argc, char** argv)
     //
     /////////////////////////////////////////////////////////////////////
 
-    // Create the video capture object.
-    wabbit::Captor captor(
-        (int)atoi(config["device"].c_str()),
-        (int)atoi(config["width"].c_str()),
-        (int)atoi(config["height"].c_str()),
-        DURATION,
-        (float)atoi(config["max_fps"].c_str())
-        );
-
-    // Assign the displayer queue.
+    // Create the queues.
     bites::ConcurrentQueue <cv::Mat*> displayer_queue;
-    captor.addOutput (displayer_queue);
-
-    // Assign the saver queue.
-    bites::ConcurrentQueue <cv::Mat*> saver_queue;
-    captor.addOutput (saver_queue);
-
-    // Create the writer queue.
-    bites::ConcurrentQueue <cv::Mat*> writer_queue;
+    bites::ConcurrentQueue <wabbit::Captor::FrameAndTime> saver_queue;
+    bites::ConcurrentQueue <wabbit::Captor::FrameAndTime> writer_queue;
 
     // Create the global deallocation queue.
     // Each thread will enqueue the frame
@@ -71,6 +56,17 @@ int main (int argc, char** argv)
     // The deallocation thread will free the frame memory
     // when every thread is finished with the given frame.
     bites::ConcurrentQueue <cv::Mat*> dealloc_queue;
+
+    // Create the video capture object.
+    wabbit::Captor captor(
+        (int)atoi(config["device"].c_str()),
+        (int)atoi(config["width"].c_str()),
+        (int)atoi(config["height"].c_str()),
+        DURATION,
+        (float)atoi(config["max_fps"].c_str()),
+        displayer_queue,
+        saver_queue
+        );
 
     // Create the disk saver.
     wabbit::DiskSaver saver (

@@ -11,6 +11,9 @@
 #include <opencv2/opencv.hpp>
 #include <bites.hpp>
 
+// Include application headers.
+#include "Captor.hpp"
+
 namespace wabbit {
 
 /**
@@ -25,7 +28,7 @@ public:
        @param  root_dir  Top directory for saving the pics to.
     */
     DBWriter(
-        bites::ConcurrentQueue <cv::Mat*>& input_queue,
+        bites::ConcurrentQueue <Captor::FrameAndTime>& input_queue,
         bites::ConcurrentQueue <cv::Mat*>& done_queue
         ):
         m_input_queue (input_queue),
@@ -33,7 +36,7 @@ public:
         {/* Empty. */}
 
 private:
-    bites::ConcurrentQueue <cv::Mat*>& m_input_queue;
+    bites::ConcurrentQueue <Captor::FrameAndTime>& m_input_queue;
     bites::ConcurrentQueue <cv::Mat*>& m_done_queue;
 
     /**

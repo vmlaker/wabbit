@@ -6,19 +6,10 @@
 
 namespace wabbit {
 
-void Captor::addOutput( bites::ConcurrentQueue <cv::Mat*>& output )
+void Captor::pushOutput (FrameAndTime& fat)
 {
-    std::lock_guard <std::mutex> locker (m_output_queues_mutex);
-    m_output_queues.push_back( &output );
-}
-
-void Captor::pushOutput( cv::Mat* frame ) 
-{
-    std::lock_guard <std::mutex> locker (m_output_queues_mutex);
-    for (auto oqueue : m_output_queues)
-    {
-        oqueue->push (frame);
-    }
+    m_displayer_queue.push (fat.first);
+    m_saver_queue.push (fat);
 }
 
 std::vector <float> Captor::getFramerate ()
@@ -37,26 +28,23 @@ void Captor::run ()
     bites::RateTicker ticker ({ 1, 5, 10 });
 
     // Compute interval needed to observe maximum FPS limit.
-    float interval_float = 1 / m_max_fps;
-    int interval_sec = (int) interval_float;
-    auto min_interval = boost::posix_time::time_duration(
-        0, // Hours.
-        0, // Minutes.
-        interval_sec, // Seconds.
-        (interval_float - interval_sec) * 1000000  // Fractional seconds.
-        );
+    float interval_seconds = 1 / m_max_fps;
+    int interval_ms = interval_seconds * 1000000;
+    auto min_interval = std::chrono::microseconds( interval_ms );
 
     // Run the loop for designated amount of time.
-    auto prev = boost::posix_time::microsec_clock::universal_time();
-    auto end = prev + boost::posix_time::seconds(m_duration);
-    while (end > boost::posix_time::microsec_clock::universal_time())
+    auto prev = std::chrono::system_clock::now();
+    auto end = prev + std::chrono::seconds(m_duration);
+    while (end > std::chrono::system_clock::now())
     {
         // Insert delay to observe maximum framerate limit.
-        auto elapsed = boost::posix_time::microsec_clock::universal_time() - prev;
-        auto sleep_microsec = ( min_interval - elapsed ).total_microseconds();
-	sleep_microsec = sleep_microsec < 0 ? 0 : sleep_microsec;
-        usleep(sleep_microsec);
-        prev = boost::posix_time::microsec_clock::universal_time();
+        auto elapsed = std::chrono::system_clock::now() - prev;
+        auto elapsed_ms = 
+            std::chrono::duration_cast<std::chrono::microseconds> (elapsed);
+        auto sleep_ms = min_interval - elapsed_ms;
+	sleep_ms = sleep_ms.count() < 0 ? std::chrono::microseconds(0) : sleep_ms;
+        usleep(sleep_ms.count());
+        prev = std::chrono::system_clock::now();            
 
         // Take a snapshot.
         auto frame = new cv::Mat;
@@ -66,11 +54,13 @@ void Captor::run ()
         m_framerate.set(ticker.tick());
 
         // Push image onto all output queues.
-        pushOutput( frame );
+        Captor::FrameAndTime fat (frame, prev);
+        pushOutput (fat);
     }
 
     // Signal end-of-processing by pushing NULL onto all output queues.
-    pushOutput( NULL );
+    Captor::FrameAndTime fat (NULL, prev);
+    pushOutput (fat);
 }
 
 }  // namespace wabbit.
