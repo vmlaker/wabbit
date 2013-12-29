@@ -1,3 +1,6 @@
+MySQL-python
+numpy
+
 mpipe
 wget
 SQLAlchemy
