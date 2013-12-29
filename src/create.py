@@ -11,7 +11,7 @@ config = coils.Config(CONFIG)
 
 # Connect to database engine.
 root_u = coils.user_input('Admin username', default=config['admin'])
-root_p = coils.user_input('Admin password', password=True)
+root_p = coils.user_input('Admin password', password=True, empty_ok=True)
 engine = sa.create_engine('mysql://{}:{}@{}'.format(root_u, root_p, config['host']))
 try:
     conn = engine.connect()
