@@ -56,11 +56,8 @@ int main (int argc, char** argv)
 
     // Create the video capture object.
     wabbit::Captor captor(
-        atoi(config["device"].c_str()),
-        atoi(config["width"].c_str()),
-        atoi(config["height"].c_str()),
+        config,
         DURATION,
-        atof(config["max_fps"].c_str()),
         saver_queue
         );
 

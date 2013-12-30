@@ -31,27 +31,18 @@ public:
     /**
        Initialize the video capture thread with parameters.
 
-       @param  device     Device index.
-       @param  width      Width of video.
-       @param  height     Height of video.
-       @param  duration   Duration of detection (in seconds.)
-       @param  max_fps    Maximum FPS rate limit.
-       @param  saver_queue      Link to the downstream disk saver worker.
+       @param  config       Application configuration.
+       @param  duration     Duration of detection (in seconds.)
+       @param  saver_queue  Link to the downstream disk saver worker.
     */
     Captor(
-        const int& device, 
-        const int& width,
-        const int& height,
+        bites::Config& config,
         const int& duration,
-        const float& max_fps,
         bites::ConcurrentQueue <FrameAndTime>& saver_queue
         ):
-        m_device        (device),
-        m_width         (width),
-        m_height        (height),
-        m_duration      (duration),
-        m_max_fps       (max_fps >= 0 ? max_fps : std::numeric_limits<float>::max()),
-        m_saver_queue     (saver_queue)
+        m_config      (config),
+        m_duration    (duration),
+        m_saver_queue (saver_queue)
         {/* Empty. */}
 
     /**
@@ -60,11 +51,11 @@ public:
     std::vector <float> getFramerate ();
 
 private:
-    int m_device;
-    int m_width;
-    int m_height;
+    // Application configuration.
+    bites::Config& m_config;
+
+    // Duration for video capture.
     int m_duration;
-    float m_max_fps;
 
     // The output queue.
     bites::ConcurrentQueue <FrameAndTime>& m_saver_queue;
