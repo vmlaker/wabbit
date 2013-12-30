@@ -18,7 +18,6 @@
 #include "Captor.hpp"
 #include "DBWriter.hpp"
 #include "DiskSaver.hpp"
-#include "DummyStage.hpp"
 
 int main (int argc, char** argv)
 {
@@ -40,14 +39,11 @@ int main (int argc, char** argv)
     //
     //  Assemble the pipeline:
     //
-    //    captor  --+-->  disk saver  -->  DB writer  --+
-    //              |                                   |
-    //              +-->  displayer   ------------------+-->  deallocator
+    //    captor  -->  disk saver  -->  DB writer  -->  deallocator
     //
     /////////////////////////////////////////////////////////////////////
 
     // Create the queues.
-    bites::ConcurrentQueue <cv::Mat*> displayer_queue;
     bites::ConcurrentQueue <wabbit::Captor::FrameAndTime> saver_queue;
     bites::ConcurrentQueue <wabbit::Captor::FrameAndTime> writer_queue;
 
@@ -60,12 +56,11 @@ int main (int argc, char** argv)
 
     // Create the video capture object.
     wabbit::Captor captor(
-        (int)atoi(config["device"].c_str()),
-        (int)atoi(config["width"].c_str()),
-        (int)atoi(config["height"].c_str()),
+        atoi(config["device"].c_str()),
+        atoi(config["width"].c_str()),
+        atoi(config["height"].c_str()),
         DURATION,
-        (float)atoi(config["max_fps"].c_str()),
-        displayer_queue,
+        atof(config["max_fps"].c_str()),
         saver_queue
         );
 
@@ -84,42 +79,23 @@ int main (int argc, char** argv)
         dealloc_queue
         );
 
-/*
-    // Create the output displayer.
-    bites::ConcurrentQueue <sherlock::Classifier::RectColor> rect_colors;
-    sherlock::Displayer displayer (
-        displayer_queue,
-        dealloc_queue,
-        rect_colors,
-        std::bind(&wabbit::Captor::getFramerate, &captor)
-        );
-*/
-    // Use a dummy stage instead of actual displayer.
-    wabbit::DummyStage displayer (
-        displayer_queue,
-        dealloc_queue
-        );
-        
     // Create the frame deallocation object.
-    // The trigger count is 3, one each for:
-    //    1) disk saver,
-    //    2) database writer, and
-    //    3) displayer.
+    // The trigger count is 2, one each for:
+    //    1) disk saver, and
+    //    2) database writer.
     sherlock::Deallocator deallocator (dealloc_queue);
-    deallocator.setTrigger (3);
+    deallocator.setTrigger (2);
 
     // Start the threads.
     captor.start();
     saver.start();
     writer.start();
-    displayer.start();
     deallocator.start();
 
     // Join the threads.
     captor.join();
     saver.join();
     writer.join();
-    displayer.join();
 
     dealloc_queue.push(NULL);
     deallocator.join();        

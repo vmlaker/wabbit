@@ -36,7 +36,6 @@ public:
        @param  height     Height of video.
        @param  duration   Duration of detection (in seconds.)
        @param  max_fps    Maximum FPS rate limit.
-       @param  displayer_queue  Link to the downstream display worker.
        @param  saver_queue      Link to the downstream disk saver worker.
     */
     Captor(
@@ -45,7 +44,6 @@ public:
         const int& height,
         const int& duration,
         const float& max_fps,
-        bites::ConcurrentQueue <cv::Mat*>& displayer_queue,
         bites::ConcurrentQueue <FrameAndTime>& saver_queue
         ):
         m_device        (device),
@@ -53,7 +51,6 @@ public:
         m_height        (height),
         m_duration      (duration),
         m_max_fps       (max_fps >= 0 ? max_fps : std::numeric_limits<float>::max()),
-        m_displayer_queue (displayer_queue),
         m_saver_queue     (saver_queue)
         {/* Empty. */}
 
@@ -69,17 +66,11 @@ private:
     int m_duration;
     float m_max_fps;
 
-    // The output queues.
-    bites::ConcurrentQueue <cv::Mat*>& m_displayer_queue;
+    // The output queue.
     bites::ConcurrentQueue <FrameAndTime>& m_saver_queue;
 
     // The current running framerate.
     bites::Mutexed <std::vector <float>> m_framerate;
-
-    /**
-       Push a frame onto all output queues.
-    */
-    void pushOutput( FrameAndTime& );
 
     /**
        The threaded function.

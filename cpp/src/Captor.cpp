@@ -6,12 +6,6 @@
 
 namespace wabbit {
 
-void Captor::pushOutput (FrameAndTime& fat)
-{
-    m_displayer_queue.push (fat.first);
-    m_saver_queue.push (fat);
-}
-
 std::vector <float> Captor::getFramerate ()
 {
     return m_framerate.get();
@@ -53,14 +47,14 @@ void Captor::run ()
         // Set the framerate.
         m_framerate.set(ticker.tick());
 
-        // Push image onto all output queues.
+        // Push image onto output queue.
         Captor::FrameAndTime fat (frame, prev);
-        pushOutput (fat);
+        m_saver_queue.push (fat);
     }
 
-    // Signal end-of-processing by pushing NULL onto all output queues.
+    // Signal end-of-processing by pushing NULL onto output queue.
     Captor::FrameAndTime fat (NULL, prev);
-    pushOutput (fat);
+    m_saver_queue.push (fat);
 }
 
 }  // namespace wabbit.
