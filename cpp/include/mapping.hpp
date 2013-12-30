@@ -49,6 +49,7 @@ public:
     const unsigned long id() const { return m_id; }
     const std::string& name() const { return m_name; }
     const std::string& value() const { return m_value; }
+    void value (const std::string& val) { m_value = val; }
 
 private:
     friend class odb::access;

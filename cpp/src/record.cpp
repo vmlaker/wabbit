@@ -18,6 +18,7 @@
 #include "Captor.hpp"
 #include "DBWriter.hpp"
 #include "DiskSaver.hpp"
+#include "DummyStage.hpp"
 
 int main (int argc, char** argv)
 {
@@ -78,10 +79,12 @@ int main (int argc, char** argv)
 
     // Create the database writer.
     wabbit::DBWriter writer (
+        config,
         writer_queue,
         dealloc_queue
         );
 
+/*
     // Create the output displayer.
     bites::ConcurrentQueue <sherlock::Classifier::RectColor> rect_colors;
     sherlock::Displayer displayer (
@@ -90,7 +93,13 @@ int main (int argc, char** argv)
         rect_colors,
         std::bind(&wabbit::Captor::getFramerate, &captor)
         );
-
+*/
+    // Use a dummy stage instead of actual displayer.
+    wabbit::DummyStage displayer (
+        displayer_queue,
+        dealloc_queue
+        );
+        
     // Create the frame deallocation object.
     // The trigger count is 3, one each for:
     //    1) disk saver,
