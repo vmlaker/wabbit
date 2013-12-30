@@ -30,7 +30,7 @@ void DBWriter::run ()
         // Assemble the time string.
         auto tstring = bites::time2string (
             task.second, 
-            "%Y-%m-%d %H:%M:%S:%f"
+            "%Y-%m-%d %H:%M:%S.%f"
             );
 
         // Create the image field.
