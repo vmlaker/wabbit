@@ -7,7 +7,6 @@
 #include <memory>  // std::auto_ptr
 
 // Include 3rd-party headers.
-//#include <odb/session.hxx>
 #include <odb/transaction.hxx>
 #include <odb/mysql/database.hxx>
 #include <bites.hpp>
