@@ -39,7 +39,7 @@ int main (int argc, char** argv)
     //
     //  Assemble the pipeline:
     //
-    //    captor  -->  disk saver  -->  DB writer  -->  deallocator
+    //    captor  -->  disk saver(s)  -->  DB writer(s)  -->  deallocator
     //
     /////////////////////////////////////////////////////////////////////
 
@@ -61,20 +61,33 @@ int main (int argc, char** argv)
         saver_queue
         );
 
-    // Create the disk saver.
-    wabbit::DiskSaver saver (
-        config["pics_dir"],
-        saver_queue,
-        writer_queue,
-        dealloc_queue
-        );
+    // Contain disk saver and DB writer threads in a common list.
+    std::list <bites::Thread*> threads;
 
-    // Create the database writer.
-    wabbit::DBWriter writer (
-        config,
-        writer_queue,
-        dealloc_queue
-        );
+    // Create the disk savers.
+    for (int ii=0; ii<atoi(config["num_savers"].c_str()); ++ii)
+    {
+        // Create the disk saver.
+        auto saver = new wabbit::DiskSaver (
+            config["pics_dir"],
+            saver_queue,
+            writer_queue,
+            dealloc_queue
+            );
+        threads.push_back (saver);
+    }
+
+    // Create the database writers.
+    for (int ii=0; ii<atoi(config["num_writers"].c_str()); ++ii)
+    {
+        // Create the database writer.
+        auto writer = new wabbit::DBWriter (
+            config,
+            writer_queue,
+            dealloc_queue
+            );
+        threads.push_back (writer);
+    }
 
     // Create the frame deallocation object.
     // The trigger count is 2, one each for:
@@ -85,15 +98,15 @@ int main (int argc, char** argv)
 
     // Start the threads.
     captor.start();
-    saver.start();
-    writer.start();
+    for (auto thread : threads) thread->start();
     deallocator.start();
 
     // Join the threads.
     captor.join();
-    saver.join();
-    writer.join();
-
+    for (auto thread : threads) thread->join();
     dealloc_queue.push(NULL);
     deallocator.join();        
+
+    // Delete the allocated thread objects.
+    for (auto thread : threads) delete thread;
 }

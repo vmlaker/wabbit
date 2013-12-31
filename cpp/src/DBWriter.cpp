@@ -15,6 +15,9 @@ namespace wabbit {
 
 void DBWriter::run ()
 {
+    // Increment the global object count.
+    incrCount();
+
     // Connect to database.    
     odb::mysql::database db (
         m_config["username"],
@@ -68,6 +71,16 @@ void DBWriter::run ()
         // Pull the next frame.
         m_input_queue.wait_and_pop (task);
     } 
+
+    if (decrCount() != 0)
+    {
+        // Feed input with "stop" signal.
+        m_input_queue.push ({NULL, task.second});
+    }
+    else
+    {
+        // Propagate "stop" signal downstream.
+    }
 }
 
 }  // namespace wabbit.

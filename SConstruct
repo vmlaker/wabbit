@@ -96,7 +96,6 @@ sources = (
     'cpp/src/record.cpp',
     'cpp/src/Captor.cpp',
     'cpp/src/DiskSaver.cpp',
-    'cpp/src/DummyStage.cpp',
     'cpp/src/DBWriter.cpp',
 )
 libs = (

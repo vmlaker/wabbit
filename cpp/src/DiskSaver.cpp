@@ -10,6 +10,9 @@ namespace wabbit {
 
 void DiskSaver::run ()
 {
+    // Increment the global object count.
+    incrCount();
+
     // Pull from the queue while there are valid tasks.
     Captor::FrameAndTime task;
     m_input_queue.wait_and_pop(task);
@@ -52,8 +55,16 @@ void DiskSaver::run ()
         m_input_queue.wait_and_pop (task);
     } 
 
-    // Signal database writer to stop.
-    m_writer_queue.push ({NULL, task.second});
+    if (decrCount() != 0)
+    {
+        // Feed input with "stop" signal.
+        m_input_queue.push ({NULL, task.second});
+    }
+    else
+    {
+        // Propagate "stop" signal downstream.
+        m_writer_queue.push ({NULL, task.second});
+    }
 }
 
 }  // namespace wabbit.

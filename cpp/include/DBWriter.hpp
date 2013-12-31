@@ -19,7 +19,8 @@ namespace wabbit {
 /**
    Database writer thread.
 */
-class DBWriter : public bites::Thread 
+class DBWriter : public bites::Thread, 
+                 protected bites::MutexedCounter<DBWriter>
 {
 public:
     /**

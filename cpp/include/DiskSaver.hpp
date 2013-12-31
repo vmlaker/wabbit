@@ -19,7 +19,8 @@ namespace wabbit {
 /**
    Disk saving thread.
 */
-class DiskSaver : public bites::Thread 
+class DiskSaver : public bites::Thread, 
+                  protected bites::MutexedCounter<DiskSaver>
 {
 public:
     /**
