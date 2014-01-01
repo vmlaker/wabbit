@@ -45,11 +45,8 @@ void DiskSaver::run ()
             // TODO: Handle failed image saving.
         }
 
-        // Signal done.
-        m_done_queue.push (task.first);
-
         // Push to writer queue.
-        m_writer_queue.push (task);
+        m_output_queue.push (task);
 
         // Pull the next frame.
         m_input_queue.wait_and_pop (task);
@@ -63,7 +60,7 @@ void DiskSaver::run ()
     else
     {
         // Propagate "stop" signal downstream.
-        m_writer_queue.push ({NULL, task.second});
+        m_output_queue.push ({NULL, task.second});
     }
 }
 

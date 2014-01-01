@@ -12,12 +12,12 @@
 // Include 3rd party headers
 #include <opencv2/opencv.hpp>
 #include <bites.hpp>
-#include <sherlock.hpp>
 
 // Include application headers.
 #include "Captor.hpp"
 #include "DBWriter.hpp"
 #include "DiskSaver.hpp"
+#include "Deallocator.hpp"
 
 int main (int argc, char** argv)
 {
@@ -46,12 +46,6 @@ int main (int argc, char** argv)
     // Create the queues.
     bites::ConcurrentQueue <wabbit::Captor::FrameAndTime> saver_queue;
     bites::ConcurrentQueue <wabbit::Captor::FrameAndTime> writer_queue;
-
-    // Create the global deallocation queue.
-    // Each thread will enqueue the frame
-    // after it is finished processing the image.
-    // The deallocation thread will free the frame memory
-    // when every thread is finished with the given frame.
     bites::ConcurrentQueue <cv::Mat*> dealloc_queue;
 
     // Create the video capture object.
@@ -71,8 +65,7 @@ int main (int argc, char** argv)
         auto saver = new wabbit::DiskSaver (
             config["pics_dir"],
             saver_queue,
-            writer_queue,
-            dealloc_queue
+            writer_queue
             );
         threads.push_back (saver);
     }
@@ -90,11 +83,7 @@ int main (int argc, char** argv)
     }
 
     // Create the frame deallocation object.
-    // The trigger count is 2, one each for:
-    //    1) disk saver, and
-    //    2) database writer.
-    sherlock::Deallocator deallocator (dealloc_queue);
-    deallocator.setTrigger (2);
+    wabbit::Deallocator deallocator (dealloc_queue);
 
     // Start the threads.
     captor.start();
@@ -104,7 +93,6 @@ int main (int argc, char** argv)
     // Join the threads.
     captor.join();
     for (auto thread : threads) thread->join();
-    dealloc_queue.push(NULL);
     deallocator.join();        
 
     // Delete the allocated thread objects.

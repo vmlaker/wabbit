@@ -80,6 +80,7 @@ void DBWriter::run ()
     else
     {
         // Propagate "stop" signal downstream.
+        m_done_queue.push (NULL);
     }
 }
 

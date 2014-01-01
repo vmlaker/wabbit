@@ -26,25 +26,24 @@ public:
     /**
        Initialize the disk saving thread with parameters.
 
-       @param  root_dir  Top directory for saving the pics to.
+       @param  root_dir      Top directory for saving the pics to.
+       @param  input_queue   Input task stream.
+       @param  output_queue  Output task stream.
     */
     DiskSaver(
         const boost::filesystem::path& root_dir,
         bites::ConcurrentQueue <Captor::FrameAndTime>& input_queue,
-        bites::ConcurrentQueue <Captor::FrameAndTime>& writer_queue,
-        bites::ConcurrentQueue <cv::Mat*>& done_queue
+        bites::ConcurrentQueue <Captor::FrameAndTime>& output_queue
         ):
         m_root_dir (root_dir),
         m_input_queue (input_queue),
-        m_writer_queue (writer_queue),
-        m_done_queue (done_queue)
+        m_output_queue (output_queue)
         {/* Empty. */}
 
 private:
     boost::filesystem::path m_root_dir;
     bites::ConcurrentQueue <Captor::FrameAndTime>& m_input_queue;
-    bites::ConcurrentQueue <Captor::FrameAndTime>& m_writer_queue;
-    bites::ConcurrentQueue <cv::Mat*>& m_done_queue;
+    bites::ConcurrentQueue <Captor::FrameAndTime>& m_output_queue;
 
     /**
        The threaded function.

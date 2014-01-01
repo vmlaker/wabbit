@@ -28,13 +28,12 @@ you can easily get the bindings via:
 Next, get the Wabbit codes:
 ::
 
-   git clone http://github.com/vmlaker/bites
-   git clone http://github.com/vmlaker/sherlock-cpp
-   git clone http://github.com/vmlaker/wabbit
+   git clone https://github.com/vmlaker/bites
+   git clone --recursive https://github.com/vmlaker/wabbit
    cd wabbit
 
 Now you're ready to install ODB and the remainder of the Wabbit software stack:
 ::
 
    sh install-odb.sh
-   scons bites=../bites sherlock=../sherlock-cpp
+   scons bites=../bites

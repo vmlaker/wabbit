@@ -31,18 +31,18 @@ public:
     /**
        Initialize the video capture thread with parameters.
 
-       @param  config       Application configuration.
-       @param  duration     Duration of detection (in seconds.)
-       @param  saver_queue  Link to the downstream disk saver worker.
+       @param  config        Application configuration.
+       @param  duration      Duration of detection (in seconds.)
+       @param  output_queue  Link to the downstream queue.
     */
     Captor(
         bites::Config& config,
         const int& duration,
-        bites::ConcurrentQueue <FrameAndTime>& saver_queue
+        bites::ConcurrentQueue <FrameAndTime>& output_queue
         ):
-        m_config      (config),
-        m_duration    (duration),
-        m_saver_queue (saver_queue)
+        m_config       (config),
+        m_duration     (duration),
+        m_output_queue (output_queue)
         {/* Empty. */}
 
     /**
@@ -58,7 +58,7 @@ private:
     int m_duration;
 
     // The output queue.
-    bites::ConcurrentQueue <FrameAndTime>& m_saver_queue;
+    bites::ConcurrentQueue <FrameAndTime>& m_output_queue;
 
     // The current running framerate.
     bites::Mutexed <std::vector <float>> m_framerate;
