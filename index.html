@@ -1,0 +1,222 @@
+<html>
+
+<head>
+  <title>Wabbit</title>
+  <link href="style.css" rel="stylesheet" type="text/css">
+
+  <a href="https://github.com/vmlaker/wabbit"><img style="position: fixed; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_orange_ff7600.png" alt="Fork me on GitHub"></a>
+
+</head>
+
+<body>
+
+  <div class="main_block">
+
+    <div style="float: left;">
+      <h1>Wabbit</h1>
+    </div>
+
+    <div style="float: left;">
+      <div class="logo">
+        <image src="logo.png"/>
+      </div>
+    </div>
+
+    <div style="clear: left;">
+    </div>
+
+    <p>
+      A webcam recorder that takes continuous snapshots,
+      stores images on disk and maintains archive index in a relational database.
+      Comes with a web app for displaying snapshots and browsing the archive.
+      <div class="demo_link">
+        <a href="http://vmlaker.org/wabbit">Live demo at http://vmlaker.org/wabbit</a>
+      </div>
+    </p>
+
+    <h2>Installation</h2>
+
+    <p>
+      The server code is written in C++11 and Python.
+      Compiler build chain (for C++ parts) is configured using
+      <a href="http://www.scons.org">SCons</a>.
+      Camera interaction runs on
+      <a href="http://docs.opencv.org">OpenCV</a>
+      and database is accessed with object-relational mapping using
+      <a href="http://www.codesynthesis.com/products/odb">ODB</a>
+      (for C++) and
+      <a href="http://www.sqlalchemy.org">SQLAlchemy</a> 
+      (for Python.)
+      The database engine is MySQL.
+    </p>
+
+    <p>
+      The web app itself is powered by 
+      <a href="http://flask.pocoo.org">Flask</a>.
+      Static pages are written in
+      <a href="http://jade-lang.com">Jade</a>
+      and client-side scripts in
+      <a href="http://coffeescript.org">CoffeeScript</a>.
+      The <a href="http://jquery.org">jQuery</a> library calls AJAX.
+    </p>
+
+    <p>
+      All these softwares are open source and easily obtainable.
+      Start by first getting the application codes from two repos:
+      <ol>
+        <li><a href="http://vmlaker.github.io/bites">Bites</a>,
+          a small toolbox of utilities, and
+        </li>
+        <li>the
+          <a href="http://github.com/vmlaker/wabbit">Wabbit</a>
+          code repo (which actually clones an additional, third repo
+          <a href="http://vmlaker.github.io/coils">Coils</a>
+          as a Git submodule):
+        </li>
+      </ol>
+    </p>
+
+    <div class="code_block">
+      git clone https://github.com/vmlaker/bites
+      git clone --recursive https://github.com/vmlaker/wabbit
+      cd wabbit
+    </div>
+
+    <p>
+      From here, build the software stack.
+      Although installation of all third-party requirements
+      is not documented, you're probably best off simply
+      following any error trail and installing the missing 
+      piece using your system's package manager.
+      For example, if missing C++ bindings for MySQL,
+      just get the Aptitude package <code>libmysql++-dev</code>
+      or YUM package <code>mysql++-devel</code>.
+      Then repeat the step.
+    </p>
+
+    <p>
+      Now then, for the Python side of things,
+      install the required modules using <code>pip</code>.
+    </p>
+
+    <div class="code_block">
+      pip install -r requirements.txt
+    </div>
+    
+    <p>
+      Alteratively, you may choose to build a Python
+      virtual environment using the provided Makefile:
+    </p>
+
+    <div class="code_block">
+      make
+      make test
+    </div>
+
+    <p>
+      For the C++ parts, first install ODB, 
+      then run the compiler chain:
+    </p>
+
+    <div class="code_block">
+      sh install-odb.sh
+      scons bites=../bites
+    </div>
+
+    <h2>Usage</h2>
+
+    <p>
+      Customize your configuration by editing file <code>wabbit.cfg</code>.
+      Then create the database, tables, user and privileges
+      (you're gonna need to know your MySQL admin password):
+    </p>
+
+    <div class="code_block">
+      python src/create.py
+    </div>
+
+    <p>
+      If, at a later time, you want to undo changes to your MySQL,
+      run <code>python src/drop.py</code>.
+      This will remove (clean up) everything created by the previous command.
+    </p>
+
+    <p>
+      With the database initialized, you can now test the recorder and pruner:
+    </p>
+
+    <div class="code_block">
+      bin/record 10
+      python src/dump.py
+      python src/prune.py -60
+      python src/dump.py
+    </div>
+
+    <h2>Deployment</h2>
+
+    <p>
+      First, compile client-side pages and scripts:
+    </p>
+
+    <div class="code_block">
+      npm install jade coffee-script
+      node_modules/.bin/jade --pretty -o templates/ src/*.jade
+      node_modules/.bin/coffee -o static -c src/*.coffee
+    </div>
+
+    <p>
+      Then, deploy to your web server. For Apache HTTPD just run the following
+      (assuming your <code>DocumentRoot</code> is <code>/var/www/html</code>):
+    </p>
+
+    <div class="code_block">
+      rm -rf /var/www/html/wabbit
+      python src/deploy.py /var/www/html/wabbit
+    </div>
+
+    <p>
+      The second command above dumps a configuration snippet for HTTPD.
+      Cut-and-paste the snippet into your HTTPD .conf file.
+      Then restart the server:
+    </p>
+      
+    <div class="code_block">
+      systemctl restart httpd.service
+    </div>
+
+    <p>
+      If you're running SELinux, 
+      keep in mind that default security policies may forbid 
+      HTTPD from reading your pictures directory
+      (as configured with <code>pics_dir</code> variable in file <code>wabbit.cfg</code>.)
+      If that's the case, 
+      change the SELinux security context of the path:
+    </p>
+
+    <div class="code_block">
+      sudo chcon -R -t httpd_sys_content_t /path/to/pics
+    </div>
+
+    <p>
+      Your page is visible at 
+      <a href="http://localhost/wabbit">http://localhost/wabbit</a>.
+    </p>
+
+    <p>
+      Consider automating the recorder and pruner 
+      by scheduling them as cron jobs. 
+      An example crontab file <code>wabbit.cron</code> is provided
+      as a starting point for your custom setup.
+    </p>
+
+    <div class="footer">
+      This page is built with 
+      <a href="http://www.w3.org/html">HTML</a> and 
+      <a href="http://www.w3.org/style/css">CSS</a>.
+    </div>
+
+  </div>
+
+</body>
+
+</html>
