@@ -1,3 +1,3 @@
 [submodule "src/coils"]
 	path = src/coils
-	url = http://github.com/vmlaker/coils
+	url = https://github.com/vmlaker/coils
