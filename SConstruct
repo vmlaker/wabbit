@@ -1,4 +1,6 @@
-"""The SCons file for Wabbit C++ codes."""
+"""
+The SCons file for Wabbit C++ codes
+"""
 
 import os
 
@@ -15,18 +17,22 @@ if not bites_path:
 bites_inc_path = os.path.join(bites_path, 'include')
 bites_lib_path = os.path.join(bites_path, 'lib')
 
+
 ###########################################
 #
-#  ODB stuff.
+#  ODB Stuff
 #
 ###########################################
 odb_inc_path = 'libodb/include'
 odb_lib_path = 'libodb/lib'
+odb_exe = 'libodb/bin/odb'
 
-# Custom builder for ODB compiler.
-odb_compiler = Builder(
-    action='odb -d mysql --generate-query --generate-schema --output-dir cpp/odb $SOURCE',
-)
+# Create a custom builder for ODB compiler.
+action = odb_exe + ' ' + \
+         '-I{} '.format(odb_inc_path) + \
+         '-d mysql ' + \
+         '--generate-query --generate-schema --output-dir cpp/odb $SOURCE'
+odb_compiler = Builder(action=action)
 env = Environment(BUILDERS={'ODBCompile' : odb_compiler})
 odb_compile = env.ODBCompile('cpp/include/mapping.hpp')
 Default(odb_compile)
@@ -48,6 +54,13 @@ odb_object = env.Object(target = 'cpp/odb/mapping-odb.o', source = 'cpp/odb/mapp
 Default(odb_object)  # Built by default.
 
 Depends(odb_object, odb_compile)
+
+
+###########################################
+#
+#  C++ Executables
+#
+###########################################
 
 # Build the dump program.
 sources = (
@@ -111,5 +124,3 @@ if debug: env.Append(CXXFLAGS = ' -g')
 target = os.path.join('bin', 'record')
 prog = env.Program(target, sources + odb_object)
 Default(prog)  # Program is built by default.
-
-
