@@ -9,6 +9,9 @@
 #
 ############################################
 
+# Activate for debugging purposes.
+#set -x
+
 function usage {
     echo
     echo "Usage:  $(basename $0) OPTION"
@@ -57,49 +60,83 @@ fi
 cd libodb/temp
 
 # This is the version of ODB to use.
-odb_version="2.3.0"
+odb_ver_major="2"
+odb_ver_minor="3"
+odb_ver_patch="0"
+odb_ver_mm="$odb_ver_major.$odb_ver_minor"
+odb_ver_full="$odb_ver_mm.$odb_ver_patch"
+
+# This is the version of libcutl to use.
+libcutl_ver_major="1"
+libcutl_ver_minor="8"
+libcutl_ver_patch="1"
+libcutl_ver_mm="$libcutl_ver_major.$libcutl_ver_minor"
+libcutl_ver_full="$libcutl_ver_mm.$odb_ver_patch"
 
 # A clean run removes any previously worked on stuff.
 if [[ $clean == 1 ]] ; then
-    rm -rf odb-$odb_version
-    rm -rf libodb-$odb_version
-    rm -rf libodb-mysql-$odb_version
-    rm -rf odb-$odb_version.tar.gz
-    rm -rf libodb-$odb_version.tar.gz
-    rm -rf libodb-mysql-$odb_version.tar.gz
-    wget http://www.codesynthesis.com/download/odb/2.3/odb-$odb_version.tar.gz
-    wget http://www.codesynthesis.com/download/odb/2.3/libodb-$odb_version.tar.gz
-    wget http://www.codesynthesis.com/download/odb/2.3/libodb-mysql-$odb_version.tar.gz
-    tar xzf odb-$odb_version.tar.gz
-    tar xzf libodb-$odb_version.tar.gz
-    tar xzf libodb-mysql-$odb_version.tar.gz
+    rm -rf odb-$odb_ver_full
+    rm -rf libodb-$odb_ver_full
+    rm -rf libodb-mysql-$odb_ver_full
+    rm -rf libcutl-$libcutl_ver_full
+
+    rm -rf odb-$odb_ver_full.tar.gz
+    rm -rf libodb-$odb_ver_full.tar.gz
+    rm -rf libodb-mysql-$odb_ver_full.tar.gz
+    rm -rf libcutl-$libcutl_ver_full.tar.gz
+
+    wget http://www.codesynthesis.com/download/odb/$odb_ver_mm/odb-$odb_ver_full.tar.gz
+    wget http://www.codesynthesis.com/download/odb/$odb_ver_mm/libodb-$odb_ver_full.tar.gz
+    wget http://www.codesynthesis.com/download/odb/$odb_ver_mm/libodb-mysql-$odb_ver_full.tar.gz
+    wget http://www.codesynthesis.com/download/libcutl/$libcutl_ver_mm/libcutl-$libcutl_ver_full.tar.gz
+
+    tar xzf odb-$odb_ver_full.tar.gz
+    tar xzf libodb-$odb_ver_full.tar.gz
+    tar xzf libodb-mysql-$odb_ver_full.tar.gz
+    tar xzf libcutl-$libcutl_ver_full.tar.gz
+
 fi
 
-# Build the ODB Compiler.
-cd odb-$odb_version
+# Build the libcutl library.
+cd libcutl-$libcutl_ver_full
 ./configure --prefix=`pwd`/../..
+if [ $? -gt 0 ]; then 
+    exit 
+fi
 make -j $jobs
 make install
 cd ..
 
 # Build the ODB Common Runtime Library.
-cd libodb-$odb_version
+cd libodb-$odb_ver_full
 ./configure --prefix=`pwd`/../..
+if [ $? -gt 0 ]; then 
+    exit 
+fi
 make -j $jobs
 make install
 cd ..
 
 # Build the ODB MySQL Database Runtime Library.
-cd libodb-mysql-$odb_version
-./configure --prefix=`pwd`/../.. --with-libodb=`pwd`/../libodb-$odb_version
+cd libodb-mysql-$odb_ver_full
+./configure --prefix=`pwd`/../.. --with-libodb=`pwd`/../libodb-$odb_ver_full
+if [ $? -gt 0 ]; then 
+    exit 
+fi
 make -j $jobs
 make install
 cd ..
 
-# Upon success, clean up the temporary directory.
-cd ..
-rm -rf temp
+# Build the ODB Compiler.
+cd odb-$odb_ver_full
+./configure --prefix=`pwd`/../.. --with-libcutl=`pwd`/../libcutl-$libcutl_ver_full
+if [ $? -gt 0 ]; then 
+    exit 
+fi
+make -j $jobs
+make install
 cd ..
 
-# Return with a success flag.
-return 0
+# Upon success, return back to the top.
+cd ..
+cd ..
