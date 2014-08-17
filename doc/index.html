@@ -73,7 +73,7 @@
       Start by first getting the application codes from two repos:
       <ol>
         <li><a href="http://vmlaker.github.io/bites">Bites</a>,
-          a small toolbox of utilities, and
+          a small C++ utility library, and
         </li>
         <li>the
           <a href="http://github.com/vmlaker/wabbit">Wabbit</a>
@@ -92,10 +92,10 @@
 
     <p>
       From here, build the software stack.
-      Although installation of all third-party requirements
+      Although installation of all 3rd-party requirements
       is not documented, you're probably best off simply
-      following any error trail and installing the missing 
-      piece using your system's package manager.
+      following any error trail and installing missing 
+      pieces using your system's package manager.
       For example, if missing C++ bindings for MySQL,
       just get the Aptitude package <code>libmysql++-dev</code>
       or YUM package <code>mysql++-devel</code>.
@@ -104,16 +104,10 @@
 
     <p>
       Now then, for the Python side of things,
-      install the required modules using <code>pip</code>.
-    </p>
-
-    <div class="code_block">
-      pip install -r requirements.txt
-    </div>
-    
-    <p>
-      Alteratively, you may choose to build a Python
-      virtual environment using the provided Makefile:
+      let's build a Python virtual environment using
+      the provided Makefile. 
+      As part of the build, make runs <code>virtualenv</code>,
+      configuring the environment according to <code>requirements.txt</code> spec:
     </p>
 
     <div class="code_block">
@@ -122,12 +116,19 @@
     </div>
 
     <p>
-      For the C++ parts, first install ODB, 
-      then run the compiler chain:
+      For the C++ parts, first install ODB using the provided shell script.
+      (Try <code>./install-odb.sh --help</code> for details.)
     </p>
 
     <div class="code_block">
-      sh install-odb.sh
+      ./install-odb.sh
+    </div>
+
+    </p>
+      Then run the compiler chain via SCons:
+    </p>
+
+    <div class="code_block">
       scons bites=../bites
     </div>
 
@@ -135,6 +136,10 @@
 
     <p>
       Customize your configuration by editing file <code>wabbit.cfg</code>.
+      Check all settings in the file, particularly the database settings.
+      Also, make sure all directories are set as absolute paths.
+    </p>
+    <p>
       Then create the database, tables, user and privileges
       (you're gonna need to know your MySQL admin password):
     </p>
@@ -163,7 +168,7 @@
     <h2 id="deployment">Deployment</h2>
 
     <p>
-      First, compile client-side pages and scripts:
+      First thing, compile the client-side pages and scripts:
     </p>
 
     <div class="code_block">
@@ -173,13 +178,18 @@
     </div>
 
     <p>
+      Before deploying to your Apache server, check your Wabbit configuration file 
+      <code>wabbit.cfg</code> -- be sure that the pics destination setting 
+      <code>pics</code> is a complete path to a valid directory.
+    </p>
+    <p>
       Then, deploy to your web server. For Apache HTTPD just run the following
       (assuming your <code>DocumentRoot</code> is <code>/var/www/html</code>):
     </p>
 
     <div class="code_block">
-      rm -rf /var/www/html/wabbit
-      python src/deploy.py /var/www/html/wabbit
+      sudo rm -rf /var/www/html/wabbit
+      sudo python src/deploy.py /var/www/html/wabbit
     </div>
 
     <p>
@@ -189,7 +199,7 @@
     </p>
       
     <div class="code_block">
-      systemctl restart httpd.service
+      sudo systemctl restart httpd.service
     </div>
 
     <p>
@@ -230,7 +240,23 @@
           A: You're missing <code>mysql_config</code>.
           On Ubuntu, install the missing package:
           <div class="code_block">
-            apt-get install libmysqlclient-dev
+            sudo apt-get install libmysqlclient-dev
+          </div>
+        </p>
+      </li>
+
+      <li>
+        <p>
+          Q: When I run SCons, I get an error like this:
+          <p>
+            <code>configure: error: g++ does not support plugins; reconfigure GCC with --enable-plugin</code>
+          </p>
+        </p>
+        <p>
+          A: Your GCC is missing header files for plugin development.
+          On Ubuntu, install the needed package:
+          <div class="code_block">
+            sudo apt-get install gcc-4.8-plugin-dev
           </div>
         </p>
       </li>
@@ -264,8 +290,8 @@
           or perhaps not even installed.
           On Ubuntu, install and start the server with:
           <div class="code_block">
-            apt-get install mysql-server
-            service mysql start
+            sudo apt-get install mysql-server
+            sudo service mysql start
           </div>
         </p>
       </li>
