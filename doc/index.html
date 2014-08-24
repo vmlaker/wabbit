@@ -26,12 +26,37 @@
     </div>
 
     <p>
-      A webcam recorder that takes continuous snapshots,
-      stores images on disk and maintains archive index in a relational database.
-      Comes with a web app for displaying snapshots and browsing the archive.
+      At its core, Wabbit is a webcam recording system. 
+      It takes continuous snapshots, stores images on disk 
+      and maintains the archive index in a relational database.
+      The package comes with a web app for displaying snapshots 
+      and browsing the image archive.
+
       <div class="demo_link">
-        <a href="http://vmlaker.org/wabbit">Live demo at http://vmlaker.org/wabbit</a>
+        <a href="http://vmlaker.org/wabbit">Check out the live demo at http://vmlaker.org/wabbit !</a>
       </div>
+    </p>
+
+    <p>
+      The pipelined multi-threaded processing of captured images
+      is written in C++.
+      It's designed so you can easily add your own 
+      image processing, archiving or analysis stages:
+      simply write your custom thread and plug it into the worklow.
+    </p>
+
+    <p>
+      The minimalist RESTful API server is written
+      in a Python microframework.
+      The basic functions are included, but the API is easy to build on
+      to add your own interfaces.
+    </p>
+
+    <p>
+      With elementary components already in place 
+      &mdash; capture, archive, management and access &mdash;
+      Wabbit is a scalable platform 
+      perfect for development of active video surveillance systems.
     </p>
     
     <h2>Table of Contents</h2>
@@ -45,8 +70,7 @@
     <h2 id="installation">Installation</h2>
 
     <p>
-      The server code is written in C++11 and Python.
-      Compiler build chain (for C++ parts) is configured using
+      The build chain &mdash; for compiling the C++ parts &mdash; is configured using
       <a href="http://www.scons.org">SCons</a>.
       Camera interaction runs on
       <a href="http://docs.opencv.org">OpenCV</a>
@@ -56,9 +80,6 @@
       <a href="http://www.sqlalchemy.org">SQLAlchemy</a> 
       (for Python).
       The database engine is MySQL.
-    </p>
-
-    <p>
       The web app itself is powered by 
       <a href="http://flask.pocoo.org">Flask</a>.
       Static pages are written in
@@ -67,10 +88,9 @@
       <a href="http://coffeescript.org">CoffeeScript</a>.
       The <a href="http://jquery.org">jQuery</a> library calls AJAX.
     </p>
-
+    
     <p>
-      All these softwares are open source and easily obtainable.
-      Start by first getting the application codes from two repos:
+      Start by getting code from two repos:
       <ol>
         <li><a href="http://vmlaker.github.io/bites">Bites</a>,
           a small C++ utility library, and
