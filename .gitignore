@@ -1,5 +1,9 @@
 *.o
 *.pyc
-static/*.js
-node_modules
 .sconsign.dblite
+bin/
+cpp/odb/mapping*
+libodb/
+node_modules/
+static/*.js
+venv/
