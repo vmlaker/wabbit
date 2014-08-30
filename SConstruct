@@ -124,3 +124,4 @@ if debug: env.Append(CXXFLAGS = ' -g')
 target = os.path.join('bin', 'record')
 prog = env.Program(target, sources + odb_object)
 Default(prog)  # Program is built by default.
+Clean(target, 'bin')
