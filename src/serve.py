@@ -10,12 +10,22 @@ from flask.ext.sqlalchemy import SQLAlchemy
 import coils
 import mapping
 
-# Load configuration file.
-CONFIG = sys.argv[1] if len(sys.argv)>=2 else 'wabbit.cfg'
+ 
+#import pdb; pdb.set_trace()
+   
+# Load the configuration file.
+CONFIG = 'wabbit.cfg'
+if len(sys.argv)>=2:
+    if sys.argv[0] != 'venv/bin/gunicorn':
+        CONFIG = sys.argv[1]
 config = coils.Config(CONFIG)
 
 # Initialize Flask and SQLAlchemy.
-app = flask.Flask(__name__)
+app = flask.Flask(
+    __name__,
+    template_folder=config['flask_template_dir'],
+    static_folder=config['flask_static_dir'],
+)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://{}:{}@{}/{}'.format(
     config['username'], config['password'],
     config['host'], config['db_name'])

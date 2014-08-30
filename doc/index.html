@@ -26,68 +26,34 @@
     </div>
 
     <p>
-      At its core, Wabbit is a webcam recording system. 
-      It takes continuous snapshots, stores images on disk 
-      and maintains the archive index in a relational database.
-      The package comes with a web app for displaying snapshots 
-      and browsing the image archive.
+      Wabbit is a scalable webcam recording system.
+      Takes continuous snapshots, stores images on disk 
+      and maintains database index.
 
       <div class="demo_link">
-        <a href="http://vmlaker.org/wabbit">Check out the live demo at http://vmlaker.org/wabbit !</a>
+        <a href="http://vmlaker.org/wabbit">&nbsp;live demo&nbsp;</a>
       </div>
     </p>
 
     <p>
-      The pipelined multi-threaded processing of captured images
-      is written in C++.
-      It's designed so you can easily add your own 
-      image processing, archiving or analysis stages:
-      simply write your custom thread and plug it into the worklow.
+      C++ multithreading for image processing.
+      Minimalist RESTful API written
+      in Python with
+      <a href="http://flask.pocoo.org">Flask</a>.
+      Example JavaScript surveillance application.
     </p>
 
-    <p>
-      The minimalist RESTful API server is written
-      in a Python microframework.
-      The basic functions are included, but the API is easy to build on
-      to add your own interfaces.
-    </p>
-
-    <p>
-      With elementary components already in place 
-      &mdash; capture, archive, management and access &mdash;
-      Wabbit is a scalable platform 
-      perfect for development of active video surveillance systems.
-    </p>
-    
     <h2>Table of Contents</h2>
     <ul>
-      <li><a href="#installation">Installation</a></li>
-      <li><a href="#usage">Usage</a></li>
-      <li><a href="#deployment">Deployment</a></li>
+      <li><a href="#download">Download</a></li>
+      <li><a href="#install">Install</a></li>
+      <li><a href="#configure">Configure</a></li>
+      <li><a href="#deploy">Deploy</a></li>
       <li><a href="#faq">FAQ</a></li>
+      <li><a href="#about">About</a></li>
     </ul>
 
-    <h2 id="installation">Installation</h2>
-
-    <p>
-      The build chain &mdash; for compiling the C++ parts &mdash; is configured using
-      <a href="http://www.scons.org">SCons</a>.
-      Camera interaction runs on
-      <a href="http://docs.opencv.org">OpenCV</a>
-      and database is accessed with object-relational mapping using
-      <a href="http://www.codesynthesis.com/products/odb">ODB</a>
-      (for C++) and
-      <a href="http://www.sqlalchemy.org">SQLAlchemy</a> 
-      (for Python).
-      The database engine is MySQL.
-      The web app itself is powered by 
-      <a href="http://flask.pocoo.org">Flask</a>.
-      Static pages are written in
-      <a href="http://jade-lang.com">Jade</a>
-      and client-side scripts in
-      <a href="http://coffeescript.org">CoffeeScript</a>.
-      The <a href="http://jquery.org">jQuery</a> library calls AJAX.
-    </p>
+    <h2 id="download">Download</h2>
     
     <p>
       Start by getting code from two repos:
@@ -97,9 +63,9 @@
         </li>
         <li>the
           <a href="http://github.com/vmlaker/wabbit">Wabbit</a>
-          code repo (which actually clones an additional, third repo
+          code repo (comes with 
           <a href="http://vmlaker.github.io/coils">Coils</a>
-          as a Git submodule):
+          git submodule):
         </li>
       </ol>
     </p>
@@ -110,54 +76,51 @@
       cd wabbit
     </div>
 
+    <h2 id="install">Install</h2>
+
     <p>
       From here, build the software stack.
-      Although installation of all 3rd-party requirements
-      is not documented, you're probably best off simply
-      following any error trail and installing missing 
+      Follow any error trail and install missing 
       pieces using your system's package manager.
-      For example, if missing C++ bindings for MySQL,
+      Like, if missing C++ bindings for MySQL,
       just get the Aptitude package <code>libmysql++-dev</code>
       or YUM package <code>mysql++-devel</code>.
       Then repeat the step.
     </p>
 
     <p>
-      Now then, for the Python side of things,
-      let's build a Python virtual environment using
-      the provided Makefile. 
-      As part of the build, make runs <code>virtualenv</code>,
-      configuring the environment according to <code>requirements.txt</code> spec:
+      First run make -- it builds a Python virtualenv instance
+      and node environment, and compiles the web client.
     </p>
 
     <div class="code_block">
       make
-      make test
     </div>
 
     <p>
-      For the C++ parts, first install ODB using the provided shell script.
+      Second, prepare the main C++ build by installing ODB libraries
+      using the provided shell script.
       (Try <code>./install-odb.sh --help</code> for details.)
     </p>
 
     <div class="code_block">
       ./install-odb.sh
     </div>
-
-    </p>
-      Then run the compiler chain via SCons:
+    
+    <p>
+      Third, run the compiler chain via SCons:
     </p>
 
     <div class="code_block">
       scons bites=../bites
     </div>
 
-    <h2 id="usage">Usage</h2>
+    <h2 id="configure">Configure</h2>
 
     <p>
-      Customize your configuration by editing file <code>wabbit.cfg</code>.
-      Check all settings in the file, particularly the database settings.
-      Also, make sure all directories are set as absolute paths.
+      Customize your installation by editing file <code>wabbit.cfg</code>.
+      Check all settings, and set the path settings to absolute paths 
+      on your system.
     </p>
     <p>
       Then create the database, tables, user and privileges
@@ -165,62 +128,69 @@
     </p>
 
     <div class="code_block">
-      python src/create.py
+      venv/bin/python src/create.py
     </div>
 
     <p>
-      If, at a later time, you want to undo changes to your MySQL,
-      run <code>python src/drop.py</code>.
+      If later you want to undo changes to your MySQL,
+      run <code>venv/bin/python src/drop.py</code>.
       This will remove (clean up) everything created by the previous command.
     </p>
 
     <p>
-      With the database initialized, you can now test the recorder and pruner:
+      Now test your configuration by running the recorder and pruner:
     </p>
 
     <div class="code_block">
       bin/record 10
-      python src/dump.py
-      python src/prune.py -60
-      python src/dump.py
+      venv/bin/python src/dump.py
+      venv/bin/python src/prune.py -60
+      venv/bin/python src/dump.py
     </div>
 
-    <h2 id="deployment">Deployment</h2>
-
     <p>
-      First thing, compile the client-side pages and scripts:
+      Now run the server:
     </p>
-
+    
     <div class="code_block">
-      npm install jade coffee-script
-      node_modules/.bin/jade --pretty -o templates/ src/*.jade
-      node_modules/.bin/coffee -o static -c src/*.coffee
+      venv/bin/gunicorn src.serve:app -b 127.0.0.1:8000
     </div>
 
     <p>
-      Before deploying to your Apache server, check your Wabbit configuration file 
-      <code>wabbit.cfg</code> -- be sure that the pics destination setting 
-      <code>pics</code> is a complete path to a valid directory.
+      Go to 
+      <a href="http:127.0.0.1:8000/info">http:127.0.0.1:8000/info</a> 
+      to check the server.
     </p>
+    
+    <h2 id="deploy">Deploy</h2>
+
     <p>
-      Then, deploy to your web server. For Apache HTTPD just run the following
-      (assuming your <code>DocumentRoot</code> is <code>/var/www/html</code>):
+      Now we'll deploy to the Apahche HTTPD web server. 
+      The following copies all client code to your Apache's 
+      <code>DocumentRoot</code> directory
+      (in this case being <code>/var/www/html/wabbit</code> ):
     </p>
 
     <div class="code_block">
       sudo rm -rf /var/www/html/wabbit
-      sudo python src/deploy.py /var/www/html/wabbit
+      sudo venv/bin/python src/deploy.py /var/www/html/wabbit
     </div>
 
     <p>
-      The second command above dumps a configuration snippet for HTTPD.
-      Cut-and-paste the snippet into your HTTPD .conf file.
+      The second command above dumps a snippet for
+      Apache VirtualHost configuration &mdash;
+      cut-and-paste the snippet into your server's Apache conf file.
       Then restart the server:
     </p>
       
     <div class="code_block">
       sudo systemctl restart httpd.service
     </div>
+
+    <p>
+      Your page is visible at 
+      <a href="http://localhost/wabbit">http://localhost/wabbit</a>.
+    </p>
 
     <p>
       If you're running SELinux, 
@@ -236,15 +206,11 @@
     </div>
 
     <p>
-      Your page is visible at 
-      <a href="http://localhost/wabbit">http://localhost/wabbit</a>.
-    </p>
-
-    <p>
-      Consider automating the recorder and pruner 
+      Recorder and pruner can be automated
       by scheduling them as cron jobs. 
       An example crontab file <code>wabbit.cron</code> is provided
       as a starting point for your custom setup.
+      Gunicorn can be automated with upstart or Systemd.
     </p>
 
     <h2 id="faq">FAQ</h2>
@@ -358,6 +324,28 @@
       </li>
 
     </ol>
+
+    <h2 id="about">About</h2>
+
+    <p>
+      Author Velimir Mlaker. 
+      C++ build configured with
+      <a href="http://www.scons.org">SCons</a>.
+      Camera interaction with
+      <a href="http://docs.opencv.org">OpenCV</a>.
+      DB accessed with ORM.
+      <a href="http://www.codesynthesis.com/products/odb">ODB</a>
+      for C++. 
+      <a href="http://www.sqlalchemy.org">SQLAlchemy</a> 
+      for Python.
+      Database engine: MySQL.
+      Web app using 
+      <a href="http://flask.pocoo.org">Flask</a>.
+      Client written in
+      <a href="http://jade-lang.com">Jade</a> and
+      <a href="http://coffeescript.org">CoffeeScript</a>.
+      <a href="http://jquery.org">jQuery</a> for AJAX.
+    </p>
 
     <div class="footer">
       This page is built with 

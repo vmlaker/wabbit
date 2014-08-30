@@ -1,30 +1,23 @@
-"""Deploy app to Apache."""
+"""
+Deploy Wabbit web app to Apache.
+"""
 
 from subprocess import call
 import os
 import sys
 import coils
 
-# Read command-line parameters.
+# Read command-line parameters and load the config file.
+# Usage:  deploy.sh www_root config_file
 WWW_ROOT = sys.argv[1]
 CONFIG = sys.argv[2] if len(sys.argv)>=3 else 'wabbit.cfg'
-
-# Load configuration file.
 config = coils.Config(CONFIG)
 
-# Create destination directories.
+# Create destination directory and copy the web service source code.
 cmd = 'mkdir -p {}'.format(os.path.join(WWW_ROOT, 'service'))
 print(cmd); call(cmd, shell=True)
-
-# Create the pics/ link.
-cmd = 'ln -s {} {}'.format(
-    config['pics_dir'], 
-    os.path.join(WWW_ROOT, 'pics'))
-print(cmd); call(cmd, shell=True)
-
-# Copy source code.
 dest = os.path.join(WWW_ROOT, 'service')
-for item in ('src', 'templates', 'static', 'wabbit.cfg', 'wabbit.wsgi'):
+for item in ('templates', 'static'):
     cmd = 'cp -r {} {}'.format(item, dest)
     print(cmd); call(cmd, shell=True)
  
@@ -41,6 +34,12 @@ for item in (
     cmd = 'ln -s {} {}'.format(item, WWW_ROOT)
     print(cmd); call(cmd, shell=True)
     
+# Create the pics/ link.
+cmd = 'ln -s {} {}'.format(
+    config['pics_dir'], 
+    os.path.join(WWW_ROOT, 'pics'))
+print(cmd); call(cmd, shell=True)
+
 # Print HTTPD configuration snippet.
 print('')
 print('Add the following to your httpd config, then restart httpd:')
@@ -48,15 +47,6 @@ text = """
     ################################
     # Wabbit configuration.
     ################################
-    WSGIDaemonProcess {db_name} \\
-        home={service_dir} \\
-        python-path={service_dir}
-    WSGIProcessGroup {db_name}
-    WSGIScriptAlias /{db_name}/service {service_dir}/wabbit.wsgi
-    <Directory {service_dir}>
-        Order allow,deny
-        Allow from all
-    </Directory>
     <Directory {pics_dir}>
         Options +Indexes
         Order allow,deny
@@ -69,9 +59,11 @@ text = """
         IndexOptions SuppressLastModified
         IndexOptions IconsAreLinks
     </Directory>
-    RewriteEngine on	
-    RewriteRule /{db_name}/browser$ /{db_name}/browser.html
-    RewriteRule /{db_name}/live$ /{db_name} [R]
+    ProxyRequests Off
+    <Location /wabbit/service/>
+         ProxyPass http://localhost:8000/
+         ProxyPassReverse http://localhost:8000/
+    </Location>
 
 """.format(
     db_name=config['db_name'],

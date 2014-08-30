@@ -39,7 +39,7 @@ body{
 .demo_link{
     font-size: 120%;
     font-style: italic;
-
+    text-decoration: underline;
     margin: 10px 10px 10px 10px;
     text-align: center;
 }
