@@ -13,6 +13,14 @@ if not bites_path:
     print('Please specify path to Bites installation, e.g. "bites=../bites"')
     exit(1)
 
+###########################################
+#
+#  Bites
+#
+###########################################
+# Build the Bites library (if not already done.)
+SConscript(os.path.join(bites_path, 'SConstruct'))
+
 # Assemble Bites include and library paths.
 bites_inc_path = os.path.join(bites_path, 'include')
 bites_lib_path = os.path.join(bites_path, 'lib')
