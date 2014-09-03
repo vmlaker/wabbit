@@ -7,6 +7,10 @@ import os
 import sys
 import coils
 
+def run(cmd):
+    print(cmd)
+    call(cmd, shell=True)
+
 # Read command-line parameters and load the config file.
 # Usage:  deploy.sh www_root config_file
 WWW_ROOT = sys.argv[1]
@@ -15,11 +19,11 @@ config = coils.Config(CONFIG)
 
 # Create destination directory and copy the web service source code.
 cmd = 'mkdir -p {}'.format(os.path.join(WWW_ROOT, 'service'))
-print(cmd); call(cmd, shell=True)
+run(cmd)
 dest = os.path.join(WWW_ROOT, 'service')
 for item in ('templates', 'static'):
     cmd = 'cp -r {} {}'.format(item, dest)
-    print(cmd); call(cmd, shell=True)
+    run(cmd)
  
 # Make soft links.
 for item in (
@@ -32,20 +36,22 @@ for item in (
     os.path.join('service', 'static', 'logo_small.png'),
     ):
     cmd = 'ln -s {} {}'.format(item, WWW_ROOT)
-    print(cmd); call(cmd, shell=True)
+    run(cmd)
     
 # Create the pics/ link.
 cmd = 'ln -s {} {}'.format(
     config['pics_dir'], 
     os.path.join(WWW_ROOT, 'pics'))
-print(cmd); call(cmd, shell=True)
+run(cmd)
 
 # Print HTTPD configuration snippet.
 print('')
 print('Add the following to your httpd config, then restart httpd:')
 text = """
     ################################
-    # Wabbit configuration.
+    #
+    #  Wabbit configuration.
+    #
     ################################
     <Directory {pics_dir}>
         Options +Indexes
@@ -59,11 +65,16 @@ text = """
         IndexOptions SuppressLastModified
         IndexOptions IconsAreLinks
     </Directory>
+
     ProxyRequests Off
-    <Location /wabbit/service/>
-         ProxyPass http://localhost:8000/
-         ProxyPassReverse http://localhost:8000/
+    <Location /wabbit/service>
+         ProxyPass http://localhost:8000
+         ProxyPassReverse http://localhost:8000
     </Location>
+
+    RewriteEngine On
+    RewriteRule /wabbit/browser$ /wabbit/browser.html
+    RewriteRule /wabbit/live$ /wabbit [R]
 
 """.format(
     db_name=config['db_name'],
