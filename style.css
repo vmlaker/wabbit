@@ -1,6 +1,12 @@
 /* Link preferences. */
-a:link {text-decoration:none;}
-a:visited {text-decoration:none;}
+a:link{
+    text-decoration: none;
+    color: #2C6EFF;
+}
+a:visited{
+    text-decoration: none;
+    color: #00747B;
+}
 a:hover {text-decoration:underline;}
 a:active {text-decoration:underline;}
 
@@ -9,13 +15,23 @@ body{
     font-size:   100%;
     font-family: Arial;
 
-    background-color: #FAEFD2;
+    background-color: #D2F5FA;
     background-image:  url(bg_top.png);
     background-repeat: repeat-x; 
 }
 
 .logo{
-    margin: 0 0 0 50px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+}
+
+.title{
+    font-size: 200%;
+    font-style: italic;
+    font-weight: bold;
+    margin-bottom: -10px;
 }
 
 .main_block{
@@ -27,7 +43,7 @@ body{
     
     border-style: solid;
     border-width: 0 1px;
-    border-color: #E1C19B;
+    border-color: #54C9C4;
 
     background-color: white;
     /*
@@ -36,22 +52,34 @@ body{
     */
 }
 
-.demo_link{
-    font-size: 120%;
-    font-style: italic;
+.preamble_top{
+    font-size: 140%;
+    padding: 0px 20px;
+}
 
-    margin: 10px 10px 10px 10px;
+.preamble_bot{
+    font-size: 105%;
+    padding: 0px 95px;
     text-align: center;
+}
+
+.spacing{
+    padding: 10px 0px;
+}
+
+.demo_link{
+    font-style: italic;
+    text-decoration: underline;
 }
 
 code{
     padding: 0px 3px;
 
-    background-color: #FFF4D7;
+    background-color: #D0F3F8;
 
     border-style: solid;
     border-width: 1px;
-    border-color: #EFD694;
+    border-color: #A6E6E5;
 }
 
 .code_block{
@@ -59,12 +87,12 @@ code{
     white-space: pre;
     font: 1em, 'Courier', Courier, Fixed;
 
-    background-color: #FFF4D7;
+    background-color: #D0F3F8;
 
     border-radius: 10px;
     border-style: solid;
     border-width: 1px;
-    border-color: #EFD694;
+    border-color: #A6E6E5;
 }
 
 .footer{

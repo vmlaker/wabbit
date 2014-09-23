@@ -4,102 +4,71 @@
   <title>Wabbit</title>
   <link href="style.css" rel="stylesheet" type="text/css">
 
-  <a href="https://github.com/vmlaker/wabbit"><img style="position: fixed; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_orange_ff7600.png" alt="Fork me on GitHub"></a>
+  <a href="https://github.com/vmlaker/wabbit"><img style="position: fixed; top: 0; right: 0; border: 0;" src="forkme.png" alt="Fork me on GitHub"></a>
 
 </head>
 
 <body>
-
   <div class="main_block">
 
-    <div style="float: left;">
-      <h1>Wabbit</h1>
-    </div>
-
-    <div style="float: left;">
-      <div class="logo">
+    <div class="preamble_top">
+      <div class="logo" style="float:right;">
         <image src="logo.png"/>
       </div>
+      <div class="title">Wabbit</div>
+      <p>
+        Distributed webcam surveillance
+        with snapshot capture and image processing.
+        Web API access to database and archive.
+      </p>
+    </div> <!-- preamble_top -->
+
+    <div class="preamble_bot">
+      multithreaded
+      &mdash;
+      multiprocessing
+      &mdash;
+      image processing with OpenCV
+      &mdash;
+      Python and C++ server
+      &mdash;
+      RESTful API with Flask
+      &mdash;
+      JS client
+      <p>
+        <div class="demo_link">
+          <a href="http://vmlaker.org/wabbit">
+            &nbsp;Click here for live demo !&nbsp;
+          </a>
+        </div>
+      </p>
     </div>
+      
+    <div class="spacing"></div>
 
-    <div style="clear: left;">
-    </div>
-
-    <p>
-      At its core, Wabbit is a webcam recording system. 
-      It takes continuous snapshots, stores images on disk 
-      and maintains the archive index in a relational database.
-      The package comes with a web app for displaying snapshots 
-      and browsing the image archive.
-
-      <div class="demo_link">
-        <a href="http://vmlaker.org/wabbit">Check out the live demo at http://vmlaker.org/wabbit !</a>
-      </div>
-    </p>
-
-    <p>
-      The pipelined multi-threaded processing of captured images
-      is written in C++.
-      It's designed so you can easily add your own 
-      image processing, archiving or analysis stages:
-      simply write your custom thread and plug it into the worklow.
-    </p>
-
-    <p>
-      The minimalist RESTful API server is written
-      in a Python microframework.
-      The basic functions are included, but the API is easy to build on
-      to add your own interfaces.
-    </p>
-
-    <p>
-      With elementary components already in place 
-      &mdash; capture, archive, management and access &mdash;
-      Wabbit is a scalable platform 
-      perfect for development of active video surveillance systems.
-    </p>
-    
     <h2>Table of Contents</h2>
     <ul>
-      <li><a href="#installation">Installation</a></li>
-      <li><a href="#usage">Usage</a></li>
-      <li><a href="#deployment">Deployment</a></li>
+      <li><a href="#download">Download</a></li>
+      <li><a href="#install">Install</a></li>
+      <li><a href="#configure">Configure</a></li>
+      <li><a href="#deploy">Deploy</a></li>
       <li><a href="#faq">FAQ</a></li>
+      <li><a href="#about">The stack</a></li>
     </ul>
 
-    <h2 id="installation">Installation</h2>
-
-    <p>
-      The build chain &mdash; for compiling the C++ parts &mdash; is configured using
-      <a href="http://www.scons.org">SCons</a>.
-      Camera interaction runs on
-      <a href="http://docs.opencv.org">OpenCV</a>
-      and database is accessed with object-relational mapping using
-      <a href="http://www.codesynthesis.com/products/odb">ODB</a>
-      (for C++) and
-      <a href="http://www.sqlalchemy.org">SQLAlchemy</a> 
-      (for Python).
-      The database engine is MySQL.
-      The web app itself is powered by 
-      <a href="http://flask.pocoo.org">Flask</a>.
-      Static pages are written in
-      <a href="http://jade-lang.com">Jade</a>
-      and client-side scripts in
-      <a href="http://coffeescript.org">CoffeeScript</a>.
-      The <a href="http://jquery.org">jQuery</a> library calls AJAX.
-    </p>
+    <h2 id="download">Download</h2>
     
     <p>
-      Start by getting code from two repos:
+      Get code from two repos:
       <ol>
         <li><a href="http://vmlaker.github.io/bites">Bites</a>,
-          a small C++ utility library, and
+          a small C++ utility library and
         </li>
         <li>the
           <a href="http://github.com/vmlaker/wabbit">Wabbit</a>
-          code repo (which actually clones an additional, third repo
+          code repo (comes with 
           <a href="http://vmlaker.github.io/coils">Coils</a>
-          as a Git submodule):
+          git submodule):
         </li>
       </ol>
     </p>
@@ -110,129 +79,107 @@
       cd wabbit
     </div>
 
-    <p>
-      From here, build the software stack.
-      Although installation of all 3rd-party requirements
-      is not documented, you're probably best off simply
-      following any error trail and installing missing 
-      pieces using your system's package manager.
-      For example, if missing C++ bindings for MySQL,
-      just get the Aptitude package <code>libmysql++-dev</code>
-      or YUM package <code>mysql++-devel</code>.
-      Then repeat the step.
-    </p>
+    <h2 id="install">Install</h2>
 
     <p>
-      Now then, for the Python side of things,
-      let's build a Python virtual environment using
-      the provided Makefile. 
-      As part of the build, make runs <code>virtualenv</code>,
-      configuring the environment according to <code>requirements.txt</code> spec:
+      Run make to build a Python virtualenv instance
+      and node environment, and to compile the client.
     </p>
 
     <div class="code_block">
       make
-      make test
     </div>
 
     <p>
-      For the C++ parts, first install ODB using the provided shell script.
-      (Try <code>./install-odb.sh --help</code> for details.)
+      Then run a script to install C++ ODB libraries
+      (use <code>--help</code> for details).
     </p>
 
     <div class="code_block">
       ./install-odb.sh
     </div>
-
-    </p>
-      Then run the compiler chain via SCons:
+    
+    <p>
+      Finally run the SCons compiler chain.
     </p>
 
     <div class="code_block">
       scons bites=../bites
     </div>
 
-    <h2 id="usage">Usage</h2>
+    <h2 id="configure">Configure</h2>
 
     <p>
-      Customize your configuration by editing file <code>wabbit.cfg</code>.
-      Check all settings in the file, particularly the database settings.
-      Also, make sure all directories are set as absolute paths.
+      Customize your installation by editing file <code>wabbit.cfg</code>
+      &mdash; set all path settings to absolute paths 
+      on your system.
     </p>
     <p>
-      Then create the database, tables, user and privileges
-      (you're gonna need to know your MySQL admin password):
+      Then create the database user and privileges
+      (you will need to know your MySQL root password).
     </p>
 
     <div class="code_block">
-      python src/create.py
+      venv/bin/python src/create.py
     </div>
 
     <p>
-      If, at a later time, you want to undo changes to your MySQL,
-      run <code>python src/drop.py</code>.
-      This will remove (clean up) everything created by the previous command.
+      If later you want to undo the above command,
+      run <code>venv/bin/python src/drop.py</code>
+      to clean up what was created.
     </p>
 
     <p>
-      With the database initialized, you can now test the recorder and pruner:
+      Now you can test the Recorder and Pruner.
     </p>
 
     <div class="code_block">
       bin/record 10
-      python src/dump.py
-      python src/prune.py -60
-      python src/dump.py
+      venv/bin/python src/dump.py
+      venv/bin/python src/prune.py -60
+      venv/bin/python src/dump.py
     </div>
 
-    <h2 id="deployment">Deployment</h2>
-
     <p>
-      First thing, compile the client-side pages and scripts:
+      Next run the server.
     </p>
-
+    
     <div class="code_block">
-      npm install jade coffee-script
-      node_modules/.bin/jade --pretty -o templates/ src/*.jade
-      node_modules/.bin/coffee -o static -c src/*.coffee
+      venv/bin/gunicorn src.serve:app -b 127.0.0.1:8000
     </div>
 
     <p>
-      Before deploying to your Apache server, check your Wabbit configuration file 
-      <code>wabbit.cfg</code> -- be sure that the pics destination setting 
-      <code>pics</code> is a complete path to a valid directory.
+      Go to 
+      <a href="http://127.0.0.1:8000/info">http://127.0.0.1:8000/info</a> 
+      to check the API server.
     </p>
+    
+    <h2 id="deploy">Deploy</h2>
+
     <p>
-      Then, deploy to your web server. For Apache HTTPD just run the following
-      (assuming your <code>DocumentRoot</code> is <code>/var/www/html</code>):
+      Deploy to Apache HTTPD by
+      copying client stack to
+      <code>DocumentRoot</code>
+      (in this case <code>/var/www/html/wabbit</code>).
     </p>
 
     <div class="code_block">
       sudo rm -rf /var/www/html/wabbit
-      sudo python src/deploy.py /var/www/html/wabbit
+      sudo venv/bin/python src/deploy.py /var/www/html/wabbit
     </div>
 
     <p>
-      The second command above dumps a configuration snippet for HTTPD.
-      Cut-and-paste the snippet into your HTTPD .conf file.
-      Then restart the server:
+      That second command dumps a snippet for
+      your VirtualHost configuration &mdash;
+      cut 'n paste the snippet into your Apache conf file.
+    </p>
+
+    <p>
+      Then restart your server.
     </p>
       
     <div class="code_block">
       sudo systemctl restart httpd.service
-    </div>
-
-    <p>
-      If you're running SELinux, 
-      keep in mind that default security policies may forbid 
-      HTTPD from reading your pictures directory
-      (as configured with <code>pics_dir</code> variable in file <code>wabbit.cfg</code>).
-      If that's the case, 
-      change the SELinux security context of the path:
-    </p>
-
-    <div class="code_block">
-      sudo chcon -R -t httpd_sys_content_t /path/to/pics
     </div>
 
     <p>
@@ -241,10 +188,21 @@
     </p>
 
     <p>
-      Consider automating the recorder and pruner 
+      If running SELinux, 
+      security policies may forbid 
+      HTTPD from reading your pictures directory.
+      In that case change your SELinux security context of your pics dir.
+    </p>
+
+    <div class="code_block">
+      sudo chcon -R -t httpd_sys_content_t /path/to/my/pics
+    </div>
+
+    <p>
+      Automate your Recorder and Pruner
       by scheduling them as cron jobs. 
-      An example crontab file <code>wabbit.cron</code> is provided
-      as a starting point for your custom setup.
+      See file <code>wabbit.cron</code> for an example setup.
+      Gunicorn can be automated with upstart or Systemd.
     </p>
 
     <h2 id="faq">FAQ</h2>
@@ -253,7 +211,7 @@
 
       <li>
         <p>
-          Q: When I run make, I get
+          <b>Q:</b> When I run make, I get
           <code>EnvironmentError: mysql_config not found</code>.
         </p>
         <p>
@@ -262,6 +220,16 @@
           <div class="code_block">
             sudo apt-get install libmysqlclient-dev
           </div>
+        </p>
+      </li>
+
+      <li>
+        <p>
+          Q: How do I install C++ bindings for MySQL?
+        </p>
+        <p>
+          A: With Aptitude, get <code>libmysql++-dev</code> package
+          and with YUM get <code>mysql++-devel</code>.
         </p>
       </li>
 
@@ -358,6 +326,24 @@
       </li>
 
     </ol>
+
+    <h2 id="about">The stack</h2>
+
+    <p>
+      <i>
+      <ul>
+        <li><a href="http://www.scons.org">SCons</a> for C++ build</li>
+        <li><a href="http://docs.opencv.org">OpenCV</a> for camera access</li>
+        <li><a href="http://www.codesynthesis.com/products/odb">ODB</a> for C++ ORM</li>
+        <li><a href="http://www.sqlalchemy.org">SQLAlchemy</a> for Python ORM</li>
+        <li>MySQL for RDBMS</li>
+        <li><a href="http://flask.pocoo.org">Flask</a> for web app</li>
+        <li><a href="http://jade-lang.com">Jade</a> and
+          <a href="http://coffeescript.org">CoffeeScript</a> for the client</li>
+        <li><a href="http://jquery.org">jQuery</a> for AJAX</li>
+      </ul>
+      </i>
+    </p>
 
     <div class="footer">
       This page is built with 
