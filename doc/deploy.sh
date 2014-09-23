@@ -6,7 +6,7 @@ git checkout master doc
 git reset HEAD
 mv doc/* .
 rm -rf doc
-rm -rf deploy.sh logo.xcf
+rm -rf deploy.sh logo.xcf forkme.xcf
 git add .
 git commit -m "Updated gh-pages for `git log master -1 | head -1`"
 #git push

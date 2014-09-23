@@ -6,4 +6,5 @@ cpp/odb/mapping*
 libodb/
 node_modules/
 static/*.js
+templates/*.html
 venv/

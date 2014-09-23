@@ -4,44 +4,47 @@
   <title>Wabbit</title>
   <link href="style.css" rel="stylesheet" type="text/css">
 
-  <a href="https://github.com/vmlaker/wabbit"><img style="position: fixed; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_orange_ff7600.png" alt="Fork me on GitHub"></a>
+  <a href="https://github.com/vmlaker/wabbit"><img style="position: fixed; top: 0; right: 0; border: 0;" src="forkme.png" alt="Fork me on GitHub"></a>
 
 </head>
 
 <body>
-
   <div class="main_block">
 
-    <div style="float: left;">
-      <h1>Wabbit</h1>
-    </div>
-
-    <div style="float: left;">
-      <div class="logo">
+    <div class="preamble_top">
+      <div class="logo" style="float:right;">
         <image src="logo.png"/>
       </div>
+      <div class="title">Wabbit</div>
+      <p>
+        Distributed webcam surveillance
+        with snapshot capture and image processing.
+        Web API access to database and archive.
+      </p>
+    </div> <!-- preamble_top -->
+
+    <div class="preamble_bot">
+      multithreaded
+      &mdash;
+      multiprocessing
+      &mdash;
+      image processing with OpenCV
+      &mdash;
+      Python and C++ server
+      &mdash;
+      RESTful API with Flask
+      &mdash;
+      JS client
+      <p>
+        <div class="demo_link">
+          <a href="http://vmlaker.org/wabbit">
+            &nbsp;Click here for live demo !&nbsp;
+          </a>
+        </div>
+      </p>
     </div>
-
-    <div style="clear: left;">
-    </div>
-
-    <p>
-      Wabbit is a scalable webcam recording system.
-      Takes continuous snapshots, stores images on disk 
-      and maintains database index.
-
-      <div class="demo_link">
-        <a href="http://vmlaker.org/wabbit">&nbsp;live demo&nbsp;</a>
-      </div>
-    </p>
-
-    <p>
-      C++ multithreading for image processing.
-      Minimalist RESTful API written
-      in Python with
-      <a href="http://flask.pocoo.org">Flask</a>.
-      Example JavaScript surveillance application.
-    </p>
+      
+    <div class="spacing"></div>
 
     <h2>Table of Contents</h2>
     <ul>
@@ -50,16 +53,16 @@
       <li><a href="#configure">Configure</a></li>
       <li><a href="#deploy">Deploy</a></li>
       <li><a href="#faq">FAQ</a></li>
-      <li><a href="#about">About</a></li>
+      <li><a href="#about">The stack</a></li>
     </ul>
 
     <h2 id="download">Download</h2>
     
     <p>
-      Start by getting code from two repos:
+      Get code from two repos:
       <ol>
         <li><a href="http://vmlaker.github.io/bites">Bites</a>,
-          a small C++ utility library, and
+          a small C++ utility library and
         </li>
         <li>the
           <a href="http://github.com/vmlaker/wabbit">Wabbit</a>
@@ -79,18 +82,8 @@
     <h2 id="install">Install</h2>
 
     <p>
-      From here, build the software stack.
-      Follow any error trail and install missing 
-      pieces using your system's package manager.
-      Like, if missing C++ bindings for MySQL,
-      just get the Aptitude package <code>libmysql++-dev</code>
-      or YUM package <code>mysql++-devel</code>.
-      Then repeat the step.
-    </p>
-
-    <p>
-      First run make -- it builds a Python virtualenv instance
-      and node environment, and compiles the web client.
+      Run make to build a Python virtualenv instance
+      and node environment, and to compile the client.
     </p>
 
     <div class="code_block">
@@ -98,9 +91,8 @@
     </div>
 
     <p>
-      Second, prepare the main C++ build by installing ODB libraries
-      using the provided shell script.
-      (Try <code>./install-odb.sh --help</code> for details.)
+      Then run a script to install C++ ODB libraries
+      (use <code>--help</code> for details).
     </p>
 
     <div class="code_block">
@@ -108,7 +100,7 @@
     </div>
     
     <p>
-      Third, run the compiler chain via SCons:
+      Finally run the SCons compiler chain.
     </p>
 
     <div class="code_block">
@@ -118,13 +110,13 @@
     <h2 id="configure">Configure</h2>
 
     <p>
-      Customize your installation by editing file <code>wabbit.cfg</code>.
-      Check all settings, and set the path settings to absolute paths 
+      Customize your installation by editing file <code>wabbit.cfg</code>
+      &mdash; set all path settings to absolute paths 
       on your system.
     </p>
     <p>
-      Then create the database, tables, user and privileges
-      (you're gonna need to know your MySQL admin password):
+      Then create the database user and privileges
+      (you will need to know your MySQL root password).
     </p>
 
     <div class="code_block">
@@ -132,13 +124,13 @@
     </div>
 
     <p>
-      If later you want to undo changes to your MySQL,
-      run <code>venv/bin/python src/drop.py</code>.
-      This will remove (clean up) everything created by the previous command.
+      If later you want to undo the above command,
+      run <code>venv/bin/python src/drop.py</code>
+      to clean up what was created.
     </p>
 
     <p>
-      Now test your configuration by running the recorder and pruner:
+      Now you can test the Recorder and Pruner.
     </p>
 
     <div class="code_block">
@@ -149,7 +141,7 @@
     </div>
 
     <p>
-      Now run the server:
+      Next run the server.
     </p>
     
     <div class="code_block">
@@ -158,17 +150,17 @@
 
     <p>
       Go to 
-      <a href="http:127.0.0.1:8000/info">http:127.0.0.1:8000/info</a> 
-      to check the server.
+      <a href="http://127.0.0.1:8000/info">http://127.0.0.1:8000/info</a> 
+      to check the API server.
     </p>
     
     <h2 id="deploy">Deploy</h2>
 
     <p>
-      Now let's deploy to the Apache HTTPD web server. 
-      The following copies all client code to your Apache's 
-      <code>DocumentRoot</code> directory
-      (in this case being <code>/var/www/html/wabbit</code> ):
+      Deploy to Apache HTTPD by
+      copying client stack to
+      <code>DocumentRoot</code>
+      (in this case <code>/var/www/html/wabbit</code>).
     </p>
 
     <div class="code_block">
@@ -177,10 +169,13 @@
     </div>
 
     <p>
-      The second command above dumps a snippet for
-      Apache VirtualHost configuration &mdash;
-      cut-and-paste the snippet into your server's Apache conf file.
-      Then restart the server:
+      That second command dumps a snippet for
+      your VirtualHost configuration &mdash;
+      cut 'n paste the snippet into your Apache conf file.
+    </p>
+
+    <p>
+      Then restart your server.
     </p>
       
     <div class="code_block">
@@ -193,23 +188,20 @@
     </p>
 
     <p>
-      If you're running SELinux, 
-      keep in mind that default security policies may forbid 
-      HTTPD from reading your pictures directory
-      (as configured with <code>pics_dir</code> variable in file <code>wabbit.cfg</code>).
-      If that's the case, 
-      change the SELinux security context of the path:
+      If running SELinux, 
+      security policies may forbid 
+      HTTPD from reading your pictures directory.
+      In that case change your SELinux security context of your pics dir.
     </p>
 
     <div class="code_block">
-      sudo chcon -R -t httpd_sys_content_t /path/to/pics
+      sudo chcon -R -t httpd_sys_content_t /path/to/my/pics
     </div>
 
     <p>
-      Recorder and pruner can be automated
+      Automate your Recorder and Pruner
       by scheduling them as cron jobs. 
-      An example crontab file <code>wabbit.cron</code> is provided
-      as a starting point for your custom setup.
+      See file <code>wabbit.cron</code> for an example setup.
       Gunicorn can be automated with upstart or Systemd.
     </p>
 
@@ -219,7 +211,7 @@
 
       <li>
         <p>
-          Q: When I run make, I get
+          <b>Q:</b> When I run make, I get
           <code>EnvironmentError: mysql_config not found</code>.
         </p>
         <p>
@@ -228,6 +220,16 @@
           <div class="code_block">
             sudo apt-get install libmysqlclient-dev
           </div>
+        </p>
+      </li>
+
+      <li>
+        <p>
+          Q: How do I install C++ bindings for MySQL?
+        </p>
+        <p>
+          A: With Aptitude, get <code>libmysql++-dev</code> package
+          and with YUM get <code>mysql++-devel</code>.
         </p>
       </li>
 
@@ -325,26 +327,22 @@
 
     </ol>
 
-    <h2 id="about">About</h2>
+    <h2 id="about">The stack</h2>
 
     <p>
-      Author Velimir Mlaker. 
-      C++ build configured with
-      <a href="http://www.scons.org">SCons</a>.
-      Camera interaction with
-      <a href="http://docs.opencv.org">OpenCV</a>.
-      DB accessed with ORM.
-      <a href="http://www.codesynthesis.com/products/odb">ODB</a>
-      for C++. 
-      <a href="http://www.sqlalchemy.org">SQLAlchemy</a> 
-      for Python.
-      Database engine: MySQL.
-      Web app using 
-      <a href="http://flask.pocoo.org">Flask</a>.
-      Client written in
-      <a href="http://jade-lang.com">Jade</a> and
-      <a href="http://coffeescript.org">CoffeeScript</a>.
-      <a href="http://jquery.org">jQuery</a> for AJAX.
+      <i>
+      <ul>
+        <li><a href="http://www.scons.org">SCons</a> for C++ build</li>
+        <li><a href="http://docs.opencv.org">OpenCV</a> for camera access</li>
+        <li><a href="http://www.codesynthesis.com/products/odb">ODB</a> for C++ ORM</li>
+        <li><a href="http://www.sqlalchemy.org">SQLAlchemy</a> for Python ORM</li>
+        <li>MySQL for RDBMS</li>
+        <li><a href="http://flask.pocoo.org">Flask</a> for web app</li>
+        <li><a href="http://jade-lang.com">Jade</a> and
+          <a href="http://coffeescript.org">CoffeeScript</a> for the client</li>
+        <li><a href="http://jquery.org">jQuery</a> for AJAX</li>
+      </ul>
+      </i>
     </p>
 
     <div class="footer">
