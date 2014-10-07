@@ -24,9 +24,7 @@
     </div> <!-- preamble_top -->
 
     <div class="preamble_bot">
-      multithreaded
-      &middot;
-      multiprocessing
+      multithreading
       &middot;
       image processing with OpenCV
       &middot;
@@ -211,11 +209,13 @@
 
       <li>
         <p>
-          <b>Q:</b> When I run make, I get
+          <b>Q:</b> 
+          When I run make, I get
           <code>EnvironmentError: mysql_config not found</code>.
-        </p>
-        <p>
-          A: You're missing <code>mysql_config</code>.
+          What do I do?
+          <br><br>
+          <b>A:</b> 
+          You're missing <code>mysql_config</code>.
           On Ubuntu, install the missing package:
           <div class="code_block">
             sudo apt-get install libmysqlclient-dev
@@ -223,25 +223,30 @@
         </p>
       </li>
 
-      <li>
-        <p>
-          Q: How do I install C++ bindings for MySQL?
-        </p>
-        <p>
-          A: With Aptitude, get <code>libmysql++-dev</code> package
-          and with YUM get <code>mysql++-devel</code>.
-        </p>
-      </li>
+      <br>
 
       <li>
         <p>
-          Q: When I run SCons, I get an error like this:
-          <p>
-            <code>configure: error: g++ does not support plugins; reconfigure GCC with --enable-plugin</code>
-          </p>
+          <b>Q:</b> 
+          How do I install C++ bindings for MySQL?
+          <br><br>
+          <b>A:</b> 
+          With Aptitude get the <code>libmysql++-dev</code> package.
+          Or, with YUM get <code>mysql++-devel</code>.
         </p>
+      </li>
+
+      <br>
+
+      <li>
         <p>
-          A: Your GCC is missing header files for plugin development.
+          <b>Q:</b> 
+          When I run SCons, I get an error like this:
+          <code>configure: error: g++ does not support plugins; reconfigure GCC with --enable-plugin</code>.
+          What does this mean?
+          <br><br>
+          <b>A:</b> 
+          Your GCC is missing header files for plugin development.
           On Ubuntu, install the needed package:
           <div class="code_block">
             sudo apt-get install gcc-4.8-plugin-dev
@@ -249,13 +254,16 @@
         </p>
       </li>
 
+      <br>
+
       <li>
         <p>
-          Q: When I attempt to record snapshots, I get
-          <code>Cannot open device -1.</code> error.
-        </p>
-        <p>
-          A: Your webcam is not detected. 
+          <b>Q:</b> 
+          When I attempt to record snapshots, I get
+          <code>Cannot open device -1</code> error.
+          Why is this happening?
+          <br><br>
+          <b>A:</b> Your webcam is not detected. 
           Check by making sure your system has a webcam:
           <div class="code_block">
             ls /dev/video*
@@ -263,18 +271,17 @@
         </p>
       </li>
 
+      <br>
+
       <li>
         <p>
-          Q: When I attempt to record snapshots, 
-          I get the following error:
-        </p>
-        <p>
-          <code>
-            Can't connect to local MySQL server through socket '/var/run/mysqld/mysqld.sock'
-          </code>
-        </p>
-        <p>
-          A: Your MySQL server is probably not running,
+          <b>Q:</b> 
+          When I attempt to record snapshots, I get the error
+          <code>Can't connect to local MySQL server through socket '/var/run/mysqld/mysqld.sock'</code>.
+          What gives?
+          <br><br>
+          <b>A:</b> 
+          Your MySQL server is probably not running,
           or perhaps not even installed.
           On Ubuntu, install and start the server with:
           <div class="code_block">
@@ -284,39 +291,38 @@
         </p>
       </li>
 
+      <br>
+
       <li>
         <p>
-          Q: When I attempt to record snapshots, 
-          I get the following error:
-        </p>
-        <p>
-          <code>
-            Access denied for user 'bugs'@'localhost' (using password: YES)
-          </code>
-        </p>
-        <p>
-          A: You probably forgot to create your database.
+          <b>Q:</b> 
+          When I attempt to record snapshots, I get the error
+          <code>Access denied for user 'bugs'@'localhost' (using password: YES)</code>.
+          Please help!
+          <br><br>
+          <b>A:</b> 
+          You most likely forgot to create the database.
           Try running:
           <div class="code_block">
             python src/create.py
           </div>
         </p>
         <p>
-          (See <a href="#usage">Usage</a> for more details.)
+          (See the <a href="#configure">Configure</a> section for more details.)
         </p>
       </li>
 
+      <br>
+
       <li>
         <p>
-          Q: When I try to compile client-side pages, I get:
-        </p>
-        <p>
-          <code>
-            /usr/bin/env: node: No such file or directory
-          </code>
-        </p>
-        <p>
-          A: You probably installed node from a package manager,
+          <b>Q:</b> 
+          When I try to compile client-side pages, I get
+          <code>/usr/bin/env: node: No such file or directory</code>.
+          What gives?
+          <br><br>
+          <b>A:</b> 
+          You probably installed node from a package manager,
           and it is misnamed to <code>nodejs</code> instead of <code>node</code>.
           Fix this by symlinking the executable:
           <div class="code_block">
@@ -330,6 +336,7 @@
     <h2 id="about">The stack</h2>
 
     <p>
+      A brief rundown of the software stack used in creating Wabbit:
       <i>
       <ul>
         <li><a href="http://www.scons.org">SCons</a> for C++ build</li>
