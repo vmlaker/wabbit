@@ -1,6 +1,7 @@
 <html>
 
 <head>
+
   <title>Wabbit</title>
   <link href="style.css" rel="stylesheet" type="text/css">
 
@@ -8,13 +9,15 @@
 
 </head>
 
+
 <body>
-  <div class="main_block">
+
+  <div id="background">
+  <div class="margin">
+  <div id="main_block">
 
     <div class="preamble_top">
-      <div class="logo" style="float:right;">
-        <image src="logo.png"/>
-      </div>
+      <image id="logo" src="logo.png"></image>
       <div class="title">Wabbit</div>
       <p>
         Distributed webcam surveillance
@@ -26,13 +29,13 @@
     <div class="preamble_bot">
       multithreading
       &middot;
-      image processing with OpenCV
+      OpenCV
       &middot;
-      Python and C++ server
+      C++ and Python
       &middot;
-      RESTful API with Flask
+      RDBMS via ORM
       &middot;
-      JS client
+      RESTful API
       <p>
         <div class="demo_link">
           <a href="http://vmlaker.org/wabbit">
@@ -358,7 +361,9 @@
       <a href="http://www.w3.org/style/css">CSS</a>.
     </div>
 
-  </div> <!-- class="main_block" -->
+  </div> <!-- main_block -->
+  </div> <!-- margin -->
+  </div> <!-- background -->
 
 </body>
 
