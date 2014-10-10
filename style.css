@@ -42,7 +42,7 @@ body{
     
     border-style: solid;
     border-width: 0px 1px;
-    border-color: #28babd;
+    border-color: #28BABD;
     background-color: white;
 }
 
@@ -76,7 +76,7 @@ body{
     padding: 10px 0px;
 }
 
-.demo_link{
+.demo_link a{
     font-style: italic;
     text-decoration: underline;
 }
@@ -101,7 +101,7 @@ code{
     border-radius: 10px;
     border-style: solid;
     border-width: 1px;
-    border-color: #A6E6E5;
+    border-color: #28BABD;
 }
 
 .footer{
