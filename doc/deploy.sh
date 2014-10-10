@@ -8,6 +8,10 @@ mv doc/* .
 rm -rf doc
 rm -rf deploy.sh forkme.xcf logo.xcf tile.xcf
 git add .
+
+# Sanity check before commit.
+git status
+
 git commit -m "Updated gh-pages for `git log master -1 | head -1`"
 git push origin gh-pages
 git checkout master
