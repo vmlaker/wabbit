@@ -1,0 +1,12 @@
+[Unit]
+Description=Wabbit API Server
+
+[Service]
+Type=simple
+User=@USER@
+Group=@GROUP@
+WorkingDirectory=@WORKING_DIR@
+ExecStart=@GUNICORN_BIN@ @APP_MODULE@ -b @ADDRESS@
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,12 @@
+[Unit]
+Description=Wabbit Recorder
+
+[Service]
+Type=simple
+User=@USER@
+Group=@GROUP@
+WorkingDirectory=@WORKING_DIR@
+ExecStart=@RECORD_CMD@ -1
+
+[Install]
+WantedBy=multi-user.target
