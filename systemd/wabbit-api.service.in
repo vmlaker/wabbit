@@ -9,6 +9,7 @@ User=@USER@
 Group=@GROUP@
 WorkingDirectory=@WORKING_DIR@
 ExecStart=@GUNICORN_BIN@ @APP_MODULE@ -b @ADDRESS@
+Restart=always
 
 [Install]
 WantedBy=multi-user.target

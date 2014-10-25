@@ -9,6 +9,7 @@ User=@USER@
 Group=@GROUP@
 WorkingDirectory=@WORKING_DIR@
 ExecStart=@RECORD_CMD@ -1
+Restart=always
 
 [Install]
 WantedBy=multi-user.target
