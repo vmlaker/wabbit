@@ -10,15 +10,9 @@ from flask.ext.sqlalchemy import SQLAlchemy
 import coils
 import mapping
 
- 
-#import pdb; pdb.set_trace()
-   
+
 # Load the configuration file.
-CONFIG = 'wabbit.cfg'
-if len(sys.argv)>=2:
-    if sys.argv[0] != 'venv/bin/gunicorn':
-        CONFIG = sys.argv[1]
-config = coils.Config(CONFIG)
+config = coils.Config('wabbit.cfg')
 
 # Initialize Flask and SQLAlchemy.
 app = flask.Flask(
