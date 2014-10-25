@@ -53,6 +53,7 @@
       <li><a href="#install">Install</a></li>
       <li><a href="#configure">Configure</a></li>
       <li><a href="#deploy">Deploy</a></li>
+      <li><a href="#automate">Automate</a></li>
       <li><a href="#faq">FAQ</a></li>
       <li><a href="#about">The stack</a></li>
     </ul>
@@ -199,12 +200,33 @@
       sudo chcon -R -t httpd_sys_content_t /path/to/my/pics
     </div>
 
+    <h2 id="automate">Automate</h2>
+
     <p>
-      Automate your Recorder and Pruner
-      by scheduling them as cron jobs. 
-      See file <code>wabbit.cron</code> for an example setup.
-      Gunicorn can be automated with upstart or Systemd.
+      You can automate the starting of your Recorder and Gunicorn 
+      server using upstart or Systemd. For Systemd
+      (like on Fedora or Red Hat) it's this easy:
     </p>
+
+    <div class="code_block">
+      venv/bin/python systemd/create.py
+      sudo cp systemd/*.service /lib/systemd/system/
+      sudo systemctl enable wabbit-record wabbit-api
+      sudo systemctl start wabbit-record wabbit-api
+    </div>
+
+    <p>
+      The Pruner can be scheduled as a cron job. 
+      Something like this should do the trick:
+    </p>
+
+    <div class="code_block">
+      crontab -l > mycron
+      echo "# m h dom mon dow  command" >> mycron
+      echo "*/1 * * * * sleep 30; cd $HOME/work/git/wabbit; venv/bin/python src/prune.py 300 >>prune.log 2>&1" >> mycron
+      crontab mycron
+      rm mycron
+    </div>
 
     <h2 id="faq">FAQ</h2>
 
@@ -212,12 +234,12 @@
 
       <li>
         <p>
-          <b>Q:</b> 
+          <i>Q:</i> 
           When I run make, I get
           <code>EnvironmentError: mysql_config not found</code>.
           What do I do?
           <br><br>
-          <b>A:</b> 
+          <i>A:</i> 
           You're missing <code>mysql_config</code>.
           On Ubuntu, install the missing package:
           <div class="code_block">
@@ -228,10 +250,10 @@
 
       <li>
         <p>
-          <b>Q:</b> 
+          <i>Q:</i> 
           How do I install C++ bindings for MySQL?
           <br><br>
-          <b>A:</b> 
+          <i>A:</i> 
           With Aptitude get the <code>libmysql++-dev</code> package.
           Or, with YUM get <code>mysql++-devel</code>.
         </p>
@@ -239,12 +261,12 @@
 
       <li>
         <p>
-          <b>Q:</b> 
+          <i>Q:</i> 
           When I run SCons, I get an error like this:
           <code>configure: error: g++ does not support plugins; reconfigure GCC with --enable-plugin</code>.
           What does this mean?
           <br><br>
-          <b>A:</b> 
+          <i>A:</i> 
           Your GCC is missing header files for plugin development.
           On Ubuntu, install the needed package:
           <div class="code_block">
@@ -255,12 +277,12 @@
 
       <li>
         <p>
-          <b>Q:</b> 
+          <i>Q:</i> 
           When I attempt to record snapshots, I get
           <code>Cannot open device -1</code> error.
           Why is this happening?
           <br><br>
-          <b>A:</b> Your webcam is not detected. 
+          <i>A:</i> Your webcam is not detected. 
           Check by making sure your system has a webcam:
           <div class="code_block">
             ls /dev/video*
@@ -270,12 +292,12 @@
 
       <li>
         <p>
-          <b>Q:</b> 
+          <i>Q:</i> 
           When I attempt to record snapshots, I get the error
           <code>Can't connect to local MySQL server through socket '/var/run/mysqld/mysqld.sock'</code>.
           What gives?
           <br><br>
-          <b>A:</b> 
+          <i>A:</i> 
           Your MySQL server is probably not running,
           or perhaps not even installed.
           On Ubuntu, install and start the server with:
@@ -288,12 +310,12 @@
 
       <li>
         <p>
-          <b>Q:</b> 
+          <i>Q:</i> 
           When I attempt to record snapshots, I get the error
           <code>Access denied for user 'bugs'@'localhost' (using password: YES)</code>.
           Please help!
           <br><br>
-          <b>A:</b> 
+          <i>A:</i> 
           You most likely forgot to create the database.
           Try running:
           <div class="code_block">
@@ -307,12 +329,12 @@
 
       <li>
         <p>
-          <b>Q:</b> 
+          <i>Q:</i> 
           When I try to compile client-side pages, I get
           <code>/usr/bin/env: node: No such file or directory</code>.
           What gives?
           <br><br>
-          <b>A:</b> 
+          <i>A:</i> 
           You probably installed node from a package manager,
           and it is misnamed to <code>nodejs</code> instead of <code>node</code>.
           Fix this by symlinking the executable:
