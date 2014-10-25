@@ -1,5 +1,7 @@
 [Unit]
 Description=Wabbit Recorder
+Requires=mysqld.service
+After=mysqld.service
 
 [Service]
 Type=simple

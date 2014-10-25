@@ -1,5 +1,7 @@
 [Unit]
 Description=Wabbit API Server
+Requires=mysqld.service
+After=mysqld.service
 
 [Service]
 Type=simple
