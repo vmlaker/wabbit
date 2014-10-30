@@ -76,9 +76,9 @@
     </p>
 
     <div class="code_block">
-      git clone https://github.com/vmlaker/bites
-      git clone --recursive https://github.com/vmlaker/wabbit
-      cd wabbit
+      git clone https://github.com/vmlaker/bites<br>
+      git clone --recursive https://github.com/vmlaker/wabbit<br>
+      cd wabbit<br>
     </div>
 
     <h2 id="install">Install</h2>
@@ -89,7 +89,7 @@
     </p>
 
     <div class="code_block">
-      make
+      make<br>
     </div>
 
     <p>
@@ -98,7 +98,7 @@
     </p>
 
     <div class="code_block">
-      ./install-odb.sh
+      ./install-odb.sh<br>
     </div>
     
     <p>
@@ -106,7 +106,7 @@
     </p>
 
     <div class="code_block">
-      scons bites=../bites
+      scons bites=../bites<br>
     </div>
 
     <h2 id="configure">Configure</h2>
@@ -122,7 +122,7 @@
     </p>
 
     <div class="code_block">
-      venv/bin/python src/create.py
+      venv/bin/python src/create.py<br>
     </div>
 
     <p>
@@ -136,10 +136,10 @@
     </p>
 
     <div class="code_block">
-      bin/record 10
-      venv/bin/python src/dump.py
-      venv/bin/python src/prune.py -60
-      venv/bin/python src/dump.py
+      bin/record 10<br>
+      venv/bin/python src/dump.py<br>
+      venv/bin/python src/prune.py -60<br>
+      venv/bin/python src/dump.py<br>
     </div>
 
     <p>
@@ -147,7 +147,7 @@
     </p>
     
     <div class="code_block">
-      venv/bin/gunicorn src.serve:app -b 127.0.0.1:8000
+      venv/bin/gunicorn src.serve:app -b 127.0.0.1:8000<br>
     </div>
 
     <p>
@@ -166,8 +166,8 @@
     </p>
 
     <div class="code_block">
-      sudo rm -rf /var/www/html/wabbit
-      sudo venv/bin/python src/deploy.py /var/www/html/wabbit
+      sudo rm -rf /var/www/html/wabbit<br>
+      sudo venv/bin/python src/deploy.py /var/www/html/wabbit<br>
     </div>
 
     <p>
@@ -181,7 +181,7 @@
     </p>
       
     <div class="code_block">
-      sudo systemctl restart httpd.service
+      sudo systemctl restart httpd.service<br>
     </div>
 
     <p>
@@ -197,7 +197,7 @@
     </p>
 
     <div class="code_block">
-      sudo chcon -R -t httpd_sys_content_t /path/to/my/pics
+      sudo chcon -R -t httpd_sys_content_t /path/to/my/pics<br>
     </div>
 
     <h2 id="automate">Automate</h2>
@@ -209,10 +209,10 @@
     </p>
 
     <div class="code_block">
-      venv/bin/python systemd/create.py
-      sudo cp systemd/*.service /lib/systemd/system/
-      sudo systemctl enable wabbit-record wabbit-api
-      sudo systemctl start wabbit-record wabbit-api
+      venv/bin/python systemd/create.py<br>
+      sudo cp systemd/*.service /lib/systemd/system/<br>
+      sudo systemctl enable wabbit-record wabbit-api<br>
+      sudo systemctl start wabbit-record wabbit-api<br>
     </div>
 
     <p>
@@ -221,16 +221,65 @@
     </p>
 
     <div class="code_block">
-      crontab -l > mycron
-      echo "# m h dom mon dow  command" >> mycron
-      echo "*/1 * * * * sleep 30; cd $HOME/work/git/wabbit; venv/bin/python src/prune.py 300 >>prune.log 2>&1" >> mycron
-      crontab mycron
-      rm mycron
+      crontab -l > mycron<br>
+      echo "# m h dom mon dow  command" >> mycron<br>
+      echo "*/1 * * * * sleep 30; cd $HOME/work/git/wabbit; venv/bin/python src/prune.py 300 >>prune.log 2>&1" >> mycron<br>
+      crontab mycron<br>
+      rm mycron<br>
     </div>
 
     <h2 id="faq">FAQ</h2>
 
     <ol>
+
+      <li>
+        <p>
+          <i>Q:</i> 
+          When I run make, it fails with
+          <code>/bin/sh: virtualenv: command not found</code>.
+          How do I fix this?
+          <br><br>
+          <i>A:</i> 
+          You're missing virtualenv, a tool for creating
+          Python Virtual Environments.
+          On YUM systems, you can install it with:
+          <div class="code_block">
+            sudo yum install python-virtualenv<br>
+          </div>
+        </p>
+      </li>
+
+      <li>
+        <p>
+          <i>Q:</i> 
+          Why am I getting
+          <code>ImportError: No module named cv2</code>
+          ?
+          <br><br>
+          <i>A:</i> 
+          You're missing the OpenCV Python library.
+          On a YUM system, install it with:
+          <div class="code_block">
+            sudo yum install opencv-python<br>
+          </div>
+        </p>
+      </li>
+
+      <li>
+        <p>
+          <i>Q:</i> 
+          My make command fails with
+          <code>make: npm: Command not found</code>,
+          what do I do? Help!!
+          <br><br>
+          <i>A:</i> 
+          Your system is missing the Node.js package manager.
+          With YUM, you can install it with:
+          <div class="code_block">
+            sudo yum install npm<br>
+          </div>
+        </p>
+      </li>
 
       <li>
         <p>
@@ -243,7 +292,13 @@
           You're missing <code>mysql_config</code>.
           On Ubuntu, install the missing package:
           <div class="code_block">
-            sudo apt-get install libmysqlclient-dev
+            sudo apt-get install libmysqlclient-dev<br>
+          </div>
+          <p>
+          Or, on Fedora:
+          </p>
+          <div class="code_block">
+            sudo yum install mariadb-devel<br>
           </div>
         </p>
       </li>
@@ -270,7 +325,13 @@
           Your GCC is missing header files for plugin development.
           On Ubuntu, install the needed package:
           <div class="code_block">
-            sudo apt-get install gcc-4.8-plugin-dev
+            sudo apt-get install gcc-4.8-plugin-dev<br>
+          </div>
+          <p>
+          On Fedora, install it with:
+          </p>
+          <div class="code_block">
+            sudo yum install gcc-plugin-devel<br>
           </div>
         </p>
       </li>
@@ -285,7 +346,14 @@
           <i>A:</i> Your webcam is not detected. 
           Check by making sure your system has a webcam:
           <div class="code_block">
-            ls /dev/video*
+            ls /dev/video*<br>
+          </div>
+          <br>
+          On some systems (like Fedora) your user needs to
+          belong to <code>video</code> group. You may need to run:
+          <br><br>
+          <div class="code_block">
+            sudo usermod -a -G video <i>username</i><br>
           </div>
         </p>
       </li>
@@ -302,8 +370,8 @@
           or perhaps not even installed.
           On Ubuntu, install and start the server with:
           <div class="code_block">
-            sudo apt-get install mysql-server
-            sudo service mysql start
+            sudo apt-get install mysql-server<br>
+            sudo service mysql start<br>
           </div>
         </p>
       </li>
@@ -319,7 +387,7 @@
           You most likely forgot to create the database.
           Try running:
           <div class="code_block">
-            python src/create.py
+            python src/create.py<br>
           </div>
         </p>
         <p>
@@ -339,7 +407,29 @@
           and it is misnamed to <code>nodejs</code> instead of <code>node</code>.
           Fix this by symlinking the executable:
           <div class="code_block">
-            sudo ln -s /usr/bin/nodejs /usr/bin/node
+            sudo ln -s /usr/bin/nodejs /usr/bin/node<br>
+          </div>
+        </p>
+      </li>
+
+      <li>
+        <p>
+          <i>Q:</i> 
+          My Apache HTTPD has errors like
+          <code>(13)Permission denied: AH00957: HTTP: attempt to connect to 127.0.0.1:8000 (127.0.0.1) failed</code>.
+          How do I fix this?
+          <br><br>
+          <i>A:</i> 
+          It might be that SELinux is preventing HTTPD from connecting to port 8000.
+          Try changing the setting with:
+          <div class="code_block">
+            sudo setsebool httpd_can_network_connect 1<br>
+          </div>
+          <br>
+          If that works, make the change permanent (to remain across reboots):
+          <br><br>
+          <div class="code_block">
+            sudo setsebool -P httpd_can_network_connect 1<br>
           </div>
         </p>
       </li>
