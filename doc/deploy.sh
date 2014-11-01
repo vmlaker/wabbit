@@ -1,7 +1,7 @@
 # Sequence of commands used to deploy content to gh-pages branch.
 
 git checkout gh-pages
-rm -rf *
+find . -maxdepth 1 ! -name '.git*' -delete
 git checkout master doc
 git reset HEAD
 mv doc/* .
