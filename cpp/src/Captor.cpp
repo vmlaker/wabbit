@@ -1,3 +1,6 @@
+// Include standard headers.
+#include <iomanip>
+
 // Include 3rd party headers.
 #include <bites.hpp>
 
@@ -68,7 +71,16 @@ void Captor::run ()
         }
 
         // Set the framerate.
-        m_framerate.set(ticker.tick());
+        auto fps = ticker.tick();
+        m_framerate.set(fps);
+
+        // Optionally print the current framerate.
+        if(m_output_stream){
+            for(auto ii=fps.begin(); ii!=fps.end(); ++ii){
+                *m_output_stream << std::fixed << std::setw(7) << std::setprecision(2) << *ii;
+            }
+            *m_output_stream << std::endl;
+        }
 
         // Push image onto output queue.
         Captor::FrameAndTime fat (frame, prev);

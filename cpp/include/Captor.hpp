@@ -31,18 +31,21 @@ public:
     /**
        Initialize the video capture thread with parameters.
 
-       @param  config        Application configuration.
-       @param  duration      Duration of detection (in seconds.)
-       @param  output_queue  Link to the downstream queue.
+       @param  config         Application configuration.
+       @param  duration       Duration of detection (in seconds.)
+       @param  output_queue   Link to the downstream queue.
+       @param  output_stream  Optional output stream for verbose output.
     */
     Captor(
         bites::Config& config,
         const int& duration,
-        bites::ConcurrentQueue <FrameAndTime>& output_queue
+        bites::ConcurrentQueue <FrameAndTime>& output_queue,
+        std::ostream* output_stream = NULL
         ):
         m_config       (config),
         m_duration     (duration),
-        m_output_queue (output_queue)
+        m_output_queue (output_queue),
+        m_output_stream (output_stream)
         {/* Empty. */}
 
     /**
@@ -59,6 +62,9 @@ private:
 
     // The output queue.
     bites::ConcurrentQueue <FrameAndTime>& m_output_queue;
+
+    // The output stream used for verbose output.
+    std::ostream* m_output_stream;
 
     // The current running framerate.
     bites::Mutexed <std::vector <float>> m_framerate;

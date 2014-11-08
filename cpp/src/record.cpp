@@ -5,9 +5,10 @@
  */
 
 // Include standard headers.
-#include <string>
-#include <sstream>
 #include <algorithm>
+#include <sstream>
+#include <string>
+#include <vector>
 
 // Include 3rd party headers
 #include <opencv2/opencv.hpp>
@@ -19,21 +20,67 @@
 #include "DiskSaver.hpp"
 #include "Deallocator.hpp"
 
+
+/**
+   Print the usage text.
+
+   @param   argv0   Name of the command (e.g. argv[0])
+*/
+void usage(const char* argv0)
+{
+    std::list<std::string> usage = {
+        "Usage: " + std::string(argv0) + " [options] duration [config_file]",
+        "",
+        "Options:",
+        "    -v   produce verbose output",
+    };
+    for(auto ii=usage.begin(); ii!=usage.end(); ++ii){
+        std::cout << *ii << std::endl;
+    }
+}
+
 int main (int argc, char** argv)
 {
-    if (argc == 1)
-    {
-        std::cout << "Usage: " << argv[0] << " duration [config_file]" << std::endl;
-        exit(1);
+    // Convert command-line arguments array (argv) into a vector of strings.
+    std::vector<std::string> args(argv, argv + argc);
+
+    // Extract command-line options.
+    args.erase(args.begin());
+    auto verbose = false;
+    while (args.size() and args[0][0] == '-') {
+        if(args[0] == "-v"){
+            verbose = true;
+            args.erase(args.begin());
+        }else{
+            break;
+        }
+        continue;
     }
 
-    // Parse command-line arguments.
-    int DURATION;
-    std::istringstream(std::string(argv[1])) >> DURATION;
-    std::string CONFIG = argc >= 3 ? argv[2] : "wabbit.cfg";
+    // With no command-line arguments, print the usage and bail.
+    if (args.size() == 0)
+    {
+        usage(argv[0]);
+        return 1;
+    }
 
+    // Extract command-line arguments DURATION and CONFIG_FILE.
+    int DURATION;
+    std::istringstream(args[0]) >> DURATION;
+    args.erase(args.begin());
+    std::string CONFIG_FILE = args.size() ? args[0] : "wabbit.cfg";
+    if(verbose){
+        std::cout << "duration    : " << DURATION << std::endl;
+        std::cout << "config_file : " << CONFIG_FILE << std::endl;
+    }
+   
     // Load the configuration file.
-    bites::Config config (CONFIG);
+    bites::Config config;
+    if (not config.load(CONFIG_FILE)){
+        std::cout << "Error: Failed to load " << CONFIG_FILE << std::endl;
+        usage(argv[0]);
+        return 1;
+    }
 
     /////////////////////////////////////////////////////////////////////
     //
@@ -52,7 +99,8 @@ int main (int argc, char** argv)
     wabbit::Captor captor(
         config,
         DURATION,
-        saver_queue
+        saver_queue,
+        verbose ? &std::cout : NULL
         );
 
     // Contain disk saver and DB writer threads in a common list.
