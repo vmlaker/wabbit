@@ -32,7 +32,7 @@ void Captor::run ()
     auto min_interval = std::chrono::microseconds( interval_ms );
 
     // Set the minimum read time for detecting camera disconnect.
-    int min_read_ms = atof(m_config["min_read"].c_str()) * 1000000;
+    auto min_read = atof(m_config["min_read"].c_str());
     
     // Run the loop under the following conditions:
     //   1) designated amount of time hasn't expired 
@@ -53,20 +53,22 @@ void Captor::run ()
 
         // Take a snapshot.
         // The only way I could detect camera disconnect was by
-        // thresholding the length of time to call read() method;
-        // for some reason return value of read() is always True, 
+        // thresholding the length of time to call read() method.
+        // For some reason return value of read() is always True, 
         // even after disconnecting the camera.
         auto frame = new cv::Mat;
         auto begin = std::chrono::system_clock::now();
-        cap >> *frame; 
+        cap >> *frame;  // Read the frame.
         elapsed = std::chrono::system_clock::now() - begin;
         elapsed_ms = std::chrono::duration_cast<std::chrono::microseconds> (elapsed);
-        if (elapsed_ms.count() < min_read_ms)
+        if (elapsed_ms.count()/1000000. < min_read)
         {
             // TODO: Write error to log instead of stdout.
-            std::cout << "Read time failed to meet threshold, "
-                      << elapsed_ms.count() << " < " 
-                      << min_read_ms << std::endl;
+            std::cout << "Error: Read time failed to meet threshold: " << std::endl;
+            std::cout << std::fixed << std::setw(10) << std::setprecision(6) 
+                      << elapsed_ms.count() / 1000000. << " (readtime) < " 
+                      << min_read << " (threshold)" << std::endl;
+            std::cout << "Probably disconnected camera." << std::endl;
             break;
         }
 
@@ -76,8 +78,11 @@ void Captor::run ()
 
         // Optionally print the current framerate.
         if(m_output_stream){
+            *m_output_stream << std::fixed << std::setw(10) << std::setprecision(6) 
+                             << elapsed_ms.count()/1000000.;
             for(auto ii=fps.begin(); ii!=fps.end(); ++ii){
-                *m_output_stream << std::fixed << std::setw(7) << std::setprecision(2) << *ii;
+                *m_output_stream << std::fixed << std::setw(7) << std::setprecision(2) 
+                                 << *ii;
             }
             *m_output_stream << std::endl;
         }
