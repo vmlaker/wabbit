@@ -14,7 +14,7 @@ def run(cmd):
 # Read command-line parameters and load the config file.
 # Usage:  deploy.sh www_root config_file
 WWW_ROOT = sys.argv[1]
-CONFIG = sys.argv[2] if len(sys.argv)>=3 else 'wabbit.cfg'
+CONFIG = sys.argv[2] if len(sys.argv)>=3 else 'wabbit.conf'
 config = coils.Config(CONFIG)
 
 # Create destination directory and copy the web service source code.

@@ -22,7 +22,7 @@ from log_format import getFormat
 
 # Read command-line parameters.
 DURATION = float(sys.argv[1])
-CONFIG = sys.argv[2] if len(sys.argv)>=3 else 'wabbit.cfg'
+CONFIG = sys.argv[2] if len(sys.argv)>=3 else 'wabbit.conf'
 
 # Configure logging and get the logger object.
 logging.basicConfig(

@@ -5,7 +5,7 @@ import sqlalchemy as sa
 import coils
 
 # Load configuration file.
-CONFIG = sys.argv[1] if len(sys.argv)>=2 else 'wabbit.cfg'
+CONFIG = sys.argv[1] if len(sys.argv)>=2 else 'wabbit.conf'
 config = coils.Config(CONFIG)
 
 # Connect to database engine.

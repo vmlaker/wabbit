@@ -18,7 +18,7 @@
 int main (int argc, char** argv)
 {
     // Load the configuration file.
-    std::string CONFIG = argc >= 2 ? argv[1] : "wabbit.cfg";
+    std::string CONFIG = argc >= 2 ? argv[1] : "wabbit.conf";
     bites::Config config (CONFIG);
 
     // Connect to database.    

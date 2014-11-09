@@ -12,7 +12,7 @@ import mapping
 
 
 # Load the configuration file.
-config = coils.Config('wabbit.cfg')
+config = coils.Config('wabbit.conf')
 
 # Initialize Flask and SQLAlchemy.
 app = flask.Flask(

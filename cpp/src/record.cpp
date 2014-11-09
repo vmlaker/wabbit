@@ -68,7 +68,7 @@ int main (int argc, char** argv)
     int DURATION;
     std::istringstream(args[0]) >> DURATION;
     args.erase(args.begin());
-    std::string CONFIG_FILE = args.size() ? args[0] : "wabbit.cfg";
+    std::string CONFIG_FILE = args.size() ? args[0] : "wabbit.conf";
     if(verbose){
         std::cout << "duration    : " << DURATION << std::endl;
         std::cout << "config_file : " << CONFIG_FILE << std::endl;
