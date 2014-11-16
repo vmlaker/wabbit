@@ -1,4 +1,4 @@
-.. image:: http://vmlaker.github.io/wabbit/logo.png
+.. image:: http://vmlaker.github.io/wabbit/logo_small.png
   :alt: Wabbit Logo
   :align: right
   :target: http://vmlaker.github.io/wabbit
