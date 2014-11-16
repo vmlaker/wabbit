@@ -94,7 +94,7 @@ env = Environment(
     LINKFLAGS='-Wl,-rpath -Wl,' + odb_lib_path,
 ) 
 if debug: env.Append(CXXFLAGS = ' -g')
-target = os.path.join('bin', 'dump')
+target = 'bin/dump'
 prog = env.Program(target, sources + odb_object)
 Default(prog)  # Program is built by default.
 
@@ -111,14 +111,9 @@ libs = (
     'boost_thread',
     'boost_system',
     'opencv_core',
-#    'opencv_contrib',
     'opencv_highgui',
-#    'opencv_imgproc',
-#    'opencv_objdetect',
-
     'odb',
     'odb-mysql',
-    
     'bites',
 )
 env = Environment(
@@ -129,7 +124,35 @@ env = Environment(
     LINKFLAGS='-Wl,-rpath -Wl,' + odb_lib_path,
 ) 
 if debug: env.Append(CXXFLAGS = ' -g')
-target = os.path.join('bin', 'record')
+target = 'bin/record'
 prog = env.Program(target, sources + odb_object)
 Default(prog)  # Program is built by default.
 Clean(target, 'bin')
+
+
+###########################################
+#
+#  The Wabbit Logo
+#
+###########################################
+
+SConscript('art/SConstruct')
+Default('art')
+
+copy = Builder(
+    action='cp $SOURCE $TARGET',
+)
+env = Environment(BUILDERS={'Copy' : copy})
+env.Copy(
+    'doc/logo_small.png',
+    'art/logo_small.png',
+)
+env.Copy(
+    'static/logo_tiny.png',
+    'art/logo_tiny.png',
+)
+
+# We're not building doc/ by default.
+#Default('doc/logo_small.png')
+
+Default('static/logo_tiny.png')

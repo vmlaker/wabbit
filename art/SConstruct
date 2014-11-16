@@ -1,0 +1,14 @@
+"""
+The SCons file for Wabbit C++ documentation
+"""
+
+# Custom builder for resizing the logo.
+sizes = (
+    (250, 'logo_small.png'),
+    (100, 'logo_tiny.png'),
+)
+for size, target in sizes:
+    conv = Builder(action='convert $SOURCE -resize {} $TARGET'.format(size))
+    env = Environment(BUILDERS={'Resize' : conv})
+    env.Resize(target, 'logo.png')
+    env.Clean('logo.png', target)

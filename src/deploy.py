@@ -33,7 +33,7 @@ for item in (
     os.path.join('service', 'templates', 'index.css'),
     os.path.join('service', 'static', 'main.js'),
     os.path.join('service', 'static', 'browser.js'),
-    os.path.join('service', 'static', 'logo_small.png'),
+    os.path.join('service', 'static', 'logo_tiny.png'),
     ):
     cmd = 'ln -s {} {}'.format(item, WWW_ROOT)
     run(cmd)
