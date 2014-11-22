@@ -35,33 +35,33 @@ odb_inc_path = 'libodb/include'
 odb_lib_path = 'libodb/lib'
 odb_exe = 'libodb/bin/odb'
 
-# Create a custom builder for ODB compiler.
+# Create a custom builder for ODB compiler,
+# and compile the ODB mappings into C++ sources.
 action = odb_exe + ' ' + \
          '-I{} '.format(odb_inc_path) + \
          '-d mysql ' + \
          '--generate-query --generate-schema --output-dir cpp/odb $SOURCE'
-odb_compiler = Builder(action=action)
-env = Environment(BUILDERS={'ODBCompile' : odb_compiler})
-odb_compile = env.ODBCompile('cpp/include/mapping.hpp')
-Default(odb_compile)
-env.Clean(
-    'cpp/include/mapping.hpp', (
-        'cpp/odb/mapping-odb.cxx',
+builder = Builder(action=action) #, target='cpp/odb/mapping-odb.cxx')
+env = Environment(BUILDERS={'ODBCompile' : builder})
+odb_compile = env.ODBCompile(
+    target=[
+        'cpp/odb/mapping-odb.cxx', 
         'cpp/odb/mapping-odb.hxx',
         'cpp/odb/mapping-odb.ixx',
         'cpp/odb/mapping.sql',
-))
+        ],
+    source='cpp/include/mapping.hpp',
+)
+Default(odb_compile)
 
-# Build the ODB mapping.
+# Build the ODB mapping from the compiled C++ sources.
 env = Environment(
     CPPPATH=(odb_inc_path, 'cpp/odb', 'cpp/include'),
     CXXFLAGS='-std=c++11',
 ) 
-if debug: env.Append(CXXFLAGS = ' -g')
-odb_object = env.Object(target = 'cpp/odb/mapping-odb.o', source = 'cpp/odb/mapping-odb.cxx')
+if debug: env.Append(CXXFLAGS=' -g')
+odb_object = env.Object(target='cpp/odb/mapping-odb.o', source='cpp/odb/mapping-odb.cxx')
 Default(odb_object)  # Built by default.
-
-Depends(odb_object, odb_compile)
 
 
 ###########################################
@@ -93,7 +93,7 @@ env = Environment(
     CXXFLAGS='-std=c++11',
     LINKFLAGS='-Wl,-rpath -Wl,' + odb_lib_path,
 ) 
-if debug: env.Append(CXXFLAGS = ' -g')
+if debug: env.Append(CXXFLAGS=' -g')
 target = 'bin/dump'
 prog = env.Program(target, sources + odb_object)
 Default(prog)  # Program is built by default.
@@ -123,11 +123,11 @@ env = Environment(
     CXXFLAGS='-std=c++11',
     LINKFLAGS='-Wl,-rpath -Wl,' + odb_lib_path,
 ) 
-if debug: env.Append(CXXFLAGS = ' -g')
+if debug: env.Append(CXXFLAGS=' -g')
 target = 'bin/record'
 prog = env.Program(target, sources + odb_object)
 Default(prog)  # Program is built by default.
-Clean(target, 'bin')
+Clean(target, 'bin')  # Delete bin/ directory upon clean.
 
 
 ###########################################
