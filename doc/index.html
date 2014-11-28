@@ -55,7 +55,8 @@
       5. <a href="#automate">Automate</a><br>
       <div style="font-size: 40%">&nbsp;</div>
       A. <a href="#faq">FAQ</a><br>
-      B. <a href="#about">The stack</a><br>
+      B. <a href="#proxy">Apache reverse proxy</a><br>
+      C. <a href="#about">The stack</a><br>
     </div>
 
     <h2 id="download">1. Download</h2>
@@ -323,6 +324,23 @@
       <li>
         <p>
           <i>Q:</i> 
+          When I run SCons, it bails with
+          <code>sh: convert: command not found</code>,
+          what the heck is this?
+          <br><br>
+          <i>A:</i> 
+          The build requires ImageMagick.
+          On Fedora, you can install it with:
+          </p>
+          <div class="code_block">
+            sudo yum install ImageMagick<br>
+          </div>
+        </p>
+      </li>
+
+      <li>
+        <p>
+          <i>Q:</i> 
           When I attempt to record snapshots, I get
           <code>Cannot open device -1</code> error.
           Why is this happening?
@@ -420,7 +438,35 @@
 
     </ol>
 
-    <h2 id="about">B. The stack</h2>
+    <h2 id="proxy">B. Apache reverse proxy</h2>
+
+    <div class="section_body">
+      <p>
+        If your Wabbit server is on a private network,
+        you can setup your Internet-facing server as a reverse proxy to it.
+
+        Let's say you're running Wabbit on internal server
+        accessible at <code>http://192.168.1.55/wabbit</code>.
+
+        And you'd like it to be shown at location 
+        <code>/bunny</code> of your Internet web server.
+
+        You can then configure your proxy server's 
+        <code>VirtualHost</code> with the following directives:
+      </p>
+      <div class="code_block">
+        &lt;Location /bunny&gt;<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;ProxyPass http://192.168.1.55/wabbit<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;ProxyPassReverse http://192.168.1.55/wabbit<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;ProxyHTMLURLMap http://192.168.1.55/wabbit<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;AddOutputFilterByType SUBSTITUTE text/html<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;Substitute s|wabbit/|bunny/|i<br>
+        &lt;/Location&gt;<br>
+        SetOutputFilter proxy-html
+      </div>
+    </div>
+
+    <h2 id="about">C. The stack</h2>
 
     <div class="section_body">
 
