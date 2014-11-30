@@ -20,13 +20,14 @@ a:active {text-decoration: underline;}
 
 body{
     margin: 0;
+    background-image: url(tile1.jpg), url(tile2.jpg);
+    background-repeat: repeat-x, repeat;
     font-size: 100%;
     font-family: Arial;
 }
 
 #background {
-    background-image: url(tile1.jpg), url(tile2.jpg);
-    background-repeat: repeat-x, repeat;
+    margin: 0;
 }
 
 .margin {
@@ -38,10 +39,10 @@ body{
     max-width: 900px;
 
     margin: auto;
-    padding: 40px 30px;
+    padding: 10px 30px;
     
     border-style: solid;
-    border-width: 0px 1px;
+    border-width: 0px 1px 1px 1px;
     border-color: #28BABD;
     background-color: white;
 }
@@ -62,18 +63,18 @@ body{
 }
 
 .preamble_top{
-    font-size: 130%;
+    font-size: 110%;
     padding: 0px 20px;
 }
 
 .preamble_bot{
-    font-size: 125%;
-    padding: 0px 95px;
+    font-size: 110%;
+    //padding: 0px 95px;
     text-align: center;
 }
  
 .table_of_contents{
-    font-size: 110%;
+//    font-size: 110%;
 }
 
 .section_body{
@@ -81,7 +82,7 @@ body{
 }
 
 .spacing{
-    padding: 10px 0px;
+    padding: 30px 0px;
 }
 
 .demo_link a{
@@ -89,8 +90,12 @@ body{
     text-decoration: underline;
 }
 
+#content{
+    padding: 20px 0;
+}
+
 code{
-    padding: 2px 4px;
+    padding: 1px 4px;
     background-color: #D7E7EA;
     border-style: solid;
     border-width: 1px;
@@ -116,3 +121,52 @@ code{
     font-size: 75%;
     font-style: italic;
 }
+
+#navcontainer{
+    padding: 30px 0px;
+    width: 494px;
+    margin: auto;
+    font-size: 150%;
+    font-weight: bold;
+    text-align: center;
+}
+
+#navcontainer a{
+    color: #00747B;
+    text-decoration: none;
+}
+
+.navbuffer{
+    float: left;
+    padding: 10px;
+}
+
+.navitem{
+    width: 140px;
+    padding: 2px;
+    float: left;
+    border-color: #00747B;
+    border-width: 1px;
+    border-style: solid;
+    border-radius: 4px;
+    box-shadow: 4px 4px 4px #C5C5DE;
+}
+
+.navitem:hover {
+    background-color: #D0F3F8;
+    color: #004A50;
+}
+
+.navitemselected{
+    width: 140px;
+    padding: 2px;
+    float: left;
+    color: #002F32;
+    background-color: #88F0FF;
+    border-color: #004A50;
+    border-width: 1px;
+    border-style: solid;
+    border-radius: 4px;
+    box-shadow: 4px 4px 4px #C5C5DE;
+}
+

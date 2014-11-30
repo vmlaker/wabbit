@@ -7,12 +7,13 @@
 
   <a href="https://github.com/vmlaker/wabbit"><img style="position: fixed; top: 0; right: 0; border: 0;" src="forkme.png" alt="Fork me on GitHub"></a>
 
-</head>
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+  <script src="script.js"></script>
 
+</head>
 
 <body>
 
-  <div id="background">
   <div class="margin">
   <div id="main_block">
 
@@ -21,12 +22,15 @@
       <div class="title">Wabbit</div>
       <p>
         Distributed webcam surveillance
-        with snapshot capture and image processing.
-        Web API access to database and archive.
+        and image processing platform with
+        snapshot archive, database index and
+        a RESTful API web server.
       </p>
+      <div style="clear: both;"></div>
     </div> <!-- preamble_top -->
 
     <div class="preamble_bot">
+<!--
       multithreading
       &middot;
       OpenCV
@@ -36,455 +40,23 @@
       RDBMS via ORM
       &middot;
       RESTful API
-      <p>
-        <div class="demo_link">
-          <a href="http://vmlaker.org/wabbit">
-            &nbsp;Click here for a live demo !&nbsp;
-          </a>
-        </div>
-      </p>
-    </div>
-      
-    <h2>Table of Contents</h2>
-
-    <div class="section_body table_of_contents">
-      1. <a href="#download">Download</a><br>
-      2. <a href="#build">Build</a><br>
-      3. <a href="#configure">Configure</a><br>
-      4. <a href="#deploy">Deploy</a><br>
-      5. <a href="#automate">Automate</a><br>
-      <div style="font-size: 40%">&nbsp;</div>
-      A. <a href="#faq">FAQ</a><br>
-      B. <a href="#proxy">Apache reverse proxy</a><br>
-      C. <a href="#about">The stack</a><br>
-    </div>
-
-    <h2 id="download">1. Download</h2>
-    
-    <div class="section_body">
-      <p>
-        Get code from two repos, 
-        <a href="http://vmlaker.github.io/bites">Bites</a>
-        and 
-        <a href="http://github.com/vmlaker/wabbit">Wabbit</a>
-        :
-      </p>
-      <div class="code_block">
-        git clone https://github.com/vmlaker/bites<br>
-        git clone https://github.com/vmlaker/wabbit<br>
-        cd wabbit<br>
+-->  
+      <div class="demo_link">
+        <a href="http://vmlaker.org/wabbit">
+          &nbsp;Click here for a live demo !&nbsp;
+        </a>
       </div>
     </div>
 
-    <h2 id="build">2. Build</h2>
-
-    <div class="section_body">
-      <p>
-        Run make to build a Python virtualenv instance
-        and node environment, and to compile the client:
-      </p>
-      <div class="code_block">
-        make<br>
-      </div>
-      <p>
-        Then run a script to install C++ ODB libraries
-        (use <code>--help</code> for details):
-      </p>
-      <div class="code_block">
-        ./install-odb.sh<br>
-      </div>
-      <p>
-        Finally run the SCons compiler chain:
-      </p>
-      <div class="code_block">
-        scons bites=../bites<br>
-      </div>
+    <div id="navcontainer">
+      <a href="#install"><div id="btnInstall" class="navitem">Install</div></a>
+      <div class="navbuffer"></div>
+      <a href="#faq"><div id="btnFAQ" class="navitem">FAQ</div></a>
+      <div class="navbuffer"></div>
+      <a href="#about"><div id="btnAbout" class="navitem">About</div></a>
     </div>
 
-    <h2 id="configure">3. Configure</h2>
-      
-    <div class="section_body">
-      <p>
-        Customize your installation by editing file 
-        <code>wabbit.conf</code>  &mdash; set all path settings
-        to absolute paths on your system.
-      </p>
-      <p>
-        Then create the database user and privileges
-        (you will need to know your MySQL root password):
-      </p>
-      <div class="code_block">
-        venv/bin/python src/create.py<br>
-      </div>
-      <p>
-        If later you want to undo the above command,
-        run <code>venv/bin/python src/drop.py</code>
-        to clean up what was created.
-      </p>
-      <p>
-        Now you can test the Recorder and Pruner:
-      </p>
-      <div class="code_block">
-        bin/record -v 10<br>
-        venv/bin/python src/dump.py<br>
-        venv/bin/python src/prune.py -60<br>
-        venv/bin/python src/dump.py<br>
-      </div>
-      <p>
-        Next run the server:
-      </p>
-      <div class="code_block">
-        venv/bin/gunicorn src.serve:app -b 127.0.0.1:8000<br>
-      </div>
-      <p>
-        Go to 
-        <a href="http://127.0.0.1:8000/info">http://127.0.0.1:8000/info</a> 
-        to check the API server.
-      </p>
-    </div>
-
-    <h2 id="deploy">4. Deploy</h2>
-    
-    <div class="section_body">
-      <p>
-        Deploy to Apache HTTPD by
-        copying client stack to
-        <code>DocumentRoot</code>
-        (in this case <code>/var/www/html/wabbit</code>):
-      </p>
-      <div class="code_block">
-        sudo rm -rf /var/www/html/wabbit<br>
-        sudo venv/bin/python src/deploy.py /var/www/html/wabbit<br>
-      </div>
-      <p>
-        That second command dumps a snippet for
-        your VirtualHost configuration &mdash; cut 'n paste
-        the snippet into your Apache conf file.
-      </p>
-      <p>
-        Then restart your server:
-      </p>
-      <div class="code_block">
-        sudo systemctl restart httpd.service<br>
-      </div>
-      <p>
-        Your page is visible at 
-        <a href="http://localhost/wabbit">http://localhost/wabbit</a>.
-      </p>
-      <p>
-        If running SELinux, 
-        security policies may forbid 
-        HTTPD from reading your pictures directory.
-        In that case change your SELinux security context of your pics dir:
-      </p>
-      <div class="code_block">
-        sudo chcon -R -t httpd_sys_content_t /path/to/my/pics<br>
-      </div>
-    </div>
-
-    <h2 id="automate">5. Automate</h2>
-
-    <div class="section_body">
-      <p>
-        You can automate the starting of your Recorder and Gunicorn 
-        server using upstart or Systemd. For Systemd
-        (like on Fedora or Red Hat) it's this easy:
-      </p>
-      <div class="code_block">
-        venv/bin/python systemd/create.py<br>
-        sudo cp systemd/*.service /lib/systemd/system/<br>
-        sudo systemctl enable wabbit-record wabbit-api<br>
-        sudo systemctl start wabbit-record wabbit-api<br>
-      </div>
-      <p>
-        The Pruner can be scheduled as a cron job. 
-        Something like this should do the trick:
-      </p>
-      <div class="code_block">
-        crontab -l > mycron<br>
-        echo "# m h dom mon dow  command" >> mycron<br>
-        echo "*/1 * * * * sleep 30; cd $HOME/work/git/wabbit; venv/bin/python src/prune.py 300 >>prune.log 2>&1" >> mycron<br>
-        crontab mycron<br>
-        rm mycron<br>
-      </div>
-    </div>
-
-    <div class="spacing"></div>
-    <hr width="30%">
-    <div class="spacing"></div>
-
-    <h2 id="faq">A. FAQ</h2>
-      
-    <ol>
-        
-      <li>
-        <p>
-          <i>Q:</i> 
-          When I run make, it fails with
-          <code>/bin/sh: virtualenv: command not found</code>.
-          How do I fix this?
-          <br><br>
-          <i>A:</i> 
-          You're missing virtualenv, a tool for creating
-          Python Virtual Environments.
-          On YUM systems, you can install it with:
-          <div class="code_block">
-            sudo yum install python-virtualenv<br>
-          </div>
-        </p>
-      </li>
-
-      <li>
-        <p>
-          <i>Q:</i> 
-          Why am I getting
-          <code>ImportError: No module named cv2</code>
-          ?
-          <br><br>
-          <i>A:</i> 
-          You're missing the OpenCV Python library.
-          On a YUM system, install it with:
-          <div class="code_block">
-            sudo yum install opencv-python<br>
-          </div>
-        </p>
-      </li>
-
-      <li>
-        <p>
-          <i>Q:</i> 
-          My make command fails with
-          <code>make: npm: Command not found</code>,
-          what do I do? Help!!
-          <br><br>
-          <i>A:</i> 
-          Your system is missing the Node.js package manager.
-          With YUM, you can install it with:
-          <div class="code_block">
-            sudo yum install npm<br>
-          </div>
-        </p>
-      </li>
-
-      <li>
-        <p>
-          <i>Q:</i> 
-          When I run make, I get
-          <code>EnvironmentError: mysql_config not found</code>.
-          What do I do?
-          <br><br>
-          <i>A:</i> 
-          You're missing <code>mysql_config</code>.
-          On Ubuntu, install the missing package:
-          <div class="code_block">
-            sudo apt-get install libmysqlclient-dev<br>
-          </div>
-          <p>
-          Or, on Fedora:
-          </p>
-          <div class="code_block">
-            sudo yum install mariadb-devel<br>
-          </div>
-        </p>
-      </li>
-
-      <li>
-        <p>
-          <i>Q:</i> 
-          How do I install C++ bindings for MySQL?
-          <br><br>
-          <i>A:</i> 
-          With Aptitude get the <code>libmysql++-dev</code> package.
-          Or, with YUM get <code>mysql++-devel</code>.
-        </p>
-      </li>
-
-      <li>
-        <p>
-          <i>Q:</i> 
-          When I run SCons, I get an error like this:
-          <code>configure: error: g++ does not support plugins; reconfigure GCC with --enable-plugin</code>.
-          What does this mean?
-          <br><br>
-          <i>A:</i> 
-          Your GCC is missing header files for plugin development.
-          On Ubuntu, install the needed package:
-          <div class="code_block">
-            sudo apt-get install gcc-4.8-plugin-dev<br>
-          </div>
-          <p>
-          On Fedora, install it with:
-          </p>
-          <div class="code_block">
-            sudo yum install gcc-plugin-devel<br>
-          </div>
-        </p>
-      </li>
-
-      <li>
-        <p>
-          <i>Q:</i> 
-          When I run SCons, it bails with
-          <code>sh: convert: command not found</code>,
-          what the heck is this?
-          <br><br>
-          <i>A:</i> 
-          The build requires ImageMagick.
-          On Fedora, you can install it with:
-          </p>
-          <div class="code_block">
-            sudo yum install ImageMagick<br>
-          </div>
-        </p>
-      </li>
-
-      <li>
-        <p>
-          <i>Q:</i> 
-          When I attempt to record snapshots, I get
-          <code>Cannot open device -1</code> error.
-          Why is this happening?
-          <br><br>
-          <i>A:</i> Your webcam is not detected. 
-          Check by making sure your system has a webcam:
-          <div class="code_block">
-            ls /dev/video*<br>
-          </div>
-          <br>
-          On some systems (like Fedora) your user needs to
-          belong to <code>video</code> group. You may need to run:
-          <br><br>
-          <div class="code_block">
-            sudo usermod -a -G video <i>username</i><br>
-          </div>
-        </p>
-      </li>
-
-      <li>
-        <p>
-          <i>Q:</i> 
-          When I attempt to record snapshots, I get the error
-          <code>Can't connect to local MySQL server through socket '/var/run/mysqld/mysqld.sock'</code>.
-          What gives?
-          <br><br>
-          <i>A:</i> 
-          Your MySQL server is probably not running,
-          or perhaps not even installed.
-          On Ubuntu, install and start the server with:
-          <div class="code_block">
-            sudo apt-get install mysql-server<br>
-            sudo service mysql start<br>
-          </div>
-        </p>
-      </li>
-
-      <li>
-        <p>
-          <i>Q:</i> 
-          When I attempt to record snapshots, I get the error
-          <code>Access denied for user 'bugs'@'localhost' (using password: YES)</code>.
-          Please help!
-          <br><br>
-          <i>A:</i> 
-          You most likely forgot to create the database.
-          Try running:
-          <div class="code_block">
-            python src/create.py<br>
-          </div>
-        </p>
-        <p>
-          (See the <a href="#configure">Configure</a> section for more details.)
-        </p>
-      </li>
-
-      <li>
-        <p>
-          <i>Q:</i> 
-          When I try to compile client-side pages, I get
-          <code>/usr/bin/env: node: No such file or directory</code>.
-          What gives?
-          <br><br>
-          <i>A:</i> 
-          You probably installed node from a package manager,
-          and it is misnamed to <code>nodejs</code> instead of <code>node</code>.
-          Fix this by symlinking the executable:
-          <div class="code_block">
-            sudo ln -s /usr/bin/nodejs /usr/bin/node<br>
-          </div>
-        </p>
-      </li>
-
-      <li>
-        <p>
-          <i>Q:</i> 
-          My Apache HTTPD has errors like
-          <code>(13)Permission denied: AH00957: HTTP: attempt to connect to 127.0.0.1:8000 (127.0.0.1) failed</code>.
-          How do I fix this?
-          <br><br>
-          <i>A:</i> 
-          It might be that SELinux is preventing HTTPD from connecting to port 8000.
-          Try changing the setting with:
-          <div class="code_block">
-            sudo setsebool httpd_can_network_connect 1<br>
-          </div>
-          <br>
-          If that works, make the change permanent (to remain across reboots):
-          <br><br>
-          <div class="code_block">
-            sudo setsebool -P httpd_can_network_connect 1<br>
-          </div>
-        </p>
-      </li>
-
-    </ol>
-
-    <h2 id="proxy">B. Apache reverse proxy</h2>
-
-    <div class="section_body">
-      <p>
-        If your Wabbit server is on a private network,
-        you can setup your Internet-facing server as a reverse proxy to it.
-
-        Let's say you're running Wabbit on internal server
-        accessible at <code>http://192.168.1.55/wabbit</code>.
-
-        And you'd like it to be shown at location 
-        <code>/bunny</code> of your Internet web server.
-
-        You can then configure your proxy server's 
-        <code>VirtualHost</code> with the following directives:
-      </p>
-      <div class="code_block">
-        &lt;Location /bunny&gt;<br>
-        &nbsp;&nbsp;&nbsp;&nbsp;ProxyPass http://192.168.1.55/wabbit<br>
-        &nbsp;&nbsp;&nbsp;&nbsp;ProxyPassReverse http://192.168.1.55/wabbit<br>
-        &nbsp;&nbsp;&nbsp;&nbsp;ProxyHTMLURLMap http://192.168.1.55/wabbit<br>
-        &nbsp;&nbsp;&nbsp;&nbsp;AddOutputFilterByType SUBSTITUTE text/html<br>
-        &nbsp;&nbsp;&nbsp;&nbsp;Substitute s|wabbit/|bunny/|i<br>
-        &lt;/Location&gt;<br>
-        SetOutputFilter proxy-html
-      </div>
-    </div>
-
-    <h2 id="about">C. The stack</h2>
-
-    <div class="section_body">
-
-      <i>
-        <ul>
-          <li><a href="http://www.scons.org">SCons</a> for C++ build</li>
-          <li><a href="http://docs.opencv.org">OpenCV</a> for camera access</li>
-          <li><a href="http://www.codesynthesis.com/products/odb">ODB</a> for C++ ORM</li>
-          <li><a href="http://www.sqlalchemy.org">SQLAlchemy</a> for Python ORM</li>
-          <li>MySQL for RDBMS</li>
-          <li><a href="http://flask.pocoo.org">Flask</a> for web app</li>
-          <li><a href="http://jade-lang.com">Jade</a> and
-            <a href="http://coffeescript.org">CoffeeScript</a> for the client</li>
-          <li><a href="http://jquery.org">jQuery</a> for AJAX</li>
-        </ul>
-      </i>
-      
-    </div>
+    <div id="content"></div>
 
     <div class="footer">
       &copy; Copyright 2014, <a href="http://vmlaker.github.io">Velimir Mlaker</a>.
@@ -492,7 +64,6 @@
 
   </div> <!-- main_block -->
   </div> <!-- margin -->
-  </div> <!-- background -->
 
 </body>
 
