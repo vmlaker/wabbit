@@ -22,12 +22,7 @@ body{
     margin: 0;
     background-image: url(tile1.jpg), url(tile2.jpg);
     background-repeat: repeat-x, repeat;
-    font-size: 100%;
     font-family: Arial;
-}
-
-#background {
-    margin: 0;
 }
 
 .margin {
@@ -39,12 +34,14 @@ body{
     max-width: 900px;
 
     margin: auto;
-    padding: 10px 30px;
+    padding: 0px 30px;
     
+    border-radius: 0px 0px 15px 15px;
     border-style: solid;
     border-width: 0px 1px 1px 1px;
-    border-color: #28BABD;
+    border-color: #00747B;
     background-color: white;
+    box-shadow: 0px 0px 20px black;
 }
 
 #logo{
@@ -63,13 +60,12 @@ body{
 }
 
 .preamble_top{
-    font-size: 110%;
-    padding: 0px 20px;
+    font-size: 115%;
+    padding: 10px 20px 0px 20px;
 }
 
 .preamble_bot{
-    font-size: 110%;
-    //padding: 0px 95px;
+    font-size: 115%;
     text-align: center;
 }
  
@@ -77,12 +73,12 @@ body{
 //    font-size: 110%;
 }
 
-.section_body{
-    padding: 0px 20px;
-}
-
 .spacing{
     padding: 30px 0px;
+}
+
+.centered{
+    text-align: center;
 }
 
 .demo_link a{
@@ -123,8 +119,8 @@ code{
 }
 
 #navcontainer{
-    padding: 30px 0px;
-    width: 494px;
+    padding: 25px 0px 40px 0px;
+    width: 524px;
     margin: auto;
     font-size: 150%;
     font-weight: bold;
@@ -138,7 +134,7 @@ code{
 
 .navbuffer{
     float: left;
-    padding: 10px;
+    padding: 20px;
 }
 
 .navitem{
@@ -148,13 +144,14 @@ code{
     border-color: #00747B;
     border-width: 1px;
     border-style: solid;
-    border-radius: 4px;
-    box-shadow: 4px 4px 4px #C5C5DE;
+    border-radius: 3px;
+    box-shadow: 3px 3px 4px #C5C5DE;
 }
 
 .navitem:hover {
     background-color: #D0F3F8;
     color: #004A50;
+    box-shadow: 3px 3px 4px #9393B3;
 }
 
 .navitemselected{
@@ -166,7 +163,7 @@ code{
     border-color: #004A50;
     border-width: 1px;
     border-style: solid;
-    border-radius: 4px;
-    box-shadow: 4px 4px 4px #C5C5DE;
+    border-radius: 3px;
+    box-shadow: 3px 3px 4px #7C7C99; //#9393B3; //ACACD0; //grey; //black; //#C5C5DE;
 }
 
