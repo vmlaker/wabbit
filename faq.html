@@ -1,0 +1,222 @@
+<div class="centered">&middot; &middot; &middot;</div>
+
+<p>
+  <b>Q:</b> 
+  When I run make, it fails with
+  <code>/bin/sh: virtualenv: command not found</code>.
+  How do I fix this?
+  <br><br>
+  <b>A:</b> 
+  You're missing virtualenv, a tool for creating
+  Python Virtual Environments.
+  On YUM systems, you can install it with:
+  <div class="code_block">
+    sudo yum install python-virtualenv<br>
+  </div>
+</p>
+
+<div class="centered">&middot; &middot; &middot;</div>
+
+<p>
+  <b>Q:</b> 
+  Why am I getting
+  <code>ImportError: No module named cv2</code>
+  ?
+  <br><br>
+  <b>A:</b> 
+  You're missing the OpenCV Python library.
+  On a YUM system, install it with:
+  <div class="code_block">
+    sudo yum install opencv-python<br>
+  </div>
+</p>
+
+<div class="centered">&middot; &middot; &middot;</div>
+
+<p>
+  <b>Q:</b> 
+  My make command fails with
+  <code>make: npm: Command not found</code>,
+  what do I do? Help!!
+  <br><br>
+  <b>A:</b> 
+  Your system is missing the Node.js package manager.
+  With YUM, you can install it with:
+  <div class="code_block">
+    sudo yum install npm<br>
+  </div>
+</p>
+
+<div class="centered">&middot; &middot; &middot;</div>
+
+<p>
+  <b>Q:</b> 
+  When I run make, I get
+  <code>EnvironmentError: mysql_config not found</code>.
+  What do I do?
+  <br><br>
+  <b>A:</b> 
+  You're missing <code>mysql_config</code>.
+  On Ubuntu, install the missing package:
+  <div class="code_block">
+    sudo apt-get install libmysqlclient-dev<br>
+  </div>
+  <br>
+  Or, on Fedora:
+  <br><br>
+  <div class="code_block">
+    sudo yum install mariadb-devel<br>
+  </div>
+</p>
+
+<div class="centered">&middot; &middot; &middot;</div>
+
+<p>
+  <b>Q:</b> 
+  How do I install C++ bindings for MySQL?
+  <br><br>
+  <b>A:</b> 
+  With Aptitude get the <code>libmysql++-dev</code> package.
+  Or, with YUM get <code>mysql++-devel</code>.
+</p>
+
+<div class="centered">&middot; &middot; &middot;</div>
+
+<p>
+  <b>Q:</b> 
+  When I run SCons, I get an error like this:
+  <code>configure: error: g++ does not support plugins; reconfigure GCC with --enable-plugin</code>.
+  What does this mean?
+  <br><br>
+  <b>A:</b> 
+  Your GCC is missing header files for plugin development.
+  On Ubuntu, install the needed package:
+  <div class="code_block">
+    sudo apt-get install gcc-4.8-plugin-dev<br>
+  </div>
+</p>
+<p>
+  On Fedora, install it with:
+</p>
+<div class="code_block">
+  sudo yum install gcc-plugin-devel<br>
+</div>
+</p>
+
+<div class="centered">&middot; &middot; &middot;</div>
+
+<p>
+  <b>Q:</b> 
+  When I run SCons, it bails with
+  <code>sh: convert: command not found</code>,
+  what the heck is this?
+  <br><br>
+  <b>A:</b> 
+  The build requires ImageMagick.
+  On Fedora, you can install it with:
+  <div class="code_block">
+    sudo yum install ImageMagick<br>
+  </div>
+</p>
+
+<div class="centered">&middot; &middot; &middot;</div>
+
+<p>
+  <b>Q:</b> 
+  When I attempt to record snapshots, I get
+  <code>Cannot open device -1</code> error.
+  Why is this happening?
+  <br><br>
+  <b>A:</b> Your webcam is not detected. 
+  Check by making sure your system has a webcam:
+  <div class="code_block">
+    ls /dev/video*<br>
+  </div>
+  <br>
+  On some systems (like Fedora) your user needs to
+  belong to <code>video</code> group. You may need to run:
+  <br><br>
+  <div class="code_block">
+    sudo usermod -a -G video <i>username</i><br>
+  </div>
+</p>
+
+<div class="centered">&middot; &middot; &middot;</div>
+
+<p>
+  <b>Q:</b> 
+  When I attempt to record snapshots, I get the error
+  <code>Can't connect to local MySQL server through socket '/var/run/mysqld/mysqld.sock'</code>.
+  What gives?
+  <br><br>
+  <b>A:</b> 
+  Your MySQL server is probably not running,
+  or perhaps not even installed.
+  On Ubuntu, install and start the server with:
+  <div class="code_block">
+    sudo apt-get install mysql-server<br>
+    sudo service mysql start<br>
+  </div>
+</p>
+
+<div class="centered">&middot; &middot; &middot;</div>
+
+<p>
+  <b>Q:</b> 
+  When I attempt to record snapshots, I get the error
+  <code>Access denied for user 'bugs'@'localhost' (using password: YES)</code>.
+  Please help!
+  <br><br>
+  <b>A:</b> 
+  You most likely forgot to create the database.
+  Try running:
+  <div class="code_block">
+    python src/create.py<br>
+  </div>
+</p>
+<p>
+  (See the <i>Configure</i> section of
+  <a href="#install">Install Guide</a>
+  for more details.)
+</p>
+
+<div class="centered">&middot; &middot; &middot;</div>
+
+<p>
+  <b>Q:</b> 
+  When I try to compile client-side pages, I get
+  <code>/usr/bin/env: node: No such file or directory</code>.
+  What gives?
+  <br><br>
+  <b>A:</b> 
+  You probably installed node from a package manager,
+  and it is misnamed to <code>nodejs</code> instead of <code>node</code>.
+  Fix this by symlinking the executable:
+  <div class="code_block">
+    sudo ln -s /usr/bin/nodejs /usr/bin/node<br>
+  </div>
+</p>
+
+<div class="centered">&middot; &middot; &middot;</div>
+
+<p>
+  <b>Q:</b> 
+  My Apache HTTPD has errors like
+  <code>(13)Permission denied: AH00957: HTTP: attempt to connect to 127.0.0.1:8000 (127.0.0.1) failed</code>.
+  How do I fix this?
+  <br><br>
+  <b>A:</b> 
+  It might be that SELinux is preventing HTTPD from connecting to port 8000.
+  Try changing the setting with:
+  <div class="code_block">
+    sudo setsebool httpd_can_network_connect 1<br>
+  </div>
+  <br>
+  If that works, make the change permanent (to remain across reboots):
+  <br><br>
+  <div class="code_block">
+    sudo setsebool -P httpd_can_network_connect 1<br>
+  </div>
+</p>
+
+<div class="centered">&middot; &middot; &middot;</div>

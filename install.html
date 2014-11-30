@@ -1,0 +1,182 @@
+<p>
+  Use the following install guide to get up and running your own Wabbit server.
+  Problems during installation? Consult <a href="#faq">the FAQ</a>.
+</p>
+
+<!--
+    <div class="section_body table_of_contents">
+      <a href="#download">1. Download</a><br>
+      <a href="#build">2. Build</a><br>
+      <a href="#configure">3. Configure</a><br>
+      <a href="#deploy">4. Deploy</a><br>
+      <a href="#automate">5. Automate</a><br>
+      <a href="#proxy">A. Apache reverse proxy</a><br>
+    </div>
+    -->
+
+<h3 id="download">1. Download</h3>
+
+<p>
+  Get code from two repos, 
+  <a href="http://vmlaker.github.io/bites">Bites</a>
+  and 
+  <a href="http://github.com/vmlaker/wabbit">Wabbit</a>
+  :
+</p>
+<div class="code_block">
+  git clone https://github.com/vmlaker/bites<br>
+  git clone https://github.com/vmlaker/wabbit<br>
+  cd wabbit<br>
+</div>
+
+<h3 id="build">2. Build</h3>
+
+<p>
+  Run make to build a Python virtualenv instance
+  and node environment, and to compile the client:
+</p>
+<div class="code_block">
+  make -j 2<br>
+</div>
+<p>
+  Then run a script to install C++ ODB libraries
+  (use <code>--help</code> for details):
+</p>
+<div class="code_block">
+  ./install-odb.sh -c -j 2<br>
+</div>
+<p>
+  Finally run the SCons compiler chain:
+</p>
+<div class="code_block">
+  scons bites=../bites -j 2<br>
+</div>
+
+<h3 id="configure">3. Configure</h3>
+
+<p>
+  Customize your installation by editing file 
+  <code>wabbit.conf</code>  &mdash; set all path settings
+  to absolute paths on your system.
+</p>
+<p>
+  Then create the database user and privileges
+  (you will need to know your MySQL root password):
+</p>
+<div class="code_block">
+  venv/bin/python src/create.py<br>
+</div>
+<p>
+  If later you want to undo the above command,
+  run <code>venv/bin/python src/drop.py</code>
+  to clean up what was created.
+</p>
+<p>
+  Now you can test the Recorder and Pruner:
+</p>
+<div class="code_block">
+  bin/record -v 10<br>
+  venv/bin/python src/dump.py<br>
+  venv/bin/python src/prune.py -60<br>
+  venv/bin/python src/dump.py<br>
+</div>
+<p>
+  Next run the server:
+</p>
+<div class="code_block">
+  venv/bin/gunicorn src.serve:app -b 127.0.0.1:8000<br>
+</div>
+<p>
+  Go to 
+  <a href="http://127.0.0.1:8000/info">http://127.0.0.1:8000/info</a> 
+  to check the API server.
+</p>
+
+<h3 id="deploy">4. Deploy</h3>
+
+<p>
+  Deploy to Apache HTTPD by
+  copying client stack to
+  <code>DocumentRoot</code>
+  (in this case <code>/var/www/html/wabbit</code>):
+</p>
+<div class="code_block">
+  sudo rm -rf /var/www/html/wabbit<br>
+  sudo venv/bin/python src/deploy.py /var/www/html/wabbit<br>
+</div>
+<p>
+  That second command dumps a snippet for
+  your VirtualHost configuration &mdash; cut 'n paste
+  the snippet into your Apache conf file.
+</p>
+<p>
+  Then restart your server:
+</p>
+<div class="code_block">
+  sudo systemctl restart httpd.service<br>
+</div>
+<p>
+  Your page is visible at 
+  <a href="http://localhost/wabbit">http://localhost/wabbit</a>.
+</p>
+<p>
+  If running SELinux, 
+  security policies may forbid 
+  HTTPD from reading your pictures directory.
+  In that case change your SELinux security context of your pics dir:
+</p>
+<div class="code_block">
+  sudo chcon -R -t httpd_sys_content_t /path/to/my/pics<br>
+</div>
+
+<h3 id="automate">5. Automate</h3>
+
+<p>
+  You can automate the starting of your Recorder and Gunicorn 
+  server using upstart or Systemd. For Systemd
+  (like on Fedora or Red Hat) it's this easy:
+</p>
+<div class="code_block">
+  venv/bin/python systemd/create.py<br>
+  sudo cp systemd/*.service /lib/systemd/system/<br>
+  sudo systemctl enable wabbit-record wabbit-api<br>
+  sudo systemctl start wabbit-record wabbit-api<br>
+</div>
+<p>
+  The Pruner can be scheduled as a cron job. 
+  Something like this should do the trick:
+</p>
+<div class="code_block">
+  crontab -l > mycron<br>
+  echo "# m h dom mon dow  command" >> mycron<br>
+  echo "*/1 * * * * sleep 30; cd $HOME/work/git/wabbit; venv/bin/python src/prune.py 300 >>prune.log 2>&1" >> mycron<br>
+  crontab mycron<br>
+  rm mycron<br>
+</div>
+
+<h3 id="proxy">A. Apache reverse proxy</h3>
+
+<p>
+  If your Wabbit server is on a private network,
+  you can setup your Internet-facing server as a reverse proxy to it.
+</p>
+<p>
+  Let's say you're running Wabbit on an internal server
+  accessible at <code>http://192.168.1.55/wabbit</code>
+  and you'd like it to be shown at location 
+  <code>/bunny</code> of your public homepage web server.
+
+  One way to do this would be to make your public server
+  act as a proxy, by configuring it's 
+  <code>VirtualHost</code> with the following directives:
+</p>
+<div class="code_block">
+  &lt;Location /bunny&gt;<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;ProxyPass http://192.168.1.55/wabbit<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;ProxyPassReverse http://192.168.1.55/wabbit<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;ProxyHTMLURLMap http://192.168.1.55/wabbit<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;AddOutputFilterByType SUBSTITUTE text/html<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;Substitute s|wabbit/|bunny/|i<br>
+  &lt;/Location&gt;<br>
+  SetOutputFilter proxy-html
+</div>
