@@ -4,8 +4,8 @@ The SCons file for Wabbit C++ documentation
 
 # Custom builder for resizing the logo.
 sizes = (
-    (250, 'logo_small.png'),
-    (100, 'logo_tiny.png'),
+    (150, 'logo_small.png'),
+    (75, 'logo_tiny.png'),
 )
 for size, target in sizes:
     conv = Builder(action='convert $SOURCE -resize {} $TARGET'.format(size))
