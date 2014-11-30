@@ -1,14 +1,14 @@
 <div class="section_body">
 
 <p>
-  Wabbit is a webcam snapshot recorder and archive server.
+  Wabbit is a webcam record and archive server.
   It comes with a web API and a live surveillance page.
 </p>
 
 <p>
   The recorder is written in C++
-  as a shared-memory, multi-threaded image processing pipeline.
-  The pipeline implements snapshot capture, disk storage and database indexing stages.
+  as a shared memory, multi-threaded image processing pipeline.
+  The pipeline implements snapshot capture, disk writing and database indexing stages.
   It is designed to be easily extended with additional image processing steps if needed.
 </p>
 
@@ -16,7 +16,7 @@
   Web server and database tools are written in Python.
   The web API is implemented in the 
   <a href="http://flask.pocoo.org">Flask microframework</a>,
-  and allows random access lookup of stored images.
+  and allows random access to stored images.
   A pruner process maintains the image archive
   to a configured maximum length of time.
 </p>
