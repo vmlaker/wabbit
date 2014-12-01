@@ -1,11 +1,14 @@
 *.o
 *.pyc
 .sconsign.dblite
+art/logo_small.png
+art/logo_tiny.png
 bin/
 cpp/odb/mapping*
 libodb/
 node_modules/
 static/*.js
+static/*.png
 templates/*.html
 venv/
 systemd/*.service
