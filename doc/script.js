@@ -4,50 +4,59 @@
 /*                                                 */
 /***************************************************/
 
-/**
-   Upon document load, set callbacks
-   and process the hash.
-*/
+/*  Setup mappings of hashtags --> buttons and
+ *  buttons --> contents.
+ */
+var hashes = ['#install', '#faq', '#about'];
+var buttons = ['#btnInstall', '#btnFAQ', '#btnAbout'];
+var contents = ['#contentInstall', '#contentFAQ', '#contentAbout'];
+var hash2button = {}
+for (ii=0; ii<hashes.length; ii++){
+    hash2button[hashes[ii]] = buttons[ii];
+}
+var button2content = {}
+for (ii=0; ii<buttons.length; ii++){
+    button2content[buttons[ii]] = contents[ii];
+}
+
+/*
+ *  Upon document load...
+ */
 $(document).ready(function(){
 
-    $('#btnInstall').click(function(){
-        select('#btnInstall');
-        $('#content').load('install.html');
-    });
+    /* Set the click() callbacks. */
+    for(ii=0; ii<buttons.length; ii++){
+        button = buttons[ii];
+        content = contents[ii];
+        /*  Set the callbacks, and deal with JavaScript closures
+         *  by returning a functions, and immediately calling the callback.
+         */
+        $(button).click(function(button, content){
+            return function(){ 
+                select(button);
+                $('#content').load('index.html ' + content);
+            }
+        }(button, content));  // Immediately call.
+    }
 
-    $('#btnFAQ').click(function(){
-        select('#btnFAQ');
-        $('#content').load('faq.html');
-    });
-
-    $('#btnAbout').click(function(){
-        select('#btnAbout');
-        $('#content').load('about.html');
-    });
+    /* Set the hashChange event. */
     $(window).on('hashchange', onHashChange);
+
+    /*  The default landing hashtag is #install. 
+     *  Set it to the default value in case it's not present,
+     *  or it is an illegal value.
+     */
+    if (!window.location.hash || hashes.indexOf(window.location.hash) == -1){
+        window.location.hash = '#install';
+    }
+
+    /* Go ahead and initally call the hashChange callback. */
     onHashChange();
 });
 
-/**
-   Perform button click based on window URL hash.
-*/
-function onHashChange(){
-    var hash2click = {}
-    hash2click['#install'] = '#btnInstall';
-    hash2click['#faq'] = '#btnFAQ';
-    hash2click['#about'] = '#btnAbout';
-    var hash = $(location).attr('hash');
-    var click = hash2click[hash];
-    if (!click) {
-        click = '#btnInstall';
-    }
-    $(click).click();
-}
-
-/**
-   Set the class for button, based on hash.
-*/
-var buttons = ['#btnInstall', '#btnFAQ', '#btnAbout'];
+/*
+ *  Set the class for button, based on hashtag.
+ */
 function select(button){
     for (ii=0; ii<buttons.length; ii++) {
         if (buttons[ii] == button) {
@@ -56,4 +65,16 @@ function select(button){
             $(buttons[ii]).attr('class', 'navitem');
         }
     }
+}
+
+/*
+ *  Retrieve the button based on current hashtag,
+ *  and click it.
+ */
+function onHashChange(){
+    var button = hash2button[window.location.hash];
+    if (!button) {
+         return;
+    }
+    $(button).click();
 }

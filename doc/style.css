@@ -34,7 +34,7 @@ body{
     max-width: 900px;
 
     margin: auto;
-    padding: 0px 30px;
+    padding: 0px 50px;
     
     border-radius: 0px 0px 15px 15px;
     border-style: solid;
@@ -84,6 +84,10 @@ body{
 .demo_link a{
     font-style: italic;
     text-decoration: underline;
+}
+
+.hiddenContent{
+    display: none;
 }
 
 #content{
@@ -164,6 +168,6 @@ code{
     border-width: 1px;
     border-style: solid;
     border-radius: 3px;
-    box-shadow: 3px 3px 4px #7C7C99; //#9393B3; //ACACD0; //grey; //black; //#C5C5DE;
+    box-shadow: 3px 3px 4px #7C7C99;
 }
 
