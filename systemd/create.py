@@ -2,19 +2,20 @@
 Create systemd files from .in templates.
 """
 
-import os
+from os import chdir
+from os.path import dirname, join, normpath, realpath
 import glob
 import getpass
 
 # Do the work in the directory of this file.
-this_dir = os.path.dirname(os.path.realpath(__file__))
-os.chdir(this_dir)
+this_dir = dirname(realpath(__file__))
+chdir(this_dir)
 
 # Create the configuration dict.
 config = {
-    'WORKING_DIR' : os.path.join(this_dir, '..'),
-    'RECORD_CMD'  : os.path.join(this_dir, '..', 'bin', 'record'),
-    'GUNICORN_BIN': os.path.join(this_dir, '..', 'venv', 'bin', 'gunicorn'),
+    'WORKING_DIR' : normpath(join(this_dir, '..')),
+    'RECORD_CMD'  : normpath(join(this_dir, '..', 'bin', 'record')),
+    'GUNICORN_BIN': normpath(join(this_dir, '..', 'venv', 'bin', 'gunicorn')),
     'APP_MODULE'  : 'src.serve:app',
     'ADDRESS'     : '127.0.0.1:8000',
     'USER'        : getpass.getuser(),
