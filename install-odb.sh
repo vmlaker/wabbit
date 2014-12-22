@@ -18,6 +18,8 @@ function usage {
     echo
     echo "    -c | --clean      Run clean, deleting everything first"
     echo "    -j | --jobs       Number of make processes (default=1)"
+    echo "    -f | --fix        Apply fix (patch and compile flag) for GCC 4.9.0+"
+    echo "                        (see http://www.codesynthesis.com/pipermail/odb-users/2014-May/001849.html"
     echo "    -h | --help       Print this help"
     echo
     echo "    First time invocation should use a clean run, e.g."
@@ -40,6 +42,8 @@ while [ "$1" != "" ]; do
                             ;;
         -j | --jobs )       shift
                             jobs=$1
+                            ;;
+        -f | --fix )        fix=1
                             ;;
         -h | --help )       usage
                             exit
@@ -79,7 +83,7 @@ if [[ $clean == 1 ]] ; then
     rm -rf libodb-$odb_ver_full
     rm -rf libodb-mysql-$odb_ver_full
     rm -rf libcutl-$libcutl_ver_full
-
+    
     rm -rf odb-$odb_ver_full.tar.gz
     rm -rf libodb-$odb_ver_full.tar.gz
     rm -rf libodb-mysql-$odb_ver_full.tar.gz
@@ -90,11 +94,16 @@ if [[ $clean == 1 ]] ; then
     wget http://www.codesynthesis.com/download/odb/$odb_ver_mm/libodb-mysql-$odb_ver_full.tar.gz
     wget http://www.codesynthesis.com/download/libcutl/$libcutl_ver_mm/libcutl-$libcutl_ver_full.tar.gz
 
+    if [[ $fix == 1 ]] ; then
+        rm -rf odb-2.3.0-gcc-4.9.0.patch
+        wget http://codesynthesis.com/~boris/tmp/odb/odb-2.3.0-gcc-4.9.0.patch
+    fi
+    
     tar xzf odb-$odb_ver_full.tar.gz
     tar xzf libodb-$odb_ver_full.tar.gz
     tar xzf libodb-mysql-$odb_ver_full.tar.gz
     tar xzf libcutl-$libcutl_ver_full.tar.gz
-
+        
 fi
 
 # Build the libcutl library.
@@ -127,9 +136,25 @@ make -j $jobs
 make install
 cd ..
 
+#-------------------------------
 # Build the ODB Compiler.
+#-------------------------------
+
+# First apply the patch to the source code.
+if [[ $fix == 1 ]] ; then
+    patch -p0 < odb-2.3.0-gcc-4.9.0.patch
+fi
+
+# Drop into the directory.
 cd odb-$odb_ver_full
-./configure --prefix=`pwd`/../.. --with-libcutl=`pwd`/../libcutl-$libcutl_ver_full
+
+# Assemble and run the configure conmmand.
+cmd="./configure --prefix=`pwd`/../.. --with-libcutl=`pwd`/../libcutl-$libcutl_ver_full"
+if [[ $fix == 1 ]] ; then
+    cmd="env CXXFLAGS=\"-fno-devirtualize\" $cmd"
+fi
+eval $cmd
+
 if [ $? -gt 0 ]; then 
     exit 
 fi
