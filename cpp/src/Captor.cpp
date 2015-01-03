@@ -88,13 +88,11 @@ void Captor::run ()
         }
 
         // Push image onto output queue.
-        Captor::FrameAndTime fat (frame, prev);
-        m_output_queue.push (fat);
+        m_output_queue.push({frame, prev});
     }
 
     // Signal end-of-processing by pushing NULL onto output queue.
-    Captor::FrameAndTime fat (NULL, prev);
-    m_output_queue.push (fat);
+    m_output_queue.push({NULL, prev});
 }
 
 }  // namespace wabbit.
