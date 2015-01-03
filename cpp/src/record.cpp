@@ -145,4 +145,6 @@ int main (int argc, char** argv)
 
     // Delete the allocated thread objects.
     for (auto thread : threads) delete thread;
+
+    return 0;
 }
