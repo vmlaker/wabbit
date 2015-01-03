@@ -16,18 +16,20 @@
 
 namespace wabbit {
 
-/**
-   Database writer thread.
-*/
+/*
+ *  Database writer thread.
+ */
 class DBWriter : public bites::Thread, 
                  protected bites::MutexedCounter<DBWriter>
 {
 public:
-    /**
-       Initialize the disk saving thread with parameters.
-
-       @param  root_dir  Top directory for saving the pics to.
-    */
+    /*
+     *  Initialize the disk saving thread with parameters.
+     *
+     *  @param  config       Application configuration object.
+     *  @param  input_queue  The shared-memory queue of inputs.
+     *  @param  done_queue   The shared-memory queue of outputs.
+     */
     DBWriter(
         bites::Config& config,
         bites::ConcurrentQueue <Captor::FrameAndTime>& input_queue,
