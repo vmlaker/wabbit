@@ -114,6 +114,7 @@ libs = (
     'opencv_highgui',
     'odb',
     'odb-mysql',
+    'tbb',
     'bites',
 )
 env = Environment(
@@ -125,6 +126,39 @@ env = Environment(
 ) 
 if debug: env.Append(CXXFLAGS=' -g')
 target = 'bin/record'
+prog = env.Program(target, sources + odb_object)
+Default(prog)  # Program is built by default.
+Clean(target, 'bin')  # Delete bin/ directory upon clean.
+
+# Build the record program.
+sources = (
+    'cpp/src/record2.cpp',
+    'cpp/src/Capture.cpp',
+    'cpp/src/DiskWrite.cpp',
+    'cpp/src/DBWrite.cpp',
+    'cpp/src/Display.cpp',
+    'cpp/src/Deallocate.cpp',
+)
+libs = (
+    'boost_filesystem',
+    'boost_thread',
+    'boost_system',
+    'opencv_core',
+    'opencv_highgui',
+    'odb',
+    'odb-mysql',
+    'tbb',
+    'bites',
+)
+env = Environment(
+    CPPPATH=(bites_inc_path, 'cpp/include', 'libodb/include', 'cpp/odb'),
+    LIBPATH=(bites_lib_path, 'libodb/lib'),
+    LIBS=libs,
+    CXXFLAGS='-std=c++11',
+    LINKFLAGS='-Wl,-rpath -Wl,' + odb_lib_path,
+) 
+if debug: env.Append(CXXFLAGS=' -g')
+target = 'bin/record2'
 prog = env.Program(target, sources + odb_object)
 Default(prog)  # Program is built by default.
 Clean(target, 'bin')  # Delete bin/ directory upon clean.
