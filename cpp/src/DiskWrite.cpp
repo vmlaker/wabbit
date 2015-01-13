@@ -7,10 +7,11 @@
 
 namespace wabbit {
 
-wabbit::ImageAndTime* DiskWrite::operator()( wabbit::ImageAndTime* image_and_time )
+const wabbit::ImageAndTime& 
+DiskWrite::operator()( const wabbit::ImageAndTime& image_and_time )
 {
     // Assemble directory path.
-    auto fpath = bites::time2dir( image_and_time->time );
+    auto fpath = bites::time2dir( image_and_time.time );
     fpath = m_root_dir / fpath;
 
     // Create the directory.
@@ -25,12 +26,12 @@ wabbit::ImageAndTime* DiskWrite::operator()( wabbit::ImageAndTime* image_and_tim
     }
 
     // Assemble the image file path.
-    auto fname = bites::time2string( image_and_time->time,
+    auto fname = bites::time2string( image_and_time.time,
                                      "__%Y-%m-%d__%H:%M:%S:%f__.jpg" );
     fpath /= fname;
 
     // Write the image to disk.
-    bool result = cv::imwrite( fpath.string(), image_and_time->image );
+    bool result = cv::imwrite( fpath.string(), image_and_time.image );
     if( !result )
     {
         // TODO: Handle failed image saving.

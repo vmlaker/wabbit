@@ -53,10 +53,8 @@ std::vector <float> Capture::getFramerate ()
     return m_framerate.get();
 }
 
-bool Capture::operator()( wabbit::ImageAndTime*& image_and_time )
+bool Capture::operator()( wabbit::ImageAndTime& image_and_time )
 {
-    image_and_time = new wabbit::ImageAndTime;
-
     if( !m_video_capture.isOpened() ){
         return false;
     }
@@ -77,9 +75,9 @@ bool Capture::operator()( wabbit::ImageAndTime*& image_and_time )
     // For some reason return value of read() is always True, 
     // even after disconnecting the camera.
     m_prev_time = std::chrono::system_clock::now();
-    m_video_capture >> image_and_time->image;  // Read the image.
+    m_video_capture >> image_and_time.image;  // Read the image.
     elapsed = std::chrono::system_clock::now() - m_prev_time;
-    image_and_time->time = m_prev_time;
+    image_and_time.time = m_prev_time;
     elapsed_ms = std::chrono::duration_cast<std::chrono::microseconds>( elapsed );
     if( elapsed_ms.count()/1000000. < m_min_read )
     {

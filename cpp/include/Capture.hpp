@@ -44,7 +44,7 @@ public:
     /**
      * The function operator called by TBB.
      */
-    bool operator()( wabbit::ImageAndTime*& );
+    bool operator()( wabbit::ImageAndTime& );
 
 private:
     // Application configuration.

@@ -27,10 +27,11 @@ DBWrite::DBWrite( const DBWrite& dbwrite )
             m_config["db_name"] )
 {}
 
-wabbit::ImageAndTime* DBWrite::operator()( wabbit::ImageAndTime* image_and_time)
+const wabbit::ImageAndTime& 
+DBWrite::operator()( const wabbit::ImageAndTime& image_and_time )
 {
     // Assemble the time string.
-    auto tstring = bites::time2string( image_and_time->time, "%Y-%m-%d %H:%M:%S.%f" );
+    auto tstring = bites::time2string( image_and_time.time, "%Y-%m-%d %H:%M:%S.%f" );
 
     // Create the image field.
     wabbit::Image img( tstring );

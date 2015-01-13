@@ -27,7 +27,7 @@ public:
     /**
      * The function operator called by TBB.
      */
-    wabbit::ImageAndTime* operator()( wabbit::ImageAndTime* );
+    const wabbit::ImageAndTime& operator()( const wabbit::ImageAndTime& );
     
 private:
     boost::filesystem::path m_root_dir;

@@ -20,7 +20,6 @@
 #include "Display.hpp"
 #include "DiskWrite.hpp"
 #include "DBWrite.hpp"
-#include "Deallocate.hpp"
 
 using namespace tbb::flow;
 
@@ -89,38 +88,36 @@ int main( int argc, char** argv )
     //
     //  Assemble the pipeline:
     //
-    //   capture -----> disk_write -----> db_write -----> dealloc
+    //   capture -----> disk_write -----> db_write
     //   (alloc)
     //
     //  TODO: Implement resizing:
     //
-    //   capture --+--> disk_write ---+---->--------->---------->---+
-    //   (alloc)   |                  |                             |
-    //             |                  +----> join ---> dealloc      +---> join ---> db_write
-    //             |                  |                             |
-    //             +---> resize ------+---->----> disk_write --->---+---> dealloc
+    //                +---------> disk_write ---------+
+    //               /                                 \
+    //   capture ---+                                   +---> join ---> db_write
+    //   (alloc)     \                                 / 
+    //                +---> resize ---> disk_write ---+
+    //
     //
     /////////////////////////////////////////////////////////////////////
 
     graph g;
 
-    typedef source_node< wabbit::ImageAndTime* > snode;
+    typedef source_node< wabbit::ImageAndTime > snode;
     snode capture( g, wabbit::Capture( config, DURATION, verbose ? &std::cout : NULL ));
 
-    typedef function_node< wabbit::ImageAndTime*, wabbit::ImageAndTime* > fnode;
+    typedef function_node< wabbit::ImageAndTime, wabbit::ImageAndTime > fnode;
     int concurrency = unlimited;
     //fnode display( g, concurrency, wabbit::Display() );
     fnode diskwrite( g, concurrency, wabbit::DiskWrite( config["pics_dir"] ));
     fnode dbwrite( g, concurrency, wabbit::DBWrite( config ));
-    fnode dealloc( g, concurrency, wabbit::Deallocate( ));
 
     //make_edge( capture, display );
     //make_edge( display, diskwrite );
     make_edge( capture, diskwrite );
     make_edge( diskwrite, dbwrite );
-    make_edge( dbwrite, dealloc );
     g.wait_for_all();
 
     return 0;
 }
-

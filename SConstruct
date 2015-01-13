@@ -137,7 +137,6 @@ sources = (
     'cpp/src/DiskWrite.cpp',
     'cpp/src/DBWrite.cpp',
     'cpp/src/Display.cpp',
-    'cpp/src/Deallocate.cpp',
 )
 libs = (
     'boost_filesystem',
