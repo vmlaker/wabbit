@@ -1,17 +1,18 @@
+/**
+ *  DBWrite.cpp
+ */
+
 #include <sstream>
 
-// Include 3rd party headers.
 #include <odb/transaction.hxx>
 #include <odb/mysql/database.hxx>
 #include <bites.hpp>
 
-// Include application headers.
 #include "DBWrite.hpp"
 #include "mapping.hpp"
 #include "mapping-odb.hxx"
 
 namespace wabbit {
-
 
 DBWrite::DBWrite( bites::Config& config )
     : m_config( config ),
@@ -46,7 +47,7 @@ DBWrite::operator()( const wabbit::ImageAndTime& image_and_time )
     typedef odb::query<wabbit::Datum> query;
     auto result = m_db.query<wabbit::Datum>( query::name == "size" );
     auto datum = result.begin();
-    int size = atoi( datum->value().c_str() );
+    int size = stoi( datum->value() );
     std::stringstream ss;
     ss << size + 1;
     datum->value( ss.str() );

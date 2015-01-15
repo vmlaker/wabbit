@@ -1,12 +1,12 @@
-// Include standard headers.
+/**
+ *  Capture.cpp
+ */
+
 #include <iomanip>
 
-// Include 3rd party headers.
 #include <bites.hpp>
 
-// Include application headers.
 #include "Capture.hpp"
-#include <unistd.h>
 
 namespace wabbit {
 
@@ -16,21 +16,21 @@ Capture::Capture( bites::Config& config,
     : m_config( config ),
       m_duration( duration ),
       m_output_stream( output_stream ),
-      m_video_capture( atoi( m_config["device"].c_str())),
+      m_video_capture( stod( m_config["device"] )),
       m_rate_ticker({1, 5, 10})
 {
-    m_video_capture.set( 3, atoi(m_config["width"].c_str()) );
-    m_video_capture.set( 4, atoi(m_config["height"].c_str() ));
+    m_video_capture.set( 3, stod( m_config["width"] ));
+    m_video_capture.set( 4, stod( m_config["height"] ));
 
     // Compute interval needed to observe maximum FPS limit.
-    float max_fps = atof( m_config["max_fps"].c_str());
+    float max_fps = stof( m_config["max_fps"] );
     max_fps = max_fps >= 0 ? max_fps : std::numeric_limits<float>::max();
     float interval_seconds = 1 / max_fps;
     int interval_ms = interval_seconds * 1000000;
     m_min_interval = std::chrono::microseconds( interval_ms );
 
     // Set the minimum read time for detecting camera disconnect.
-    m_min_read = atof( m_config["min_read"].c_str() );
+    m_min_read = stof( m_config["min_read"] );
     
     m_prev_time = std::chrono::system_clock::now();
     m_end_time = m_prev_time + std::chrono::seconds( m_duration );
