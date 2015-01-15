@@ -1,10 +1,10 @@
 #ifndef WABBIT_DISKWRITE_HPP_INCLUDED
 #define WABBIT_DISKWRITE_HPP_INCLUDED
 
-// Include 3rd party headers.
+#include <string>
+
 #include <boost/filesystem.hpp>
 
-// Include application headers.
 #include "ImageAndTime.hpp"
 
 namespace wabbit {
@@ -21,8 +21,10 @@ public:
      *
      *  @param  root_dir  Top directory for saving the pics to.
      */
-    DiskWrite( const boost::filesystem::path& root_dir ):
-        m_root_dir( root_dir ) {}
+    DiskWrite( const boost::filesystem::path& root_dir, const std::string& suffix="" )
+        : m_root_dir( root_dir ),
+          m_suffix( suffix )
+        {}
 
     /**
      * The function operator called by TBB.
@@ -31,6 +33,7 @@ public:
     
 private:
     boost::filesystem::path m_root_dir;
+    std::string m_suffix;
 };
 
 }  // namespace wabbit.

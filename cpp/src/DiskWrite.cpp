@@ -1,8 +1,10 @@
-// Include 3rd party headers.
+/**
+ *  DiskWrite.cpp
+ */
+
 #include <bites.hpp>
 #include <boost/filesystem.hpp>
 
-// Include application headers.
 #include "DiskWrite.hpp"
 
 namespace wabbit {
@@ -26,8 +28,12 @@ DiskWrite::operator()( const wabbit::ImageAndTime& image_and_time )
     }
 
     // Assemble the image file path.
-    auto fname = bites::time2string( image_and_time.time,
-                                     "__%Y-%m-%d__%H:%M:%S:%f__.jpg" );
+    auto fname = bites::time2string( 
+        image_and_time.time, "__%Y-%m-%d__%H:%M:%S:%f__" );
+    if( m_suffix.size() ){
+        fname += m_suffix;
+    }
+    fname += ".jpg";
     fpath /= fname;
 
     // Write the image to disk.
