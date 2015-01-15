@@ -4,22 +4,20 @@
  *  Parameters:  <duration_sec> [<config_file>]
  */
 
-// Include standard headers.
 #include <algorithm>
 #include <sstream>
 #include <string>
 #include <vector>
 
-// Include 3rd party headers
 #include <opencv2/opencv.hpp>
 #include <bites.hpp>
 #include "tbb/flow_graph.h"
 
-// Include application headers.
 #include "Capture.hpp"
 #include "Display.hpp"
 #include "DiskWrite.hpp"
 #include "DBWrite.hpp"
+#include "Resize.hpp"
 
 using namespace tbb::flow;
 
@@ -86,38 +84,71 @@ int main( int argc, char** argv )
 
     /////////////////////////////////////////////////////////////////////
     //
-    //  Assemble the pipeline:
+    //  Assemble the image capture and processing pipeline.
+    //
+    //  The default pipeline:
     //
     //   capture -----> disk_write -----> db_write
     //   (alloc)
     //
-    //  TODO: Implement resizing:
+    //  If resizing is enables:
     //
     //                +---------> disk_write ---------+
     //               /                                 \
-    //   capture ---+                                   +---> join ---> db_write
+    //   capture ---+                                   +---> join ---> funnel ---> db_write
     //   (alloc)     \                                 / 
     //                +---> resize ---> disk_write ---+
     //
-    //
     /////////////////////////////////////////////////////////////////////
 
+    /////////////////////////////////////////////////////////////////////
+    //
+    //  Instantiate the flow graph nodes.
+    //
+    /////////////////////////////////////////////////////////////////////
+    using namespace wabbit;
     graph g;
 
-    typedef source_node< wabbit::ImageAndTime > snode;
-    snode capture( g, wabbit::Capture( config, DURATION, verbose ? &std::cout : NULL ));
+    typedef source_node< ImageAndTime > snode;
+    snode capture( g, Capture( config, DURATION, verbose ? &std::cout : NULL ));
 
-    typedef function_node< wabbit::ImageAndTime, wabbit::ImageAndTime > fnode;
-    int concurrency = unlimited;
-    //fnode display( g, concurrency, wabbit::Display() );
-    fnode diskwrite( g, concurrency, wabbit::DiskWrite( config["pics_dir"] ));
-    fnode dbwrite( g, concurrency, wabbit::DBWrite( config ));
+    typedef function_node< ImageAndTime, ImageAndTime > fnode;
 
-    //make_edge( capture, display );
-    //make_edge( display, diskwrite );
-    make_edge( capture, diskwrite );
-    make_edge( diskwrite, dbwrite );
+    const int concurrency = unlimited;
+
+    fnode diskwrite1( g, concurrency, DiskWrite( config["pics_dir"] ));
+
+    fnode resize( g, concurrency, Resize( config ));
+    std::string suffix( config["width2"] + "x" + config["height2"] + "__" );
+    fnode diskwrite2( g, concurrency, DiskWrite( config["pics_dir"], suffix ));
+    join_node< tuple< ImageAndTime, ImageAndTime > > join( g );
+    function_node< tuple< ImageAndTime, ImageAndTime >, ImageAndTime > funnel(
+        g, unlimited, []( const tuple< ImageAndTime, ImageAndTime > &t )
+        -> const ImageAndTime& { return std::get<0>( t ); });
+            
+    fnode dbwrite( g, concurrency, DBWrite( config ));
+
+    /////////////////////////////////////////////////////////////////////
+    //
+    // Connect the nodes with edges.
+    //
+    /////////////////////////////////////////////////////////////////////
+    make_edge( capture, diskwrite1 );
+    
+    if( config["width2"].empty() or config["height2"].empty() )
+    {
+        make_edge( diskwrite1, dbwrite );
+    }
+    else
+    {
+        make_edge( capture, resize );
+        make_edge( resize, diskwrite2 );
+        make_edge( diskwrite1, input_port<0>( join ));
+        make_edge( diskwrite2, input_port<1>( join ));
+        make_edge( join, funnel );
+        make_edge( funnel, dbwrite );
+    }
+
     g.wait_for_all();
-
     return 0;
 }

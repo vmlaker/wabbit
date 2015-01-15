@@ -134,9 +134,10 @@ Clean(target, 'bin')  # Delete bin/ directory upon clean.
 sources = (
     'cpp/src/record2.cpp',
     'cpp/src/Capture.cpp',
-    'cpp/src/DiskWrite.cpp',
     'cpp/src/DBWrite.cpp',
+    'cpp/src/DiskWrite.cpp',
     'cpp/src/Display.cpp',
+    'cpp/src/Resize.cpp',
 )
 libs = (
     'boost_filesystem',
@@ -144,6 +145,7 @@ libs = (
     'boost_system',
     'opencv_core',
     'opencv_highgui',
+    'opencv_imgproc',
     'odb',
     'odb-mysql',
     'tbb',
