@@ -28,6 +28,18 @@ request_count = 0
 early_count = 0
 error_count = 0
 
+numberWithCommas = (x) ->
+    ###
+    #
+    #  Return given value with commas placed as thousand separtors.
+    #    E.g. 5629296 --> 5,529,296
+    #  (source Elias Zamaria, http://stackoverflow.com/a/2901298/1510289)
+    #
+    ###
+    parts = x.toString().split('.')
+    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+    parts.join('.')
+
 info = ->
     ###
     # Make the AJAX server info request.
@@ -60,7 +72,7 @@ info = ->
             $('#live_time_hud').text short_tstamp
             $('#server_time').text data.server_time.slice(0, -3)
             $('#load_avg').text data.load_avg
-            $('#db_size').text data.db_size
+            $('#db_size').text numberWithCommas(data.db_size) + ' snapshots'
             $('#latest_tstamp').text data.latest_tstamp.slice(0, -3)
 
             # If the database is empty, turn OFF live display
