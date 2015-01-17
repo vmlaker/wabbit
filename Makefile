@@ -29,10 +29,18 @@ venv: requirements.txt
 test: $(VENV_CV2)
 	. venv/bin/activate && python -c 'import cv2; print(cv2)'
 
-node: 
-	npm install jade coffee-script
-	node_modules/.bin/jade --pretty -o templates/ src/*.jade
-	node_modules/.bin/coffee -o static -c src/*.coffee
+COFFEE = node_modules/.bin/coffee
+JADE = node_modules/.bin/jade
+
+node: $(COFFEE) $(JADE)
+	$(JADE) --pretty -o templates/ src/*.jade
+	$(COFFEE) -o static -c src/*.coffee
+
+$(COFFEE):
+	npm install coffee-script
+
+$(JADE):
+	npm install jade
 
 clean:
 	rm -rf venv
