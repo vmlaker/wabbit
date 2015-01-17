@@ -226,9 +226,8 @@
           &nbsp;&nbsp;&nbsp;&nbsp;ProxyPassReverse http://192.168.1.55/wabbit<br>
           &nbsp;&nbsp;&nbsp;&nbsp;ProxyHTMLURLMap http://192.168.1.55/wabbit<br>
           &nbsp;&nbsp;&nbsp;&nbsp;AddOutputFilterByType SUBSTITUTE text/html<br>
-          &nbsp;&nbsp;&nbsp;&nbsp;Substitute s|wabbit/|bunny/|i<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;Substitute "s|wabbit/|bunny/|ni"<br>
           &lt;/Location&gt;<br>
-          SetOutputFilter proxy-html
         </div>
 
       </div>
@@ -486,9 +485,10 @@
           </p>
 
           <p>
-            The recorder is written in C++
-            as a shared memory, multi-threaded image processing pipeline.
-            The pipeline implements snapshot capture, disk writing and database indexing stages.
+            The recorder is written in C++.
+            The multi-threaded image processing pipeline uses
+            <a href="http://www.threadingbuildingblocks.org">Intel Threading Building Blocks</a>
+            templates. The pipeline implements snapshot capture, disk writing and database indexing stages.
             It's designed to be easily extended with additional image processing steps if needed.
           </p>
 
@@ -510,6 +510,8 @@
             <ul>
               <li><a href="http://www.scons.org">SCons</a> for C++ build</li>
               <li><a href="http://docs.opencv.org">OpenCV</a> for camera access</li>
+              <li><a href="http://www.threadingbuildingblocks.org">Intel TBB</a> for C++ parallelism</li>
+              <li><a href="http://vmlaker.github.io/mpipe">MPipe</a> for Python parallelism</li>
               <li><a href="http://www.codesynthesis.com/products/odb">ODB</a> for C++ ORM</li>
               <li><a href="http://www.sqlalchemy.org">SQLAlchemy</a> for Python ORM</li>
               <li>MySQL for RDBMS</li>
@@ -526,7 +528,7 @@
     </div>
 
     <div class="footer">
-      &copy; Copyright 2014, <a href="http://vmlaker.github.io">Velimir Mlaker</a>.
+      &copy; Copyright 2015, <a href="http://vmlaker.github.io">Velimir Mlaker</a>.
     </div>
 
   </div> <!-- main_block -->
