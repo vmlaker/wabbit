@@ -1,9 +1,12 @@
 """Prune database and disk of old images.
 
-Parameters:  <older_than_sec> [<config_file>]
-
 Disk is pruned to the next 60 s boundary. 
 To prune all files use seconds value <= -60.
+
+"""
+usage = \
+"""
+Usage:  python prune.py  <older_than_sec> [<config_file>]
 """
 
 import datetime as dt
@@ -18,8 +21,12 @@ import mapping
 from log_format import getFormat
 
 # Read command-line parameters.
-SECONDS = float(sys.argv[1])
-CONFIG = sys.argv[2] if len(sys.argv)>=3 else 'wabbit.conf'
+try:
+    SECONDS = float(sys.argv[1])
+    CONFIG = sys.argv[2] if len(sys.argv)>=3 else 'wabbit.conf'
+except:
+    print(usage)
+    sys.exit(1)
 
 # Configure logging and get the logger object.
 logging.basicConfig(
@@ -87,20 +94,42 @@ def on_rmtree_error(func, path, excinfo):
 levels = coils.time2levels(then)
 dstack = list()  # Stack of descended subdirectories.
 saved = os.getcwd()  # Pushd.
+
+# Start at the root level, i.e. the top of 
+# the pics directory (where the years are listed).
 os.chdir(config['pics_dir'])
+
+# For each level (Y, M, D, h, m) starting with the year,
+# prune the archive file structure of all older directories,
+# while descending into the archive.
 for level in levels:
     
+    # Compare every directory with the current level, and
+    # if the directory is older than the level 
+    # (it's name being a smaller number) erase it.
     for entry in os.listdir('.'):
+
+        # Skip if entry is not a numeric integer string.
         try:
             int_entry = int(entry)
         except:
             continue
-        if int_entry < int(level):
-            full = os.path.join(os.getcwd(), entry)
-            shutil.rmtree(full, ignore_errors=False, onerror=on_rmtree_error)
-            logger.info('Removed {}'.format(full))
 
-    # Skip if not a directory.
+        # Only intersted in entries less than the level
+        # (i.e. older than the level) so skip the others.
+        if int_entry >= int(level):
+            continue
+
+        # Remove the filesystem path.
+        full = os.path.join(os.getcwd(), entry)
+        shutil.rmtree(full, ignore_errors=False, onerror=on_rmtree_error)
+        logger.info('Removed {}'.format(full))
+
+    # Now that we've removed the current level's older
+    # directories, descend into the next level.
+
+    # If we can't find the directory for the current label,
+    # then we're done.
     if not os.path.isdir(level):
         break
 
