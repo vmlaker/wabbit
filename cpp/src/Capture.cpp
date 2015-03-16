@@ -3,8 +3,11 @@
  */
 
 #include <iomanip>
+#include <regex>
+#include <stdexcept>  // std::invalid_argument
 
 #include <bites.hpp>
+#include <boost/filesystem.hpp>
 
 #include "Capture.hpp"
 
@@ -16,9 +19,29 @@ Capture::Capture( bites::Config& config,
     : m_config( config ),
       m_duration( duration ),
       m_output_stream( output_stream ),
-      m_video_capture( stod( m_config["device"] )),
+      m_video_capture(),
       m_rate_ticker({1, 5, 10})
 {
+    // Attempt to open device given as integer.
+    // If that fails, attempt to resolve the device as a path.
+    int device = -1;
+    try{
+        device = stod( m_config["device"] );
+    }
+    catch( std::invalid_argument){
+        boost::filesystem::path path( m_config["device"] );
+        auto target = boost::filesystem::canonical(path).string();
+        std::regex exp( ".*video(\\d+)" );
+        std::smatch match;
+        std::regex_search( target, match, exp );
+        device = stod( match[1] );
+    }
+    if( m_output_stream ){
+        *m_output_stream << "device: " << device << std::endl;
+    }
+
+    // Setup the OpenCV VideoCapture object.
+    m_video_capture.open( device );
     m_video_capture.set( 3, stod( m_config["width"] ));
     m_video_capture.set( 4, stod( m_config["height"] ));
 
