@@ -21,7 +21,7 @@ config = coils.Config(CONFIG)
 cmd = 'mkdir -p {}'.format(os.path.join(WWW_ROOT, 'service'))
 run(cmd)
 dest = os.path.join(WWW_ROOT, 'service')
-for item in ('templates', 'static'):
+for item in ('client/templates', 'client/static'):
     cmd = 'cp -r {} {}'.format(item, dest)
     run(cmd)
  
