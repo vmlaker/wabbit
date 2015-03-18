@@ -1,3 +1,9 @@
+/*****************************************************/
+/*                                                   */
+/*  Style sheet for Wabbit surveillance page.        */
+/*                                                   */
+/*****************************************************/
+
 /* Hyperlink preferences. */
 a:link  {text-decoration : none; }
 a:hover {text-decoration : underline; }
