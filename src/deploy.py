@@ -27,13 +27,13 @@ for item in ('client/templates', 'client/static'):
  
 # Make soft links.
 for item in (
-    os.path.join('service', 'templates', 'index.html'),
     os.path.join('service', 'templates', 'browser.html'),
-    os.path.join('service', 'templates', 'main.css'),
-    os.path.join('service', 'templates', 'index.css'),
-    os.path.join('service', 'static', 'main.js'),
+    os.path.join('service', 'templates', 'index.html'),
     os.path.join('service', 'static', 'browser.js'),
+    os.path.join('service', 'static', 'index.css'),
     os.path.join('service', 'static', 'logo_tiny.png'),
+    os.path.join('service', 'static', 'main.js'),
+    os.path.join('service', 'static', 'style.css'),
     ):
     cmd = 'ln -s {} {}'.format(item, WWW_ROOT)
     run(cmd)
