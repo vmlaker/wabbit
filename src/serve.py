@@ -42,7 +42,7 @@ def info():
     latest_url = coils.time2fname(
         coils.string2time(
             latest_tstamp.value), full=True)
-    latest_url = 'pics/{}.{}'.format(latest_url, config['f_ext'])
+    latest_url = 'pics/{}.jpg'.format(latest_url)
     load_avg = os.getloadavg()
     return flask.jsonify(
         server_time=now, 
@@ -132,7 +132,7 @@ def slide():
     # Convert time to url.
     if result_time:
         result_url = coils.time2fname(coils.string2time(result_time), full=True)
-        result_url = 'pics/{}.{}'.format(result_url, config['f_ext'])
+        result_url = 'pics/{}.jpg'.format(result_url)
     else:
         result_url = None
 
