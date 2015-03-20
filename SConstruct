@@ -40,27 +40,27 @@ odb_exe = 'libodb/bin/odb'
 action = odb_exe + ' ' + \
          '-I{} '.format(odb_inc_path) + \
          '-d mysql ' + \
-         '--generate-query --generate-schema --output-dir cpp/odb $SOURCE'
-builder = Builder(action=action) #, target='cpp/odb/mapping-odb.cxx')
+         '--generate-query --generate-schema --output-dir src/cpp/odb $SOURCE'
+builder = Builder(action=action) #, target='src/cpp/odb/mapping-odb.cxx')
 env = Environment(BUILDERS={'ODBCompile' : builder})
 odb_compile = env.ODBCompile(
     target=[
-        'cpp/odb/mapping-odb.cxx', 
-        'cpp/odb/mapping-odb.hxx',
-        'cpp/odb/mapping-odb.ixx',
-        'cpp/odb/mapping.sql',
+        'src/cpp/odb/mapping-odb.cxx',
+        'src/cpp/odb/mapping-odb.hxx',
+        'src/cpp/odb/mapping-odb.ixx',
+        'src/cpp/odb/mapping.sql',
         ],
-    source='cpp/include/mapping.hpp',
+    source='src/cpp/include/mapping.hpp',
 )
 Default(odb_compile)
 
 # Build the ODB mapping from the compiled C++ sources.
 env = Environment(
-    CPPPATH=(odb_inc_path, 'cpp/odb', 'cpp/include'),
+    CPPPATH=(odb_inc_path, 'src/cpp/odb', 'src/cpp/include'),
     CXXFLAGS='-std=c++11',
 ) 
 if debug: env.Append(CXXFLAGS=' -g')
-odb_object = env.Object(target='cpp/odb/mapping-odb.o', source='cpp/odb/mapping-odb.cxx')
+odb_object = env.Object(target='src/cpp/odb/mapping-odb.o', source='src/cpp/odb/mapping-odb.cxx')
 Default(odb_object)  # Built by default.
 
 
@@ -72,7 +72,7 @@ Default(odb_object)  # Built by default.
 
 # Build the dump program.
 sources = (
-    'cpp/src/dump.cpp',
+    'src/cpp/src/dump.cpp',
 )
 libs = (
     'boost_system',
@@ -82,9 +82,9 @@ libs = (
 )
 cpppath = (
     bites_inc_path, 
-    'cpp/include',
+    'src/cpp/include',
     'libodb/include',
-    'cpp/odb',
+    'src/cpp/odb',
 )
 env = Environment(
     CPPPATH=cpppath,
@@ -100,12 +100,12 @@ Default(prog)  # Program is built by default.
 
 # Build the record program.
 sources = (
-    'cpp/src/record.cpp',
-    'cpp/src/Capture.cpp',
-    'cpp/src/DBWrite.cpp',
-    'cpp/src/DiskWrite.cpp',
-    'cpp/src/Display.cpp',
-    'cpp/src/Resize.cpp',
+    'src/cpp/src/record.cpp',
+    'src/cpp/src/Capture.cpp',
+    'src/cpp/src/DBWrite.cpp',
+    'src/cpp/src/DiskWrite.cpp',
+    'src/cpp/src/Display.cpp',
+    'src/cpp/src/Resize.cpp',
 )
 libs = (
     'boost_filesystem',
@@ -119,7 +119,7 @@ libs = (
     'bites',
 )
 env = Environment(
-    CPPPATH=(bites_inc_path, 'cpp/include', 'libodb/include', 'cpp/odb'),
+    CPPPATH=(bites_inc_path, 'src/cpp/include', 'libodb/include', 'src/cpp/odb'),
     LIBPATH=(bites_lib_path, 'libodb/lib'),
     LIBS=libs,
     CXXFLAGS='-std=c++11',

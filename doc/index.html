@@ -114,11 +114,11 @@
           (you will need to know your MySQL root password):
         </p>
         <div class="code_block">
-          venv/bin/python src/create.py<br>
+          venv/bin/python src/py/create.py<br>
         </div>
         <p>
           If later you want to undo the above command,
-          run <code>venv/bin/python src/drop.py</code>
+          run <code>venv/bin/python src/py/drop.py</code>
           to clean up what was created.
         </p>
         <p>
@@ -126,9 +126,9 @@
         </p>
         <div class="code_block">
           bin/record -v 10<br>
-          venv/bin/python src/dump.py<br>
-          venv/bin/python src/prune.py -60<br>
-          venv/bin/python src/dump.py<br>
+          venv/bin/python src/py/dump.py<br>
+          venv/bin/python src/py/prune.py -60<br>
+          venv/bin/python src/py/dump.py<br>
         </div>
         <p>
           Next run the server:
@@ -152,7 +152,7 @@
         </p>
         <div class="code_block">
           sudo rm -rf /var/www/html/wabbit<br>
-          sudo venv/bin/python src/deploy.py /var/www/html/wabbit<br>
+          sudo venv/bin/python src/py/deploy.py /var/www/html/wabbit<br>
         </div>
         <p>
           That second command dumps a snippet for
@@ -199,7 +199,7 @@
         <div class="code_block">
           crontab -l > mycron<br>
           echo "# m h dom mon dow  command" >> mycron<br>
-          echo "*/1 * * * * sleep 30; cd $HOME/work/git/wabbit; venv/bin/python src/prune.py 300 >>prune.log 2>&1" >> mycron<br>
+          echo "*/1 * * * * sleep 30; cd $HOME/work/git/wabbit; venv/bin/python src/py/prune.py 300 >>prune.log 2>&1" >> mycron<br>
           crontab mycron<br>
           rm mycron<br>
         </div>

@@ -16,7 +16,7 @@ config = {
     'WORKING_DIR' : normpath(join(this_dir, '..')),
     'RECORD_CMD'  : normpath(join(this_dir, '..', 'bin', 'record')),
     'GUNICORN_BIN': normpath(join(this_dir, '..', 'venv', 'bin', 'gunicorn')),
-    'APP_MODULE'  : 'src.serve:app',
+    'APP_MODULE'  : 'src.py.serve:app',
     'ADDRESS'     : '127.0.0.1:8000',
     'USER'        : getpass.getuser(),
     'GROUP'       : getpass.getuser(),

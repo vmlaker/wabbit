@@ -33,8 +33,8 @@ COFFEE = node_modules/.bin/coffee
 JADE = node_modules/.bin/jade
 
 node: $(COFFEE) $(JADE)
-	$(JADE) --pretty -o client/templates/ src/*.jade
-	$(COFFEE) -o client/static -c src/*.coffee
+	$(JADE) --pretty -o client/templates/ src/jade/*.jade
+	$(COFFEE) -o client/static -c src/coffee/*.coffee
 
 $(COFFEE):
 	npm install coffee-script
