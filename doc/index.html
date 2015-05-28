@@ -134,7 +134,7 @@
           Next run the server:
         </p>
         <div class="code_block">
-          venv/bin/gunicorn src.serve:app -b 127.0.0.1:8000<br>
+          venv/bin/gunicorn src.py.serve:app --workers 4 --threads 4 --bind 127.0.0.1:8000 --access-logfile -<br>
         </div>
         <p>
           Go to 
