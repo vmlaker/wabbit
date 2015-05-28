@@ -158,3 +158,4 @@ env.Copy(
 #Default('doc/logo_small.png')
 
 Default('static/logo_tiny.png')
+Clean('static/logo_tiny.png', 'static/logo_tiny.png')

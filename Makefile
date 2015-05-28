@@ -48,4 +48,4 @@ clean: clean2
 
 clean2:
 	rm -rf templates
-	rm -rf static/*.js static/*.png
+	rm -rf static/*.js
