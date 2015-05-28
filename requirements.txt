@@ -1,6 +1,7 @@
 coils==1.0.6
 Flask==0.10.1
 Flask-SQLAlchemy==2.0
+futures==3.0.2
 gunicorn==19.3.0
 mpipe==1.0.8
 MySQL-python==1.2.5
