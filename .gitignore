@@ -4,11 +4,11 @@
 art/logo_small.png
 art/logo_tiny.png
 bin/
-client/static/*.js
-client/static/*.png
-client/templates/*.html
-cpp/odb/mapping*
 libodb/
 node_modules/
-venv/
+src/cpp/odb/mapping*
+static/*.js
+static/*.png
 systemd/*.service
+templates/
+venv/
