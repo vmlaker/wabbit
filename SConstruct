@@ -150,11 +150,11 @@ env.Copy(
     'art/logo_small.png',
 )
 env.Copy(
-    'client/static/logo_tiny.png',
+    'static/logo_tiny.png',
     'art/logo_tiny.png',
 )
 
 # We're not building doc/ by default.
 #Default('doc/logo_small.png')
 
-Default('client/static/logo_tiny.png')
+Default('static/logo_tiny.png')

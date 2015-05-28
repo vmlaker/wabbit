@@ -12,7 +12,7 @@ info = ->
     ###
     
     
-    $.ajax 'service/range?amount=3600',
+    $.ajax 'range?amount=3600',
         dataType : 'json'
         cache    : false
         timeout  : 2000
@@ -39,7 +39,7 @@ on_slide = (amount) ->
 
     $('#slider_amount').text amount.toFixed(3)
 
-    url = 'service/slide?time1=' + begin_time + '&time2=' + end_time + '&amount=' + amount
+    url = 'slide?time1=' + begin_time + '&time2=' + end_time + '&amount=' + amount
     $.ajax url,
         async    : false
         dataType : 'json'

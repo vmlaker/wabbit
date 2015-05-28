@@ -15,20 +15,44 @@ import mapping
 config = coils.Config('wabbit.conf')
 
 # Initialize Flask and SQLAlchemy.
+#
+# By default, Flask looks for templates/ and static/ folders
+# inside root app folder. In our case, the root app folder
+# (i.e. src/) is a sibling, hence we need to explicitly tell Flask
+# about their locations.
+template_folder = os.path.join(os.getcwd(), 'templates')
+static_folder = os.path.join(os.getcwd(), 'static')
+
+# Create the Flask app.
 app = flask.Flask(
     __name__,
-    template_folder=config['flask_template_dir'],
-    static_folder=config['flask_static_dir'],
+    template_folder=template_folder,
+    static_folder=static_folder,
 )
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://{}:{}@{}/{}'.format(
     config['username'], config['password'],
     config['host'], config['db_name'])
 db = SQLAlchemy(app)
 
+
 @app.route('/')
-def index():
-    """Render the index page."""
-    return flask.render_template('index.html')    
+def root():
+    """Render the root index page."""
+    return flask.render_template('index.html')
+
+@app.route('/browser')
+def browser():
+    """Render the browser page."""
+    return flask.render_template('browser.html')
+
+@app.route('/pics/<path:path>')
+def pics(path):
+    """Serve files from the pics directory.
+    This works only in debug mode.
+    In production, configure your web server to serve pics."""
+    if app.debug:
+        print('path = "{}"'.format(path))
+        return flask.send_from_directory(config['pics_dir'], path)
 
 @app.route('/info')
 def info():
@@ -231,5 +255,14 @@ def getNearestTime(time_query):
     result = tstamp_left if (delta_left < delta_right) else tstamp_right
     return result
 
+"""
+Run (in debug mode) the Flask development server
+as defined in module app, object app.
+
+Usage:
+   python serve.py
+"""
 if __name__ == '__main__':
-    app.run()
+    """If running this file from command line,
+    run the Flask development server."""
+    app.run('localhost', 8000, 'debug')

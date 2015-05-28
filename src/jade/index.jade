@@ -4,8 +4,8 @@ html
 
     title Wabbit
     script(src='http://code.jquery.com/jquery-1.10.1.min.js')
-    script(src='main.js', type='text/javascript')
-    link(href='style.css', type='text/css', rel='stylesheet')
+    script(src='static/main.js', type='text/javascript')
+    link(href='static/style.css', type='text/css', rel='stylesheet')
 
   body
     
@@ -71,11 +71,4 @@ html
           span(class='table_cell') Load average
           span(class='table_cell' id='load_avg')
 
-    div(class='footer')
-      | This website, including camera and database server,
-      | is powered by V.Mlaker's 
-      a(href='http://vmlaker.github.io/wabbit') Wabbit
-      | .
-      br
-      a(href='http://vmlaker.github.io/wabbit')
-        img(src='logo_tiny.png')
+    {% include 'footer.html' %}

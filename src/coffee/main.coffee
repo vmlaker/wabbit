@@ -54,7 +54,7 @@ info = ->
     # Mark the beginning of callback entry.
     callback_begin = null
         
-    $.ajax 'service/info',
+    $.ajax 'info',
         dataType : 'json'
         cache    : false
         timeout  : ajax_timeout
