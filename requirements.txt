@@ -5,7 +5,7 @@ futures==3.0.2
 gunicorn==19.3.0
 mpipe==1.0.8
 MySQL-python==1.2.5
-numpy==1.9.1
-simplejson==3.6.5
-SQLAlchemy==0.9.8
+numpy==1.9.2
+simplejson==3.7.2
+SQLAlchemy==1.0.4
 wget==2.2
