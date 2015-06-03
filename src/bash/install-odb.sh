@@ -19,7 +19,7 @@ function usage {
     echo "    -c | --clean      Run clean, deleting everything first"
     echo "    -j | --jobs       Number of make processes (default=1)"
     echo "    -f | --fix        Apply fix (patch and compile flag) for GCC 4.9.0+"
-    echo "                        (see http://www.codesynthesis.com/pipermail/odb-users/2014-May/001849.html"
+    echo "                        (see http://www.codesynthesis.com/pipermail/odb-users/2014-May/001849.html)"
     echo "    -h | --help       Print this help"
     echo
     echo "    First time invocation should use a clean run, e.g."
