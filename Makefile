@@ -25,6 +25,7 @@ $(VENV_CV2): $(GLOBAL_CV2) venv
 venv: requirements.txt
 	test -d venv || virtualenv venv
 	. venv/bin/activate && pip install -r requirements.txt
+	ln -s venv/bin/python
 
 test: $(VENV_CV2)
 	. venv/bin/activate && python -c 'import cv2; print(cv2)'
@@ -42,10 +43,13 @@ $(COFFEE):
 $(JADE):
 	npm install jade
 
-clean: clean2
+clean: clean_py_node clean_build
+
+clean_py_node:
 	rm -rf venv
+	rm -rf python
 	rm -rf node_modules
 
-clean2:
+clean_build:
 	rm -rf templates
 	rm -rf static/*.js
