@@ -22,14 +22,6 @@ function usage {
     echo "                        (see http://www.codesynthesis.com/pipermail/odb-users/2014-May/001849.html)"
     echo "    -h | --help       Print this help"
     echo
-    echo "    First time invocation should use a clean run, e.g."
-    echo "        $(basename $0) -c -j 4"
-    echo 
-    echo "    For subsequent invocations (following installation of a missing module"
-    echo "    indicated in a previous attempt, for example) consider leaving out"
-    echo "    the clean flag in order to prevent needless downloading of sources, e.g."
-    echo "        $(basename $0) -j 8"
-    echo
     exit 1
 }
 
@@ -54,21 +46,34 @@ while [ "$1" != "" ]; do
     shift
 done
 
-# A clean run starts from scratch.
-if [[ $clean == 1 ]] ; then
-    rm -rf libodb
-    mkdir -p libodb/temp
-fi
-
-# Will download to, and build from, a temporary directory.
-cd libodb/temp
-
 # This is the version of ODB to use.
 odb_ver_major="2"
 odb_ver_minor="3"
 odb_ver_patch="0"
 odb_ver_mm="$odb_ver_major.$odb_ver_minor"
 odb_ver_full="$odb_ver_mm.$odb_ver_patch"
+
+# Retrieve the currently installed ODB version (if any).
+odb_ver_cur=`libodb/bin/odb --version | head -1 | awk '{print $NF}'`
+
+# Based on current version (if any), decide whether to install.
+if [[ $odb_ver_cur == '' ]] ; then
+    echo ODB not installed, will now install.
+elif [[ $odb_ver_cur != $odb_ver_full ]] ; then
+    echo ODB version $odb_ver_cur installed, will now install version $odb_ver_full.
+else
+    echo ODB version $odb_ver_cur already installed.
+    exit
+fi
+
+# A clean run starts from scratch.
+if [[ $clean == 1 ]] ; then
+    rm -rf libodb
+fi
+
+# Will download to, and build from, a temporary directory.
+mkdir -p libodb/temp
+cd libodb/temp
 
 # This is the version of libcutl to use.
 libcutl_ver_major="1"
@@ -83,29 +88,30 @@ if [[ $clean == 1 ]] ; then
     rm -rf libodb-$odb_ver_full
     rm -rf libodb-mysql-$odb_ver_full
     rm -rf libcutl-$libcutl_ver_full
-    
+    if [[ $fix == 1 ]] ; then
+        rm -rf odb-$odb_ver_full-gcc-4.9.0.patch
+    fi
     rm -rf odb-$odb_ver_full.tar.gz
     rm -rf libodb-$odb_ver_full.tar.gz
     rm -rf libodb-mysql-$odb_ver_full.tar.gz
     rm -rf libcutl-$libcutl_ver_full.tar.gz
-
-    wget http://www.codesynthesis.com/download/odb/$odb_ver_mm/odb-$odb_ver_full.tar.gz
-    wget http://www.codesynthesis.com/download/odb/$odb_ver_mm/libodb-$odb_ver_full.tar.gz
-    wget http://www.codesynthesis.com/download/odb/$odb_ver_mm/libodb-mysql-$odb_ver_full.tar.gz
-    wget http://www.codesynthesis.com/download/libcutl/$libcutl_ver_mm/libcutl-$libcutl_ver_full.tar.gz
-
-    if [[ $fix == 1 ]] ; then
-        rm -rf odb-2.3.0-gcc-4.9.0.patch
-        wget http://codesynthesis.com/~boris/tmp/odb/odb-2.3.0-gcc-4.9.0.patch
-    fi
-    
-    tar xzf odb-$odb_ver_full.tar.gz
-    tar xzf libodb-$odb_ver_full.tar.gz
-    tar xzf libodb-mysql-$odb_ver_full.tar.gz
-    tar xzf libcutl-$libcutl_ver_full.tar.gz
-        
 fi
 
+# Download the tarballs.
+wget -nc http://www.codesynthesis.com/download/odb/$odb_ver_mm/odb-$odb_ver_full.tar.gz
+wget -nc http://www.codesynthesis.com/download/odb/$odb_ver_mm/libodb-$odb_ver_full.tar.gz
+wget -nc http://www.codesynthesis.com/download/odb/$odb_ver_mm/libodb-mysql-$odb_ver_full.tar.gz
+wget -nc http://www.codesynthesis.com/download/libcutl/$libcutl_ver_mm/libcutl-$libcutl_ver_full.tar.gz
+if [[ $fix == 1 ]] ; then
+    wget -nc http://codesynthesis.com/~boris/tmp/odb/odb-$odb_ver_full-gcc-4.9.0.patch
+fi
+    
+# Extract the tarballs.
+tar --skip-old-files -xzf odb-$odb_ver_full.tar.gz
+tar --skip-old-files -xzf libodb-$odb_ver_full.tar.gz
+tar --skip-old-files -xzf libodb-mysql-$odb_ver_full.tar.gz
+tar --skip-old-files -xzf libcutl-$libcutl_ver_full.tar.gz
+        
 # Build the libcutl library.
 cd libcutl-$libcutl_ver_full
 ./configure --prefix=`pwd`/../..
