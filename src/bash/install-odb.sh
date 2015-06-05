@@ -53,6 +53,11 @@ odb_ver_patch="0"
 odb_ver_mm="$odb_ver_major.$odb_ver_minor"
 odb_ver_full="$odb_ver_mm.$odb_ver_patch"
 
+# A clean run starts from scratch.
+if [[ $clean == 1 ]] ; then
+    rm -rf libodb
+fi
+
 # Retrieve the currently installed ODB version (if any).
 odb_ver_cur=`libodb/bin/odb --version | head -1 | awk '{print $NF}'`
 
@@ -66,11 +71,6 @@ else
     exit
 fi
 
-# A clean run starts from scratch.
-if [[ $clean == 1 ]] ; then
-    rm -rf libodb
-fi
-
 # Will download to, and build from, a temporary directory.
 mkdir -p libodb/temp
 cd libodb/temp
@@ -81,21 +81,6 @@ libcutl_ver_minor="8"
 libcutl_ver_patch="1"
 libcutl_ver_mm="$libcutl_ver_major.$libcutl_ver_minor"
 libcutl_ver_full="$libcutl_ver_mm.$odb_ver_patch"
-
-# A clean run removes any previously worked on stuff.
-if [[ $clean == 1 ]] ; then
-    rm -rf odb-$odb_ver_full
-    rm -rf libodb-$odb_ver_full
-    rm -rf libodb-mysql-$odb_ver_full
-    rm -rf libcutl-$libcutl_ver_full
-    if [[ $fix == 1 ]] ; then
-        rm -rf odb-$odb_ver_full-gcc-4.9.0.patch
-    fi
-    rm -rf odb-$odb_ver_full.tar.gz
-    rm -rf libodb-$odb_ver_full.tar.gz
-    rm -rf libodb-mysql-$odb_ver_full.tar.gz
-    rm -rf libcutl-$libcutl_ver_full.tar.gz
-fi
 
 # Download the tarballs.
 wget -nc http://www.codesynthesis.com/download/odb/$odb_ver_mm/odb-$odb_ver_full.tar.gz
