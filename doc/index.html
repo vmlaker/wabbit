@@ -83,17 +83,16 @@
 
         <p>
           Run make to build a Python virtualenv instance
-          and node environment, and to compile the client:
+          and node environment, and to compile the client-side code:
         </p>
         <div class="code_block">
           make -j 2<br>
         </div>
         <p>
-          Then run a script to install C++ ODB libraries
-          (use <code>--help</code> for details):
+          Then run a script to install C++ ODB libraries:
         </p>
         <div class="code_block">
-          sh src/bash/install-odb.sh -c -j 2<br>
+          sh src/bash/install-odb.sh -j 2<br>
         </div>
         <p>
           Finally run the SCons compiler chain:
@@ -302,26 +301,6 @@
           <div class="code_block">
             sudo yum install mariadb-devel<br>
           </div>
-        </p>
-
-        <div class="centered">&middot; &middot; &middot;</div>
-
-        <p>
-          <b>Q:</b> 
-          During ODB installation, I'm getting errors like:
-          <br>
-          <code>error: 'HOST_WIDEST_INT' does not name a type</code>
-          <br>
-          <code>error: expected initializer before 'gcov_type_unsigned'</code>
-          <br><br>
-          <b>A:</b>
-          This is a known problem when compiling ODB with 
-          GCC version 4.9.0 or above
-          (check out
-          <a href="http://codesynthesis.com/pipermail/odb-users/2014-May/001847.html">this link</a>
-          for details).
-          Just run <code>sh src/bash/install-odb.sh --fix</code>
-          (i.e. re-run it with the <code>--fix</code> option).
         </p>
 
         <div class="centered">&middot; &middot; &middot;</div>
