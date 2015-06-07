@@ -13,15 +13,12 @@
 #set -x
 
 function usage {
-    echo
     echo "Usage:  $(basename $0) OPTION"
-    echo
-    echo "    -c | --clean      Run clean, deleting everything first"
-    echo "    -j | --jobs       Number of make processes (default=1)"
-    echo "    -f | --fix        Apply fix (patch and compile flag) for GCC 4.9.0+"
-    echo "                        (see http://www.codesynthesis.com/pipermail/odb-users/2014-May/001849.html)"
-    echo "    -h | --help       Print this help"
-    echo
+    echo 
+    echo "Options:"
+    echo "  -c | --clean      Run clean, deleting everything first"
+    echo "  -j | --jobs       Number of make processes (default=1)"
+    echo "  -h | --help       Print this help"
     exit 1
 }
 
@@ -34,8 +31,6 @@ while [ "$1" != "" ]; do
                             ;;
         -j | --jobs )       shift
                             jobs=$1
-                            ;;
-        -f | --fix )        fix=1
                             ;;
         -h | --help )       usage
                             exit
@@ -59,7 +54,7 @@ if [[ $clean == 1 ]] ; then
 fi
 
 # Retrieve the currently installed ODB version (if any).
-odb_ver_cur=`libodb/bin/odb --version | head -1 | awk '{print $NF}'`
+odb_ver_cur=`libodb/bin/odb --version 2> /dev/null | head -1 | awk '{print $NF}'`
 
 # Based on current version (if any), decide whether to install.
 if [[ $odb_ver_cur == '' ]] ; then
@@ -69,6 +64,15 @@ elif [[ $odb_ver_cur != $odb_ver_full ]] ; then
 else
     echo ODB version $odb_ver_cur already installed.
     exit
+fi
+
+# Determine whether we need to apply the fix in case GCC version is >= 4.9 .
+# (see http://www.codesynthesis.com/pipermail/odb-users/2014-May/001849.html)
+gcc_ver=`gcc -dumpversion`
+gcc_ver=`echo $gcc_ver | sed 's/\([0-9]*\.[0-9]*\).*/\1/'`
+fix=`echo "$gcc_ver>=4.9" | bc`
+if [[ $fix == 1 ]] ; then
+    echo Detected GCC version $gcc_ver, will apply fix.
 fi
 
 # Will download to, and build from, a temporary directory.
