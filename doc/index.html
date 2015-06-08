@@ -49,7 +49,9 @@
 
       <div id="contentInstall">
         <p>
-          Use the following install guide to get up and running your own Wabbit server.
+          Use the guide below to get up and running your own Wabbit server.
+        </p>
+        <p>
           Problems during installation? Consult <a href="#faq">the FAQ</a>.
         </p>
 
@@ -64,44 +66,39 @@
             </div>
             -->
 
-        <h3 id="download">1. Download</h3>
+        <h2 id="download"><i>Get it!</i></h2>
 
         <p>
-          Get code from two repos, 
+          Download
           <a href="http://vmlaker.github.io/bites">Bites</a>
           and 
-          <a href="http://github.com/vmlaker/wabbit">Wabbit</a>
-          :
+          <a href="http://github.com/vmlaker/wabbit">Wabbit</a>:
         </p>
         <div class="code_block">
           git clone https://github.com/vmlaker/bites<br>
           git clone https://github.com/vmlaker/wabbit<br>
+        </div>
+
+        <h2 id="build"><i>Build it!</i></h2>
+
+        <p>
+          From the top of the source tree
+          run make, install ODB and then run SCons:
+        </p>
+        <div class="code_block">
           cd wabbit<br>
-        </div>
-
-        <h3 id="build">2. Build</h3>
-
-        <p>
-          Run make to build a Python virtualenv instance
-          and node environment, and to compile the client-side code:
-        </p>
-        <div class="code_block">
           make -j 2<br>
-        </div>
-        <p>
-          Then run a script to install C++ ODB libraries:
-        </p>
-        <div class="code_block">
           sh src/bash/install-odb.sh -j 2<br>
-        </div>
-        <p>
-          Finally run the SCons compiler chain:
-        </p>
-        <div class="code_block">
           scons bites=../bites -j 2<br>
         </div>
+        <p>
+          Make builds your Python virtualenv and Node.js environment,
+          and compiles the client-side code.
+          The shell script installs C++ ODB libraries.
+          The SCons build chain compiles the C++ sources.
+        </p>
 
-        <h3 id="configure">3. Configure</h3>
+        <h2 id="configure"><i>Configure it!</i></h2>
 
         <p>
           Customize your installation by editing file 
@@ -130,7 +127,7 @@
           ./python src/py/dump.py<br>
         </div>
         <p>
-          Next run the server:
+          Next, run the server:
         </p>
         <div class="code_block">
           venv/bin/gunicorn src.py.serve:app --workers 4 --threads 4 --bind 127.0.0.1:8000 --access-logfile -<br>
@@ -141,7 +138,7 @@
           to check the API server.
         </p>
 
-        <h3 id="deploy">4. Deploy</h3>
+        <h2 id="deploy"><i>Deploy it!</i></h2>
 
         <p>
           Deploy to Apache HTTPD by
@@ -178,7 +175,7 @@
           sudo chcon -R -t httpd_sys_content_t /path/to/my/pics<br>
         </div>
 
-        <h3 id="automate">5. Automate</h3>
+        <h2 id="automate"><i>Automate it!</i></h2>
 
         <p>
           You can automate the starting of your Recorder and Gunicorn 
@@ -203,7 +200,7 @@
           rm mycron<br>
         </div>
 
-        <h3 id="proxy">A. Apache reverse proxy</h3>
+        <h2 id="proxy">Appendix: Apache reverse proxy</h2>
 
         <p>
           If your Wabbit server is on a private network,
@@ -232,7 +229,6 @@
       </div>
 
       <div id="contentFAQ">
-        <div class="centered">&middot; &middot; &middot;</div>
 
         <p>
           <b>Q:</b> 
@@ -249,7 +245,7 @@
           </div>
         </p>
 
-        <div class="centered">&middot; &middot; &middot;</div>
+        <br>
 
         <p>
           <b>Q:</b> 
@@ -265,7 +261,7 @@
           </div>
         </p>
 
-        <div class="centered">&middot; &middot; &middot;</div>
+        <br>
 
         <p>
           <b>Q:</b> 
@@ -281,7 +277,7 @@
           </div>
         </p>
 
-        <div class="centered">&middot; &middot; &middot;</div>
+        <br>
 
         <p>
           <b>Q:</b> 
@@ -303,7 +299,7 @@
           </div>
         </p>
 
-        <div class="centered">&middot; &middot; &middot;</div>
+        <br>
 
         <p>
           <b>Q:</b> 
@@ -314,7 +310,7 @@
           Or, with YUM get <code>mysql++-devel</code>.
         </p>
 
-        <div class="centered">&middot; &middot; &middot;</div>
+        <br>
 
         <p>
           <b>Q:</b> 
@@ -336,7 +332,7 @@
           sudo yum install gcc-plugin-devel<br>
         </div>
 
-        <div class="centered">&middot; &middot; &middot;</div>
+        <br>
 
         <p>
           <b>Q:</b> 
@@ -352,7 +348,7 @@
           </div>
         </p>
 
-        <div class="centered">&middot; &middot; &middot;</div>
+        <br>
 
         <p>
           <b>Q:</b> 
@@ -374,7 +370,7 @@
           </div>
         </p>
 
-        <div class="centered">&middot; &middot; &middot;</div>
+        <br>
 
         <p>
           <b>Q:</b> 
@@ -392,7 +388,7 @@
           </div>
         </p>
 
-        <div class="centered">&middot; &middot; &middot;</div>
+        <br>
 
         <p>
           <b>Q:</b> 
@@ -413,7 +409,7 @@
           for more details.)
         </p>
 
-        <div class="centered">&middot; &middot; &middot;</div>
+        <br>
 
         <p>
           <b>Q:</b> 
@@ -430,7 +426,7 @@
           </div>
         </p>
 
-        <div class="centered">&middot; &middot; &middot;</div>
+        <br>
 
         <p>
           <b>Q:</b> 
@@ -452,7 +448,7 @@
           </div>
         </p>
 
-        <div class="centered">&middot; &middot; &middot;</div>
+        <br>
 
       </div>
       <div id="contentAbout">
