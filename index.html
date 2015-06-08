@@ -83,17 +83,16 @@
 
         <p>
           Run make to build a Python virtualenv instance
-          and node environment, and to compile the client:
+          and node environment, and to compile the client-side code:
         </p>
         <div class="code_block">
           make -j 2<br>
         </div>
         <p>
-          Then run a script to install C++ ODB libraries
-          (use <code>--help</code> for details):
+          Then run a script to install C++ ODB libraries:
         </p>
         <div class="code_block">
-          ./install-odb.sh -c -j 2<br>
+          sh src/bash/install-odb.sh -j 2<br>
         </div>
         <p>
           Finally run the SCons compiler chain:
@@ -114,11 +113,11 @@
           (you will need to know your MySQL root password):
         </p>
         <div class="code_block">
-          venv/bin/python src/create.py<br>
+          ./python src/py/create.py<br>
         </div>
         <p>
           If later you want to undo the above command,
-          run <code>venv/bin/python src/drop.py</code>
+          run <code>./python src/py/drop.py</code>
           to clean up what was created.
         </p>
         <p>
@@ -126,15 +125,15 @@
         </p>
         <div class="code_block">
           bin/record -v 10<br>
-          venv/bin/python src/dump.py<br>
-          venv/bin/python src/prune.py -60<br>
-          venv/bin/python src/dump.py<br>
+          ./python src/py/dump.py<br>
+          ./python src/py/prune.py -60<br>
+          ./python src/py/dump.py<br>
         </div>
         <p>
           Next run the server:
         </p>
         <div class="code_block">
-          venv/bin/gunicorn src.serve:app -b 127.0.0.1:8000<br>
+          venv/bin/gunicorn src.py.serve:app --workers 4 --threads 4 --bind 127.0.0.1:8000 --access-logfile -<br>
         </div>
         <p>
           Go to 
@@ -152,7 +151,7 @@
         </p>
         <div class="code_block">
           sudo rm -rf /var/www/html/wabbit<br>
-          sudo venv/bin/python src/deploy.py /var/www/html/wabbit<br>
+          sudo ./python src/py/deploy.py /var/www/html/wabbit<br>
         </div>
         <p>
           That second command dumps a snippet for
@@ -187,7 +186,7 @@
           (like on Fedora or Red Hat) it's this easy:
         </p>
         <div class="code_block">
-          venv/bin/python systemd/create.py<br>
+          ./python systemd/create.py<br>
           sudo cp systemd/*.service /lib/systemd/system/<br>
           sudo systemctl enable wabbit-record wabbit-api<br>
           sudo systemctl start wabbit-record wabbit-api<br>
@@ -199,7 +198,7 @@
         <div class="code_block">
           crontab -l > mycron<br>
           echo "# m h dom mon dow  command" >> mycron<br>
-          echo "*/1 * * * * sleep 30; cd $HOME/work/git/wabbit; venv/bin/python src/prune.py 300 >>prune.log 2>&1" >> mycron<br>
+          echo "*/1 * * * * sleep 30; cd $HOME/work/git/wabbit; ./python src/py/prune.py 300 >>prune.log 2>&1" >> mycron<br>
           crontab mycron<br>
           rm mycron<br>
         </div>
@@ -226,9 +225,8 @@
           &nbsp;&nbsp;&nbsp;&nbsp;ProxyPassReverse http://192.168.1.55/wabbit<br>
           &nbsp;&nbsp;&nbsp;&nbsp;ProxyHTMLURLMap http://192.168.1.55/wabbit<br>
           &nbsp;&nbsp;&nbsp;&nbsp;AddOutputFilterByType SUBSTITUTE text/html<br>
-          &nbsp;&nbsp;&nbsp;&nbsp;Substitute s|wabbit/|bunny/|i<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;Substitute "s|wabbit/|bunny/|ni"<br>
           &lt;/Location&gt;<br>
-          SetOutputFilter proxy-html
         </div>
 
       </div>
@@ -466,9 +464,10 @@
           </p>
 
           <p>
-            The recorder is written in C++
-            as a shared memory, multi-threaded image processing pipeline.
-            The pipeline implements snapshot capture, disk writing and database indexing stages.
+            The recorder is written in C++.
+            The multi-threaded image processing pipeline uses
+            <a href="http://www.threadingbuildingblocks.org">Intel Threading Building Blocks</a>
+            templates. The pipeline implements snapshot capture, disk writing and database indexing stages.
             It's designed to be easily extended with additional image processing steps if needed.
           </p>
 
@@ -490,6 +489,8 @@
             <ul>
               <li><a href="http://www.scons.org">SCons</a> for C++ build</li>
               <li><a href="http://docs.opencv.org">OpenCV</a> for camera access</li>
+              <li><a href="http://www.threadingbuildingblocks.org">Intel TBB</a> for C++ parallelism</li>
+              <li><a href="http://vmlaker.github.io/mpipe">MPipe</a> for Python parallelism</li>
               <li><a href="http://www.codesynthesis.com/products/odb">ODB</a> for C++ ORM</li>
               <li><a href="http://www.sqlalchemy.org">SQLAlchemy</a> for Python ORM</li>
               <li>MySQL for RDBMS</li>
@@ -506,7 +507,7 @@
     </div>
 
     <div class="footer">
-      &copy; Copyright 2014, <a href="http://vmlaker.github.io">Velimir Mlaker</a>.
+      &copy; Copyright 2015, <a href="http://vmlaker.github.io">Velimir Mlaker</a>.
     </div>
 
   </div> <!-- main_block -->
