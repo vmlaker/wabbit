@@ -6,6 +6,7 @@ art/logo_tiny.png
 bin/
 libodb/
 node_modules/
+python
 src/cpp/odb/mapping*
 static/*.js
 static/*.png
