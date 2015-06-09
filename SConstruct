@@ -1,8 +1,9 @@
 """
-The SCons file for Wabbit C++ codes
+The SCons file for building Wabbit.
 """
 
 import os
+
 
 # Retrieve the debug flag, if set.
 debug = bool(int(ARGUMENTS.get('debug', False)))
@@ -13,9 +14,10 @@ if not bites_path:
     print('Please specify path to Bites installation, e.g. "bites=../bites"')
     exit(1)
 
+
 ###########################################
 #
-#  Bites
+#  Build Bites.
 #
 ###########################################
 # Build the Bites library (if not already done.)
@@ -28,7 +30,7 @@ bites_lib_path = os.path.join(bites_path, 'lib')
 
 ###########################################
 #
-#  ODB Stuff
+#  Compile ODB mappings.
 #
 ###########################################
 odb_inc_path = 'libodb/include'
@@ -61,12 +63,13 @@ env = Environment(
 ) 
 if debug: env.Append(CXXFLAGS=' -g')
 odb_object = env.Object(target='src/cpp/odb/mapping-odb.o', source='src/cpp/odb/mapping-odb.cxx')
-Default(odb_object)  # Built by default.
+Depends(odb_object, odb_compile)
+Default(odb_object)
 
 
 ###########################################
 #
-#  C++ Executables
+#  Build C++ executables.
 #
 ###########################################
 
@@ -80,14 +83,8 @@ libs = (
     'odb-mysql',
     'bites',
 )
-cpppath = (
-    bites_inc_path, 
-    'src/cpp/include',
-    'libodb/include',
-    'src/cpp/odb',
-)
 env = Environment(
-    CPPPATH=cpppath,
+    CPPPATH=(bites_inc_path, 'src/cpp/include', 'libodb/include', 'src/cpp/odb'),
     LIBPATH=(bites_lib_path, 'libodb/lib'),
     LIBS=libs,
     CXXFLAGS='-std=c++11',
@@ -96,7 +93,8 @@ env = Environment(
 if debug: env.Append(CXXFLAGS=' -g')
 target = 'bin/dump'
 prog = env.Program(target, sources + odb_object)
-Default(prog)  # Program is built by default.
+Depends(prog, odb_object)
+Default(prog)
 
 # Build the record program.
 sources = (
@@ -128,13 +126,14 @@ env = Environment(
 if debug: env.Append(CXXFLAGS=' -g')
 target = 'bin/record'
 prog = env.Program(target, sources + odb_object)
-Default(prog)  # Program is built by default.
-Clean(target, 'bin')  # Delete bin/ directory upon clean.
+Depends(prog, odb_object)
+Clean(prog, 'bin')  # Delete bin/ directory upon clean.
+Default(prog)
 
 
 ###########################################
 #
-#  The Wabbit Logo
+#  Copy the logo.
 #
 ###########################################
 
