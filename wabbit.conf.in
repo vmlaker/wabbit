@@ -44,4 +44,4 @@ num_writers  2
 ####################
 # Path settings
 ####################
-pics_dir  /path/to/pics
+pics_dir  @PICS_DIR@
