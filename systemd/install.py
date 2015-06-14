@@ -15,9 +15,6 @@ import coils
 CONFIG = sys.argv[1] if len(sys.argv)>=2 else 'wabbit.conf'
 config = coils.Config(CONFIG)
 
-print('Creating service files')
-call('./python systemd/create.py', shell=True)
-
 # Do the work in the directory of this file.
 this_dir = dirname(realpath(__file__))
 chdir(this_dir)
