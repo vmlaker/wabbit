@@ -1,15 +1,10 @@
 *.o
 *.pyc
 .sconsign.dblite
-art/logo_small.png
-art/logo_tiny.png
 bin/
 libodb/
 node_modules/
 python
-src/cpp/odb/mapping*
-static/*.js
-static/*.png
-systemd/*.service
 templates/
 venv/
+wabbit.conf
