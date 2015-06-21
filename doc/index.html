@@ -142,21 +142,16 @@
         <h2 id="deploy"><i>5) Deploy</i></h2>
 
         <p>
-          Deploy to Apache HTTPD by
-          copying client stack to
-          <code>DocumentRoot</code>
-          (in this case <code>/var/www/html/wabbit</code>):
+          Deploy to Apache HTTPD:
         </p>
         <div class="code_block">
-          sudo rm -rf /var/www/html/wabbit<br>
-          sudo ./python src/py/deploy.py /var/www/html/wabbit<br>
+          sudo ./python deploy/apache.py<br>
         </div>
         <p>
-          That second command dumps a snippet for
-          your VirtualHost configuration &mdash; cut 'n paste
+          This creates a link in <code>/var/www/html</code>
+          to your pictures archive, and dumps a snippet for
+          your VirtualHost configuration &mdash; cut-and-paste
           the snippet into your Apache conf file.
-        </p>
-        <p>
           Then restart your server:
         </p>
         <div class="code_block">
@@ -180,14 +175,20 @@
 
         <p>
           You can automate the starting of your Recorder and Gunicorn 
-          server using upstart or Systemd. For Systemd
-          (like on Fedora or Red Hat) it's this easy:
+          server using upstart or Systemd. For Systemd,
+          build, install and start the services with:
         </p>
         <div class="code_block">
-          ./python systemd/create.py<br>
-          sudo cp systemd/*.service /lib/systemd/system/<br>
-          sudo systemctl enable wabbit-record wabbit-api<br>
-          sudo systemctl start wabbit-record wabbit-api<br>
+          ./python systemd/build.py<br>
+          sudo ./python systemd/install.py<br>
+          sudo ./python systemd/start.py<br>
+        </div>
+        <p>
+          To stop and uninstall the services, do:
+        </p>
+        <div class="code_block">
+          sudo ./python systemd/stop.py<br>
+          sudo ./python systemd/remove.py<br>
         </div>
         <p>
           The Pruner can be scheduled as a cron job. 
