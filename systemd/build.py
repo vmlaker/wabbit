@@ -22,6 +22,8 @@ chdir(this_dir)
 for key, val in {
     'WORKING_DIR' : normpath(join(this_dir, '..')),
     'RECORD_CMD'  : normpath(join(this_dir, '..', 'bin', 'record')),
+    'PYTHON'      : normpath(join(this_dir, '..', 'python')),
+    'PRUNER'      : normpath(join(this_dir, '..', 'src', 'py', 'pruner.py')),
     'GUNICORN_BIN': normpath(join(this_dir, '..', 'venv', 'bin', 'gunicorn')),
     'APP_MODULE'  : 'src.py.serve:app',
     'ADDRESS'     : '127.0.0.1:8000',

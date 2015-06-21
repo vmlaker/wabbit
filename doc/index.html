@@ -174,9 +174,9 @@
         <h2 id="automate"><i>6) Automate</i></h2>
 
         <p>
-          You can automate the starting of your Recorder and Gunicorn 
-          server using upstart or Systemd. For Systemd,
-          build, install and start the services with:
+          If you have Systemd, it's easy to automate the control
+	  of your Wabbit server processes.
+          Build, install and start the services with:
         </p>
         <div class="code_block">
           ./python systemd/build.py<br>
@@ -189,17 +189,6 @@
         <div class="code_block">
           sudo ./python systemd/stop.py<br>
           sudo ./python systemd/remove.py<br>
-        </div>
-        <p>
-          The Pruner can be scheduled as a cron job. 
-          Something like this should do the trick:
-        </p>
-        <div class="code_block">
-          crontab -l > mycron<br>
-          echo "# m h dom mon dow  command" >> mycron<br>
-          echo "*/1 * * * * sleep 30; cd $HOME/work/git/wabbit; ./python src/py/prune.py 300 >>prune.log 2>&1" >> mycron<br>
-          crontab mycron<br>
-          rm mycron<br>
         </div>
 
         <h2 id="proxy">Appendix: Apache reverse proxy</h2>

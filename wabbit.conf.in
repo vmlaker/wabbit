@@ -25,6 +25,13 @@ max_fps   10
 min_read  0.00001
 
 ####################
+# Archive settings
+####################
+pics_dir     @PICS_DIR@
+max_history  500000
+prune_sleep  30
+
+####################
 # MPipe settings
 ####################
 workers_per_stage  1
@@ -41,7 +48,3 @@ test_timeout  5
 num_savers   4
 num_writers  2
 
-####################
-# Path settings
-####################
-pics_dir  @PICS_DIR@

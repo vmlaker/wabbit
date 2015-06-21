@@ -1,0 +1,15 @@
+[Unit]
+Description=Wabbit Pruner
+Requires=mysqld.service
+After=mysqld.service
+
+[Service]
+Type=simple
+User=@USER@
+Group=@GROUP@
+WorkingDirectory=@WORKING_DIR@
+ExecStart=/usr/bin/bash -c '@PYTHON@ @PRUNER@ >>prune.log 2>&1'
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
