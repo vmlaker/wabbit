@@ -137,8 +137,8 @@ Default(prog)
 #
 ###########################################
 
-SConscript('art/SConstruct')
-Default('art')
+SConscript('src/images/SConstruct')
+Default('src/images')
 
 copy = Builder(
     action='cp $SOURCE $TARGET',
@@ -146,11 +146,11 @@ copy = Builder(
 env = Environment(BUILDERS={'Copy' : copy})
 env.Copy(
     'doc/logo_small.png',
-    'art/logo_small.png',
+    'src/images/logo_small.png',
 )
 env.Copy(
     'static/logo_tiny.png',
-    'art/logo_tiny.png',
+    'src/images/logo_tiny.png',
 )
 
 # We're not building doc/ by default.
