@@ -1,5 +1,7 @@
 ####################
-# Database settings
+#
+#  Database
+#
 ####################
 admin     root
 db_name   wabbit
@@ -8,7 +10,9 @@ password  bunny
 host      localhost
 
 ####################
-# Capture settings
+#
+#  Camera
+#
 ####################
 device    -1
 width     800
@@ -25,14 +29,25 @@ max_fps   10
 min_read  0.00001
 
 ####################
-# Archive settings
+#
+#  Server
+#
+####################
+port      8000
+
+####################
+#
+#  Archive
+#
 ####################
 pics_dir     @PICS_DIR@
 max_history  500000
 prune_sleep  30
 
 ####################
-# MPipe settings
+#
+#  MPipe
+#
 ####################
 workers_per_stage  1
 
@@ -41,7 +56,9 @@ workers_per_stage  1
 test_timeout  5
 
 ####################
-# Record options
+#
+#  Recorder
+#
 ####################
 
 # Number of threads per stage.

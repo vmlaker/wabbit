@@ -1,0 +1,38 @@
+    ProxyRequests Off
+    <Location /@db_name@>
+        ProxyPass http://127.0.0.1:@port@
+        ProxyPassReverse http://127.0.0.1:@port@
+        AddOutputFilterByType SUBSTITUTE text/html
+
+        # <link> tags.
+        Substitute s;href="/static;href="/@db_name@/static;n
+
+        # <img> and <script> tags.
+        Substitute s;src="/static;src="/@db_name@/static;n
+
+	# Link from browser to root.
+        Substitute s;href="/";href="/@db_name@/";n
+	 
+        #Substitute s;src="/@db_name@/icons;src="/icons;n
+        RequestHeader unset Accept-Encoding
+
+    </Location>
+    RewriteRule ^/@db_name@$ @db_name@/ [R]
+    <Location /@db_name@/pics>
+        ProxyPass http://127.0.0.1/@db_name@_pics
+        ProxyPassReverse http://127.0.0.1/@db_name@_pics
+    </Location>
+    <Directory /var/www/html/@db_name@_pics/>
+        Options +Indexes
+        Order allow,deny
+        Allow from all
+        IndexStyleSheet /static/index.css
+        IndexOptions HTMLTable
+        IndexOptions NameWidth=*
+        IndexOptions FancyIndexing
+        IndexOptions SuppressDescription
+        IndexOptions SuppressLastModified
+        IndexOptions IconsAreLinks
+        AddOutputFilterByType SUBSTITUTE text/html
+        Substitute s;@db_name@_pics;@db_name@/pics;n
+    </Directory>

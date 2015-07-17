@@ -142,16 +142,21 @@
         <h2 id="deploy"><i>5) Deploy</i></h2>
 
         <p>
-          Deploy to Apache HTTPD:
+          Deploy to Apache HTTPD
+          by first creating a link in <code>/var/www/html</code>
+          to your pictures archive:
         </p>
         <div class="code_block">
-          sudo ./python deploy/apache.py<br>
+          sudo ./python deploy/httpd/link.py<br>
         </div>
         <p>
-          This creates a link in <code>/var/www/html</code>
-          to your pictures archive, and dumps a snippet for
-          your VirtualHost configuration &mdash; cut-and-paste
-          the snippet into your Apache conf file.
+          Then dump a snippet for your VirtualHost configuration:
+        </p>
+        <div class="code_block">
+          ./python deploy/httpd/dump.py<br>
+        </div>
+        <p>
+          Cut-and-paste the snippet into your Apache conf file.
           Then restart your server:
         </p>
         <div class="code_block">
