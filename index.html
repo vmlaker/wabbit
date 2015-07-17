@@ -49,10 +49,8 @@
 
       <div id="contentInstall">
         <p>
-          Use the guide below to get up and running your own Wabbit server.
-        </p>
-        <p>
-          Problems during installation? Consult <a href="#faq">the FAQ</a>.
+          Use this easy guide to get up and running with your own Wabbit server.
+          For problems during installation consult <a href="#faq">the FAQ</a>.
         </p>
 
         <!--
@@ -66,20 +64,17 @@
             </div>
             -->
 
-        <h2 id="download"><i>Get it!</i></h2>
+        <h2 id="download"><i>1) Download</i></h2>
 
         <p>
-          Download
-          <a href="http://vmlaker.github.io/bites">Bites</a>
-          and 
-          <a href="http://github.com/vmlaker/wabbit">Wabbit</a>:
+          Clone two repos:
         </p>
         <div class="code_block">
           git clone https://github.com/vmlaker/bites<br>
           git clone https://github.com/vmlaker/wabbit<br>
         </div>
 
-        <h2 id="build"><i>Build it!</i></h2>
+        <h2 id="build"><i>2) Build</i></h2>
 
         <p>
           From the top of the source tree
@@ -98,13 +93,16 @@
           The SCons build chain compiles the C++ sources.
         </p>
 
-        <h2 id="configure"><i>Configure it!</i></h2>
+        <h2 id="configure"><i>3) Configure</i></h2>
 
         <p>
-          Customize your installation by editing file 
-          <code>wabbit.conf</code>  &mdash; set all path settings
-          to absolute paths on your system.
+          Customize your installation in file
+          <code>wabbit.conf</code>:
         </p>
+        <div class="code_block">
+          cp wabbit.conf.in wabbit.conf<br>
+          vi wabbit.conf<br>
+        </div>
         <p>
           Then create the database user and privileges
           (you will need to know your MySQL root password):
@@ -117,8 +115,11 @@
           run <code>./python src/py/drop.py</code>
           to clean up what was created.
         </p>
+
+        <h2 id="test"><i>4) Test</i></h2>
+
         <p>
-          Now you can test the Recorder and Pruner:
+          Test the Recorder and Pruner:
         </p>
         <div class="code_block">
           bin/record -v 10<br>
@@ -138,24 +139,24 @@
           to check the API server.
         </p>
 
-        <h2 id="deploy"><i>Deploy it!</i></h2>
+        <h2 id="deploy"><i>5) Deploy</i></h2>
 
         <p>
-          Deploy to Apache HTTPD by
-          copying client stack to
-          <code>DocumentRoot</code>
-          (in this case <code>/var/www/html/wabbit</code>):
+          Deploy to Apache HTTPD
+          by first creating a link in <code>/var/www/html</code>
+          to your pictures archive:
         </p>
         <div class="code_block">
-          sudo rm -rf /var/www/html/wabbit<br>
-          sudo ./python src/py/deploy.py /var/www/html/wabbit<br>
+          sudo ./python deploy/httpd/link.py<br>
         </div>
         <p>
-          That second command dumps a snippet for
-          your VirtualHost configuration &mdash; cut 'n paste
-          the snippet into your Apache conf file.
+          Then dump a snippet for your VirtualHost configuration:
         </p>
+        <div class="code_block">
+          ./python deploy/httpd/dump.py<br>
+        </div>
         <p>
+          Cut-and-paste the snippet into your Apache conf file.
           Then restart your server:
         </p>
         <div class="code_block">
@@ -175,29 +176,24 @@
           sudo chcon -R -t httpd_sys_content_t /path/to/my/pics<br>
         </div>
 
-        <h2 id="automate"><i>Automate it!</i></h2>
+        <h2 id="automate"><i>6) Automate</i></h2>
 
         <p>
-          You can automate the starting of your Recorder and Gunicorn 
-          server using upstart or Systemd. For Systemd
-          (like on Fedora or Red Hat) it's this easy:
+          If you have Systemd, it's easy to automate the control
+	  of your Wabbit server processes.
+          Build, install and start the services with:
         </p>
         <div class="code_block">
-          ./python systemd/create.py<br>
-          sudo cp systemd/*.service /lib/systemd/system/<br>
-          sudo systemctl enable wabbit-record wabbit-api<br>
-          sudo systemctl start wabbit-record wabbit-api<br>
+          ./python systemd/build.py<br>
+          sudo ./python systemd/install.py<br>
+          sudo ./python systemd/start.py<br>
         </div>
         <p>
-          The Pruner can be scheduled as a cron job. 
-          Something like this should do the trick:
+          To stop and uninstall the services, do:
         </p>
         <div class="code_block">
-          crontab -l > mycron<br>
-          echo "# m h dom mon dow  command" >> mycron<br>
-          echo "*/1 * * * * sleep 30; cd $HOME/work/git/wabbit; ./python src/py/prune.py 300 >>prune.log 2>&1" >> mycron<br>
-          crontab mycron<br>
-          rm mycron<br>
+          sudo ./python systemd/stop.py<br>
+          sudo ./python systemd/remove.py<br>
         </div>
 
         <h2 id="proxy">Appendix: Apache reverse proxy</h2>
