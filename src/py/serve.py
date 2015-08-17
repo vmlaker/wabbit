@@ -51,7 +51,6 @@ def pics(path):
     This works only in debug mode.
     In production, configure your web server to serve pics."""
     if app.debug:
-        print('path = "{}"'.format(path))
         return flask.send_from_directory(config['pics_dir'], path)
 
 @app.route('/info')
