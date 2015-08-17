@@ -26,7 +26,7 @@
         Options +Indexes
         Order allow,deny
         Allow from all
-        IndexStyleSheet /static/index.css
+        IndexStyleSheet /static/css/index.css
         IndexOptions HTMLTable
         IndexOptions NameWidth=*
         IndexOptions FancyIndexing

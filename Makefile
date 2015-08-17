@@ -46,7 +46,7 @@ $(JADE):
 
 build: node
 	$(JADE) --pretty -o templates/ src/jade/*.jade
-	$(COFFEE) -o static/ -c src/coffee/*.coffee
+	$(COFFEE) -o static/js/ -c src/coffee/*.coffee
 
 clean: clean_py_node clean_build
 
@@ -57,4 +57,4 @@ clean_py_node:
 
 clean_build:
 	rm -rf templates
-	rm -rf static/*.js
+	rm -rf static/js/
