@@ -23,7 +23,7 @@ class DiskReader(mpipe.OrderedWorker):
     def doTask(self, tstamp):
         """Read image from disk and propagate it downstream."""
         tstamp = coils.string2time(tstamp)
-        fname = coils.time2fname(tstamp, full=True) + '.' + self._config['f_ext']
+        fname = coils.time2fname(tstamp, full=True) + '.jpg'
         fname = os.path.join(self._config['pics_dir'], fname)
         image = cv2.imread(fname)
         return tstamp, image
@@ -48,7 +48,7 @@ class DiskSaver(mpipe.UnorderedWorker):
             pass
 
         # Save the file.
-        fname = os.path.join(dname, coils.time2fname(tstamp)) + '.' + self._config['f_ext']
+        fname = os.path.join(dname, coils.time2fname(tstamp)) + '.jpg'
         cv2.imwrite(fname, image)
 
         # Propagate timestamp downstream.
@@ -105,7 +105,7 @@ class Downloader(mpipe.UnorderedWorker):
     def doTask(self, tstamp):
         """Download image."""
         tstamp = coils.string2time(tstamp)
-        fname = coils.time2fname(tstamp) + '.' + self._config['f_ext']
+        fname = coils.time2fname(tstamp) + '.jpg'
         dest_dir = os.path.join(self._config['pics_dir'], coils.time2dir(tstamp))
         dest_fname = os.path.join(
             dest_dir,
@@ -120,10 +120,9 @@ class Downloader(mpipe.UnorderedWorker):
             pass
         saved = os.getcwd()
         os.chdir(dest_dir)
-        url = '{}/pics/{}.{}'.format(
+        url = '{}/pics/{}.jpg'.format(
             self._url,
             coils.time2fname(tstamp, full=True),
-            self._config['f_ext'],
             )
         print(url)
         wget.download(url, bar=None)
