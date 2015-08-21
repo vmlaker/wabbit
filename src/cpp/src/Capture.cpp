@@ -3,7 +3,6 @@
  */
 
 #include <iomanip>
-#include <regex>
 #include <stdexcept>  // std::invalid_argument
 
 #include <bites.hpp>
@@ -30,11 +29,14 @@ Capture::Capture( bites::Config& config,
     }
     catch( std::invalid_argument){
         boost::filesystem::path path( m_config["device"] );
+
+        // Resolve symbolic link.
         auto target = boost::filesystem::canonical(path).string();
-        std::regex exp( ".*video(\\d+)" );
-        std::smatch match;
-        std::regex_search( target, match, exp );
-        device = stod( match[1] );
+
+        // Extract the number ABC from string /dev/videoABC
+        auto length = std::string( "/dev/video" ).length();
+        auto number = target.substr( length );
+        device = std::stod( number );
     }
     if( m_output_stream ){
         *m_output_stream << "device: " << device << std::endl;
