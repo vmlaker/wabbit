@@ -6,6 +6,7 @@ html
     script(src='http://code.jquery.com/jquery-1.11.3.min.js')
     script(src="{{ url_for('static', filename='js/browser.js') }}")
     link(href="{{ url_for('static', filename='css/style.css') }}", type='text/css', rel='stylesheet')
+    link(href="{{ url_for('static', filename='css/bootstrap.min.css') }}", type='text/css', rel='stylesheet')
     script(
       src='http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js', 
       type='text/javascript'
@@ -18,15 +19,14 @@ html
 
   body
     
-    div(style='text-align: center;')
-      div(id='live_outer')
-        img(
-          id='latest_image',
-          alt='Latest image',
-          onload='window.wabbitOnImageLoad()',
-          onerror='window.wabbitOnImageLoad()',
-          )
-        span(id='live_time_hud')
+    img(
+      class='img-responsive',
+      id='latest_image',
+      alt='Latest image',
+      onload='window.wabbitOnImageLoad()',
+      onerror='window.wabbitOnImageLoad()',
+      )
+    span(id='live_time_hud')
 
     div(id='slider')
 

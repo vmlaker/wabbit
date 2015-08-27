@@ -6,12 +6,13 @@ html
     script(src='http://code.jquery.com/jquery-1.11.3.min.js')
     script(src="{{ url_for('static', filename='js/main.js') }}")
     link(href="{{ url_for('static', filename='css/style.css') }}", type='text/css', rel='stylesheet')
+    link(href="{{ url_for('static', filename='css/bootstrap.min.css') }}", type='text/css', rel='stylesheet')
 
   body
-    
-    div(style='text-align: center;')
-      div(id='live_outer')
+    div(class='row')
+      div(class='col-xs-12')
         img(
+          class='img-responsive',
           id='latest_image',
           alt='Latest image',
           onload='window.wabbitOnImageLoad()',

@@ -75,10 +75,8 @@ info = ->
             $('#db_size').text numberWithCommas(data.db_size) + ' snapshots'
             $('#latest_tstamp').text data.latest_tstamp.slice(0, -3)
 
-            # If the database is empty, turn OFF live display
-            # and try again.
+            # If the database is empty, try again.
             if data.db_size == '0'
-                $('#live_outer').css 'display', 'none'
                 tryInfoAgain()
                 
             # Otherwise, if a new image arrived...
@@ -92,10 +90,8 @@ info = ->
                 # Reset load begin time.
                 image_load_begin = Date.now()
 
-                # Set the <img> src attribute
-                # and make sure live display is ON.
+                # Set the <img> src attribute.
                 $('#latest_image').attr 'src', data.latest_url
-                $('#live_outer').css 'display', 'inline-block'
                 prev_image_tstamp = data.latest_tstamp
 
             # Otherwise, the database is not empty but there is no

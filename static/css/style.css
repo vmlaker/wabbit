@@ -8,41 +8,17 @@
 a:link  {text-decoration : none; }
 a:hover {text-decoration : underline; }
 
-#live_outer{
-    display: inline-block;
-    position: relative;
-    /*
-    border-style: solid;
-    border-color: blue;
-    */
-}
-#live_outer img{
-    /* Get rid of extra space below image. */
-    vertical-align: bottom;
-
-    width: 100%;
-    height: auto;
-
-    border-radius: 15px;
-}
 #live_time_hud{
     position    : absolute;
-    padding     : 0 10px 0 10px;
-    bottom      : 10px;
-    right       : 10px;
+    top         : 5%;
+    right       : 5%;
 
     font-size   : 40px;
-    font-weight : 900;
-    color       : black;
-    background  : aqua;
-    opacity     : 0.4;
+    color       : rgba(0, 0, 0, 1.0);
+    background  : rgba(255, 0, 0, 0.4);
 
-    border-radius : 10px;
-    /*
-    border-style  : solid;
-    border-width  : 2px;
-    border-color  : cyan;
-    */
+    padding       : 0 10px;
+    border-radius : 5px;
 }
 .info_block{
     margin-top : 5px;
