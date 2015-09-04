@@ -11,14 +11,15 @@ html
   body
     div(class='row')
       div(class='col-xs-12')
-        img(
-          class='img-responsive center-block',
-          id='latest_image',
-          alt='Latest image',
-          onload='window.wabbitOnImageLoad()',
-          onerror='window.wabbitOnImageLoad()',
-          )
-        span(id='live_time_hud')
+        div(id='img-container')
+          img(
+            class='img-responsive',
+            id='latest_image',
+            alt='Latest image',
+            onload='window.wabbitOnImageLoad()',
+            onerror='window.wabbitOnImageLoad()',
+            )
+          span(id='live_time_hud')
 
     div(class='info_block')
       div(class='table_table')

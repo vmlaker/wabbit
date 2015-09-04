@@ -18,12 +18,16 @@ VENV_CV2 = $(VENV_LIB)/cv2.so
 # Find cv2 library for the global Python installation.
 GLOBAL_CV2 := $(shell /usr/bin/python -c 'import cv2; print(cv2)' | awk '{print $$4}' | sed s:"['>]":"":g)
 
+# All CSS files to be built.
+CSS_OUT = style.css
+
 # By default:
-#  1) get Bootstrap
-#  2) create Python virtualenv w/ OpenCV
-#  3) install node.js
-#  4) do a build
-all: $(VENV_CV2) node build bootstrap link_bootstrap
+#  1) create Python virtualenv w/ OpenCV
+#  2) install node.js
+#  3) do a build
+#  4) get Bootstrap
+#  5) build CSS files
+all: $(VENV_CV2) node build bootstrap link_bootstrap $(CSS_OUT)
 
 # Link global cv2 library file inside the virtual environment.
 $(VENV_CV2): $(GLOBAL_CV2) venv
@@ -48,6 +52,10 @@ link_bootstrap:
 	mkdir -p static/js
 	ln -sf ../../bootstrap/dist/css/bootstrap.min.css static/css
 	ln -sf ../../bootstrap/dist/js/bootstrap.min.js static/js
+
+# Rule to buid CSS files out of templates.
+%.css: src/css/%.css.in
+	./python src/py/dotin.py $< > static/css/$@
 
 COFFEE = node_modules/.bin/coffee
 JADE = node_modules/.bin/jade
