@@ -18,13 +18,16 @@ config = coils.Config(CONFIG)
 this_dir = dirname(realpath(__file__))
 chdir(this_dir)
 
+# Get the path to the root Wabbit directory.
+root_dir = normpath(join(this_dir, '..', '..'))
+
 # Add items to configuration.
 for key, val in {
-    'WORKING_DIR' : normpath(join(this_dir, '..')),
-    'RECORD_CMD'  : normpath(join(this_dir, '..', 'bin', 'record')),
-    'PYTHON'      : normpath(join(this_dir, '..', 'python')),
-    'PRUNER'      : normpath(join(this_dir, '..', 'src', 'py', 'pruner.py')),
-    'GUNICORN_BIN': normpath(join(this_dir, '..', 'venv', 'bin', 'gunicorn')),
+    'WORKING_DIR' : root_dir,
+    'RECORD_CMD'  : normpath(join(root_dir, 'bin', 'record')),
+    'PYTHON'      : normpath(join(root_dir, 'python')),
+    'PRUNER'      : normpath(join(root_dir, 'src', 'py', 'pruner.py')),
+    'GUNICORN_BIN': normpath(join(root_dir, 'venv', 'bin', 'gunicorn')),
     'APP_MODULE'  : 'src.py.serve:app',
     'ADDRESS'     : '127.0.0.1:8000',
     'USER'        : getpass.getuser(),
