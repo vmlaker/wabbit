@@ -29,7 +29,6 @@ for key, val in {
     'PRUNER'      : normpath(join(root_dir, 'src', 'py', 'pruner.py')),
     'GUNICORN_BIN': normpath(join(root_dir, 'venv', 'bin', 'gunicorn')),
     'APP_MODULE'  : 'src.py.serve:app',
-    'ADDRESS'     : '127.0.0.1:8000',
     'USER'        : getpass.getuser(),
     'GROUP'       : getpass.getuser(),
 }.items():

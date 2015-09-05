@@ -8,7 +8,7 @@ Type=simple
 User=@USER@
 Group=@GROUP@
 WorkingDirectory=@WORKING_DIR@
-ExecStart=@GUNICORN_BIN@ @APP_MODULE@ --workers 4 --threads 4 --bind @ADDRESS@
+ExecStart=@GUNICORN_BIN@ @APP_MODULE@ --workers 4 --threads 4 --bind 127.0.0.1:@port@
 Restart=always
 
 [Install]
