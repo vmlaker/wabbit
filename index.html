@@ -59,7 +59,6 @@
               <a href="#build">2. Build</a><br>
               <a href="#configure">3. Configure</a><br>
               <a href="#deploy">4. Deploy</a><br>
-              <a href="#automate">5. Automate</a><br>
               <a href="#proxy">A. Apache reverse proxy</a><br>
             </div>
             -->
@@ -119,31 +118,52 @@
         <h2 id="test"><i>4) Test</i></h2>
 
         <p>
-          Test the Recorder and Pruner:
+          Make sure your installation works by testing the Recorder:
         </p>
         <div class="code_block">
           bin/record -v 10<br>
           ./python src/py/dump.py<br>
-          ./python src/py/prune.py -60<br>
-          ./python src/py/dump.py<br>
         </div>
         <p>
-          Next, run the server:
+          Now try running the server in development mode:
+        </p>
+        <div class="code_block">
+          ./python src/py/serve.py<br>
+        </div>
+        <p>
+          Go to
+          <a href="http://127.0.0.1:8000">http://127.0.0.1:8000</a>
+          to view the front page.
+        </p>
+        <p>
+          Next, run the server in production mode:
         </p>
         <div class="code_block">
           venv/bin/gunicorn src.py.serve:app --workers 4 --threads 4 --bind 127.0.0.1:8000 --access-logfile -<br>
         </div>
         <p>
-          Go to 
-          <a href="http://127.0.0.1:8000/info">http://127.0.0.1:8000/info</a> 
-          to check the API server.
+          In production mode you won't see any images
+          until you open access to the image archive via your webserver
+          (we'll do that in a sec).
+          But you can still check the API at
+          <a href="http://127.0.0.1:8000/info">http://127.0.0.1:8000/info</a>.
         </p>
+        <p>
+          If you want to delete the recording you just did,
+          run the Pruner to remove all images and
+          remove all database entries:
+        </p>
+        <div class="code_block">
+          ./python src/py/prune.py -60<br>
+          ./python src/py/dump.py<br>
+        </div>
 
         <h2 id="deploy"><i>5) Deploy</i></h2>
 
         <p>
-          Deploy to Apache HTTPD
-          by first creating a link in <code>/var/www/html</code>
+          You can easily publish the snapshot archive
+          and run the API server through Apache HTTPD.
+          Start by first creating a link in <code>/var/www/html</code>
           to your pictures archive:
         </p>
         <div class="code_block">
@@ -157,7 +177,7 @@
         </div>
         <p>
           Cut-and-paste the snippet into your Apache conf file.
-          Then restart your server:
+          Then restart your HTTPD server:
         </p>
         <div class="code_block">
           sudo systemctl restart httpd.service<br>
@@ -176,24 +196,22 @@
           sudo chcon -R -t httpd_sys_content_t /path/to/my/pics<br>
         </div>
 
-        <h2 id="automate"><i>6) Automate</i></h2>
-
         <p>
           If you have Systemd, it's easy to automate the control
 	  of your Wabbit server processes.
           Build, install and start the services with:
         </p>
         <div class="code_block">
-          ./python systemd/build.py<br>
-          sudo ./python systemd/install.py<br>
-          sudo ./python systemd/start.py<br>
+          ./python deploy/systemd/build.py<br>
+          sudo ./python deploy/systemd/install.py<br>
+          sudo ./python deploy/systemd/start.py<br>
         </div>
         <p>
           To stop and uninstall the services, do:
         </p>
         <div class="code_block">
-          sudo ./python systemd/stop.py<br>
-          sudo ./python systemd/remove.py<br>
+          sudo ./python deploy/systemd/stop.py<br>
+          sudo ./python deploy/systemd/remove.py<br>
         </div>
 
         <h2 id="proxy">Appendix: Apache reverse proxy</h2>
@@ -220,6 +238,7 @@
           &nbsp;&nbsp;&nbsp;&nbsp;AddOutputFilterByType SUBSTITUTE text/html<br>
           &nbsp;&nbsp;&nbsp;&nbsp;Substitute "s|wabbit/|bunny/|ni"<br>
           &lt;/Location&gt;<br>
+          RewriteRule ^/bunny$ bunny/ [R]
         </div>
 
       </div>
