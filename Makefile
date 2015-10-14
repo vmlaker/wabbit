@@ -54,7 +54,7 @@ link_bootstrap:
 	ln -sf ../../bootstrap/dist/js/bootstrap.min.js static/js
 
 # Rule to buid CSS files out of templates.
-%.css: src/css/%.css.in
+%.css: src/css/%.css.in venv
 	./python src/py/dotin.py $< > static/css/$@
 
 COFFEE = node_modules/.bin/coffee
