@@ -1,5 +1,14 @@
     RewriteEngine On
     ProxyRequests Off
+    # On Raspbian, the Location directive for "/pics/" never
+    # matches unless it precedes Location "/", even though
+    # Apache docs state otherwise. The blunt fix is to declare
+    # identical Location "/pics" directives before and after "/".
+    # This insures the location is matched on Raspbian and others.
+    <Location /@db_name@/pics>
+        ProxyPass http://127.0.0.1/@db_name@_pics
+        ProxyPassReverse http://127.0.0.1/@db_name@_pics
+    </Location>
     <Location /@db_name@>
         ProxyPass http://127.0.0.1:@port@
         ProxyPassReverse http://127.0.0.1:@port@
