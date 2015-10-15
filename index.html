@@ -82,7 +82,7 @@
         <div class="code_block">
           cd wabbit<br>
           make -j 2<br>
-          sh src/bash/install-odb.sh -j 2<br>
+          bash src/bash/install-odb.sh -j 2<br>
           scons bites=../bites -j 2<br>
         </div>
         <p>
@@ -163,17 +163,19 @@
         <p>
           You can easily publish the snapshot archive
           and run the API server through Apache HTTPD.
-          Start by first creating a link in <code>/var/www/html</code>
-          to your pictures archive:
+          Start by first creating a link to your pictures archive
+	  inside your system www directory (note that here we're using
+	  <code>/var/www/html</code> -- your platform may use
+	  a different path).
         </p>
         <div class="code_block">
-          sudo ./python deploy/httpd/link.py<br>
+          sudo ./python deploy/httpd/link.py /var/www/html<br>
         </div>
         <p>
           Then dump a snippet for your VirtualHost configuration:
         </p>
         <div class="code_block">
-          ./python deploy/httpd/dump.py<br>
+          ./python deploy/httpd/dump.py /var/www/html<br>
         </div>
         <p>
           Cut-and-paste the snippet into your Apache conf file.
@@ -415,7 +417,7 @@
           You most likely forgot to create the database.
           Try running:
           <div class="code_block">
-            python src/create.py<br>
+            ./python src/py/create.py<br>
           </div>
         </p>
         <p>
