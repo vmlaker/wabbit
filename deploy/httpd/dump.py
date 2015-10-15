@@ -8,9 +8,12 @@ import sys
 
 import coils
 
-# Load configuration file.
-CONFIG = sys.argv[1] if len(sys.argv)>=2 else 'wabbit.conf'
-config = coils.Config(CONFIG)
+www_directory = sys.argv[1]
+config_fname = sys.argv[2] if len(sys.argv)>=3 else 'wabbit.conf'
+
+# Load the configuration, and add to it path to www.
+config = coils.Config(config_fname)
+config['www_directory'] = normpath(www_directory)
 
 # Go into the directory of this file.
 this_dir = dirname(realpath(__file__))

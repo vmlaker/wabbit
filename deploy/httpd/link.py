@@ -1,5 +1,6 @@
 """
-Create soft link to pictures directory.
+Create soft link to the pictures directory
+inside HTTPD www directory.
 """
 
 import os
@@ -8,13 +9,13 @@ import sys
 
 import coils
 
-# Load configuration file.
-CONFIG = sys.argv[1] if len(sys.argv)>=2 else 'wabbit.conf'
-config = coils.Config(CONFIG)
+www_directory = sys.argv[1]
+config_fname = sys.argv[2] if len(sys.argv)>=3 else 'wabbit.conf'
 
+config = coils.Config(config_fname)
 source = realpath(config['pics_dir'])
 link = config['db_name'] + '_pics'
-link = join('/', 'var', 'www', 'html', link)
+link = join(www_directory, link)
 
 # Remove soft link if already exists.
 try:
