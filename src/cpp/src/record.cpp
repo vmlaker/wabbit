@@ -5,6 +5,7 @@
  */
 
 #include <algorithm>
+#include <csignal>
 #include <sstream>
 #include <string>
 #include <vector>
@@ -41,6 +42,11 @@ void usage( const char* argv0 )
 
 int main( int argc, char** argv )
 {
+    // Setup signal handling.
+    signal(SIGTERM, [] (int value) { std::exit(value); } );
+    signal(SIGINT, [] (int value) { std::exit(value); } );
+
+
     // Convert command-line arguments array (argv) into a vector of strings.
     std::vector<std::string> args( argv, argv + argc );
 
