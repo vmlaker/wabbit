@@ -1,0 +1,5 @@
+#!/bin/sh
+
+ROOT=@WORKING_DIR@
+cd $ROOT
+exec chpst -u@USER@ @BASH@ -c '@PYTHON@ @PRUNER@ >>prune.log 2>&1'

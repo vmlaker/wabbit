@@ -1,0 +1,5 @@
+#!/bin/sh
+
+ROOT=@WORKING_DIR@
+cd $ROOT
+exec chpst -u@USER@ @RECORD_CMD@ -1

@@ -1,0 +1,6 @@
+#!/bin/sh
+
+ROOT=@WORKING_DIR@
+GUNICORN=@GUNICORN_BIN@
+cd $ROOT
+exec chpst -u@USER@ @GUNICORN_BIN@ @APP_MODULE@ --workers 4 --threads 4 --bind 127.0.0.1:@port@
