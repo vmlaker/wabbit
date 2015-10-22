@@ -44,6 +44,9 @@ Capture::Capture( bites::Config& config,
 
     // Setup the OpenCV VideoCapture object.
     m_video_capture.open( device );
+    if( m_output_stream ){
+        *m_output_stream << "is opened: " << m_video_capture.isOpened() << std::endl;
+    }
     m_video_capture.set( 3, stod( m_config["width"] ));
     m_video_capture.set( 4, stod( m_config["height"] ));
 
