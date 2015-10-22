@@ -2,4 +2,4 @@
 
 ROOT=@WORKING_DIR@
 cd $ROOT
-exec chpst -u@USER@ @BASH@ -c '@PYTHON@ @PRUNER@ >>prune.log 2>&1'
+exec chpst -u@USER@:@GROUP@ @PYTHON@ @PRUNER@ >>prune.log 2>&1
