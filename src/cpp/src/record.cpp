@@ -10,6 +10,7 @@
 #include <string>
 #include <vector>
 
+#include <boost/filesystem.hpp>
 #include <opencv2/opencv.hpp>
 #include <bites.hpp>
 #include "tbb/flow_graph.h"
@@ -75,6 +76,7 @@ int main( int argc, char** argv )
     std::istringstream( args[0] ) >> DURATION;
     args.erase( args.begin() );
     std::string CONFIG_FILE = args.size() ? args[0] : "wabbit.conf";
+    CONFIG_FILE = boost::filesystem::absolute(CONFIG_FILE).string();
     if( verbose ){
         std::cout << "duration    : " << DURATION << std::endl;
         std::cout << "config_file : " << CONFIG_FILE << std::endl;
