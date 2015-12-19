@@ -38,6 +38,13 @@ gunicorn_settings  --workers 4 --threads 8
 
 ####################
 #
+#  Memcached parameters
+#
+####################
+memcached    --SERVER=localhost
+
+####################
+#
 #  Archive
 #
 ####################

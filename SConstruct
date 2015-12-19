@@ -103,11 +103,13 @@ sources = (
     'src/cpp/src/DBWrite.cpp',
     'src/cpp/src/DiskWrite.cpp',
     'src/cpp/src/Display.cpp',
+    'src/cpp/src/MemcachedWrite.cpp',
     'src/cpp/src/Resize.cpp',
 )
 libs = (
     'boost_filesystem',
     'boost_system',
+    'libmemcached',
     'opencv_core',
     'opencv_highgui',
     'opencv_imgproc',
@@ -126,6 +128,32 @@ env = Environment(
 if debug: env.Append(CXXFLAGS=' -g')
 target = 'bin/record'
 prog = env.Program(target, sources + odb_object)
+Depends(prog, odb_object)
+Clean(prog, 'bin')  # Delete bin/ directory upon clean.
+Default(prog)
+
+# Build the play_mcd program.
+sources = (
+    'src/cpp/src/play_mcd.cpp',
+)
+libs = (
+    'boost_system',
+    'libmemcached',
+    'opencv_core',
+    'opencv_highgui',
+    'tbb',    # Intel Threading Building Blocks
+    'bites',
+)
+env = Environment(
+    CPPPATH=(bites_inc_path, 'src/cpp/include'),
+    LIBPATH=(bites_lib_path),
+    LIBS=libs,
+    CXXFLAGS='-std=c++11',
+    LINKFLAGS='-Wl,-rpath -Wl,'
+) 
+if debug: env.Append(CXXFLAGS=' -g')
+target = 'bin/play_mcd'
+prog = env.Program(target, sources)
 Depends(prog, odb_object)
 Clean(prog, 'bin')  # Delete bin/ directory upon clean.
 Default(prog)

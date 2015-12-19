@@ -19,6 +19,7 @@
 #include "Display.hpp"
 #include "DiskWrite.hpp"
 #include "DBWrite.hpp"
+#include "MemcachedWrite.hpp"
 #include "Resize.hpp"
 
 using namespace tbb::flow;
@@ -96,36 +97,26 @@ int main( int argc, char** argv )
     //
     //  The default pipeline:
     //
-    //   capture -----> disk_write -----> db_write
-    //   (alloc)
+    //                +---> memcached_write (optional)
+    //               /
+    //   capture ---+---> disk_write -----> db_write
     //
-    //  If resizing is enables:
-    //
-    //                +---------> disk_write ---------+
-    //               /                                 \
-    //   capture ---+                                   +---> join ---> funnel ---> db_write
-    //   (alloc)     \                                 / 
+    //  If resizing is enabled:
+    //                
+    //                +---> memcached_write (optional)
+    //               /
+    //   capture ---+-----------------> disk_write -----+---> join ---> funnel ---> db_write
+    //               \                                 / 
     //                +---> resize ---> disk_write ---+
-    //
-    /////////////////////////////////////////////////////////////////////
-
-    /////////////////////////////////////////////////////////////////////
-    //
-    //  Instantiate the flow graph nodes.
     //
     /////////////////////////////////////////////////////////////////////
     using namespace wabbit;
     graph g;
-
     typedef source_node< ImageAndTime > snode;
     snode capture( g, Capture( config, DURATION, verbose ? &std::cout : NULL ));
-
     typedef function_node< ImageAndTime, ImageAndTime > fnode;
-
     const int concurrency = unlimited;
-
     fnode diskwrite1( g, concurrency, DiskWrite( config["pics_dir"] ));
-
     fnode resize( g, concurrency, Resize( config ));
     std::string suffix( config["width2"] + "x" + config["height2"] + "__" );
     fnode diskwrite2( g, concurrency, DiskWrite( config["pics_dir"], suffix ));
@@ -133,22 +124,17 @@ int main( int argc, char** argv )
     function_node< tuple< ImageAndTime, ImageAndTime >, ImageAndTime > funnel(
         g, unlimited, []( const tuple< ImageAndTime, ImageAndTime > &t )
         -> const ImageAndTime& { return std::get<0>( t ); });
-            
     fnode dbwrite( g, concurrency, DBWrite( config ));
+    fnode mcdwrite( g, concurrency, MemcachedWrite( config, verbose ? &std::cout : NULL ));
 
-    /////////////////////////////////////////////////////////////////////
-    //
-    // Connect the nodes with edges.
-    //
-    /////////////////////////////////////////////////////////////////////
+    // Connect the flow graph.
     make_edge( capture, diskwrite1 );
-    
-    if( config["width2"].empty() or config["height2"].empty() )
-    {
-        make_edge( diskwrite1, dbwrite );
+    if( config["memcached"].size() ){
+      make_edge( capture, mcdwrite );
     }
-    else
-    {
+    if( config["width2"].empty() or config["height2"].empty() ){
+        make_edge( diskwrite1, dbwrite );
+    }else{
         make_edge( capture, resize );
         make_edge( resize, diskwrite2 );
         make_edge( diskwrite1, input_port<0>( join ));
@@ -156,7 +142,6 @@ int main( int argc, char** argv )
         make_edge( join, funnel );
         make_edge( funnel, dbwrite );
     }
-
     g.wait_for_all();
     return 0;
 }
