@@ -1,0 +1,37 @@
+html
+  head
+    title Wabbit Websocket
+    script(src='http://code.jquery.com/jquery-1.11.3.min.js')
+    link(href="{{ static_url('css/bootstrap.min.css') }}", type='text/css', rel='stylesheet')
+    link(href="{{ static_url('css/style.css') }}", type='text/css', rel='stylesheet')
+script.
+  $(document).ready(function(){
+    if ('WebSocket' in window) {
+      var ws_path = 'ws://' + window.location.host + window.location.pathname + 'ws';
+      //alert(ws_path);
+      var ws = new WebSocket (ws_path);
+      //alert(ws);
+      ws.onopen = function () {
+        ws.send(1);
+      };
+      ws.onmessage = function (msg) {
+        $('#cam').attr('src', 'data:image/jpg;base64,' + msg.data);
+        ws.send(1);
+      };
+      ws.onerror = function (e) {
+        console.log(e);
+        ws.send(1);
+      };
+    } else {
+      alert('WebSocket not supported');
+    }
+  });
+
+body
+  div(class='row')
+    div(class='col-xs-12')
+      div(id='img-container')
+        img(
+          class='img-responsive',
+          id='cam',
+        )
