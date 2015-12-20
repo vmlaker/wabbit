@@ -7,7 +7,11 @@ html
 script.
   $(document).ready(function(){
     if ('WebSocket' in window) {
-      var ws_path = 'ws://' + window.location.host + window.location.pathname + 'ws';
+      var ws_path = 'ws://' + window.location.host + window.location.pathname;
+      if (ws_path.substr(-1) !== '/') {
+        ws_path += '/';
+      }
+      ws_path += 'ws';
       //alert(ws_path);
       var ws = new WebSocket (ws_path);
       //alert(ws);
