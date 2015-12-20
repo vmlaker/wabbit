@@ -6,6 +6,8 @@ gunicorn==19.3.0
 mpipe==1.0.8
 MySQL-python==1.2.5
 numpy==1.9.2
+python-memcached==1.57
 simplejson==3.7.2
 SQLAlchemy==1.0.4
+tornado==4.3
 wget==2.2
