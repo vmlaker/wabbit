@@ -109,11 +109,6 @@
         <div class="code_block">
           ./python src/py/create.py<br>
         </div>
-        <p>
-          If later you want to undo the above command,
-          run <code>./python src/py/drop.py</code>
-          to clean up what was created.
-        </p>
 
         <h2 id="test"><i>4) Test</i></h2>
 
@@ -148,15 +143,6 @@
           But you can still check the API at
           <a href="http://127.0.0.1:8000/info">http://127.0.0.1:8000/info</a>.
         </p>
-        <p>
-          If you want to delete the recording you just did,
-          run the Pruner to remove all images and
-          remove all database entries:
-        </p>
-        <div class="code_block">
-          ./python src/py/prune.py -60<br>
-          ./python src/py/dump.py<br>
-        </div>
 
         <h2 id="deploy"><i>5) Deploy</i></h2>
 
@@ -208,15 +194,8 @@
           sudo ./python deploy/systemd/install.py<br>
           sudo ./python deploy/systemd/start.py<br>
         </div>
-        <p>
-          To stop and uninstall the services, do:
-        </p>
-        <div class="code_block">
-          sudo ./python deploy/systemd/stop.py<br>
-          sudo ./python deploy/systemd/remove.py<br>
-        </div>
 
-        <h2 id="proxy">Appendix: Apache reverse proxy</h2>
+        <h2 id="proxy">Appendix A: Apache reverse proxy</h2>
 
         <p>
           If your Wabbit server is on a private network,
@@ -241,6 +220,32 @@
           &nbsp;&nbsp;&nbsp;&nbsp;Substitute "s|wabbit/|bunny/|ni"<br>
           &lt;/Location&gt;<br>
           RewriteRule ^/bunny$ bunny/ [R]
+        </div>
+
+        <h2 id="proxy">Appendix B: Teardown</h2>
+
+        <p>
+          To remove Wabbit from your system,
+          first stop and remove the services.
+          For Systemd:
+        </p>
+        <div class="code_block">
+          sudo ./python deploy/systemd/stop.py<br>
+          sudo ./python deploy/systemd/remove.py<br>
+        </div>
+        <p>
+          Or, for runit:
+        </p>
+        <div class="code_block">
+          sudo ./python deploy/runit/stop.py<br>
+          sudo ./python deploy/runit/remove.py<br>
+        </div>
+        <p>
+          Then, clear your achive and remove the database:
+        </p>
+        <div class="code_block">
+          ./python src/py/prune.py -60</br>
+          ./python src/py/drop.py</br>
         </div>
 
       </div>
