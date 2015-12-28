@@ -66,10 +66,11 @@
         <h2 id="download"><i>1) Download</i></h2>
 
         <p>
-          Clone two repos:
+          Clone three repos:
         </p>
         <div class="code_block">
           git clone https://github.com/vmlaker/bites<br>
+          git clone https://github.com/vmlaker/date<br>
           git clone https://github.com/vmlaker/wabbit<br>
         </div>
 
@@ -83,7 +84,7 @@
           cd wabbit<br>
           make -j 2<br>
           bash src/bash/install-odb.sh -j 2<br>
-          scons bites=../bites -j 2<br>
+          scons bites=../bites date=../date -j 2<br>
         </div>
         <p>
           Make builds your Python virtualenv and Node.js environment,
@@ -510,6 +511,7 @@
               <li><a href="http://www.threadingbuildingblocks.org">Intel TBB</a> for C++ parallelism</li>
               <li><a href="http://vmlaker.github.io/mpipe">MPipe</a> for Python parallelism</li>
               <li><a href="http://www.codesynthesis.com/products/odb">ODB</a> for C++ ORM</li>
+              <li><a href="http://github.com/HowardHinnant/date">H. Hinnant's date library</a> for C++ date and time formatting</li>
               <li><a href="http://www.sqlalchemy.org">SQLAlchemy</a> for Python ORM</li>
               <li>MySQL for RDBMS</li>
               <li><a href="http://flask.pocoo.org">Flask</a> for web app</li>

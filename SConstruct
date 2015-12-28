@@ -13,6 +13,10 @@ bites_path = ARGUMENTS.get('bites', None)
 if not bites_path:
     print('Please specify path to Bites installation, e.g. "bites=../bites"')
     exit(1)
+date_path = ARGUMENTS.get('date', None)
+if not date_path:
+    print('Please specify path to C++ date installation, e.g. "date=../date"')
+    exit(1)
 
 
 ###########################################
@@ -119,7 +123,7 @@ libs = (
     'bites',
 )
 env = Environment(
-    CPPPATH=(bites_inc_path, 'src/cpp/include', 'libodb/include', 'src/cpp/odb'),
+    CPPPATH=(bites_inc_path, date_path, 'src/cpp/include', 'libodb/include', 'src/cpp/odb'),
     LIBPATH=(bites_lib_path, 'libodb/lib'),
     LIBS=libs,
     CXXFLAGS='-std=c++11',

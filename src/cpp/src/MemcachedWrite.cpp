@@ -1,6 +1,8 @@
 //  MemcachedWrite.cpp
 
+#include <sstream>
 #include <bites.hpp>
+#include <date.h>
 #include "MemcachedWrite.hpp"
 
 namespace wabbit {
@@ -8,6 +10,7 @@ namespace wabbit {
 MemcachedWrite::MemcachedWrite( bites::Config& config,
                                 std::ostream* output_stream)
   : m_config( config ),
+    m_memc( NULL ),
     m_output_stream( output_stream )
 {
   m_memc = memcached(config["memcached"].c_str(), config["memcached"].size());
@@ -36,9 +39,26 @@ MemcachedWrite::operator()( const wabbit::ImageAndTime& image_and_time )
     );
   if( m_output_stream ){
     if(rc != MEMCACHED_SUCCESS){
-      *m_output_stream << "Failed to set: " << memcached_strerror(m_memc, rc) << std::endl;
+      *m_output_stream << "Failed to set image: " << rc << " " << memcached_strerror(m_memc, rc) << std::endl;
     }
   }
+  using namespace date;
+  auto tt = std::chrono::high_resolution_clock::to_time_t(image_and_time.time);
+  std::stringstream ss;
+  ss << image_and_time.time;
+  auto sss = ss.str();
+
+  rc = memcached_set(
+    m_memc, "time", strlen("time"),
+    reinterpret_cast<const char*>(sss.c_str()), sss.size(),
+    0, 0
+    );
+  if( m_output_stream ){
+    if(rc != MEMCACHED_SUCCESS){
+      *m_output_stream << "Failed to set time: " << rc << " " << memcached_strerror(m_memc, rc) << std::endl;
+    }
+  }
+
   return image_and_time;
 } 
   
