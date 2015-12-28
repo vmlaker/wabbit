@@ -92,13 +92,13 @@ int main( int argc, char** argv )
   //
   //  The default pipeline:
   //
-  //                +---> memcached_write (optional)
+  //                +---> limit(1) ---> memcached_write (both optional)
   //               /
   //   capture ---+---> disk_write -----> db_write
   //
   //  If resizing is enabled:
   //                
-  //                +---> memcached_write (optional)
+  //                +---> limit(1) ---> memcached_write (both optional)
   //               /
   //   capture ---+-----------------> disk_write -----+---> join ---> funnel ---> db_write
   //               \                                 / 
@@ -110,22 +110,26 @@ int main( int argc, char** argv )
   typedef source_node< ImageAndTime > snode;
   snode capture( g, Capture( config, DURATION, verbose ? &std::cout : NULL ));
   typedef function_node< ImageAndTime, ImageAndTime > fnode;
-  const int concurrency = unlimited;
-  fnode diskwrite1( g, concurrency, DiskWrite( config["pics_dir"] ));
-  fnode resize( g, concurrency, Resize( config ));
+
+  fnode diskwrite1( g, unlimited, DiskWrite( config["pics_dir"] ));
+  fnode resize( g, unlimited, Resize( config ));
   std::string suffix( config["width2"] + "x" + config["height2"] + "__" );
-  fnode diskwrite2( g, concurrency, DiskWrite( config["pics_dir"], suffix ));
+  fnode diskwrite2( g, unlimited, DiskWrite( config["pics_dir"], suffix ));
   join_node< tuple< ImageAndTime, ImageAndTime > > join( g );
   function_node< tuple< ImageAndTime, ImageAndTime >, ImageAndTime > funnel(
     g, unlimited, []( const tuple< ImageAndTime, ImageAndTime > &t )
     -> const ImageAndTime& { return std::get<0>( t ); });
-  fnode dbwrite( g, concurrency, DBWrite( config ));
-  fnode mcdwrite( g, concurrency, MemcachedWrite( config, verbose ? &std::cout : NULL ));
+  fnode dbwrite( g, unlimited, DBWrite( config ));
+
+  limiter_node< ImageAndTime > limit( g, 1 );
+  typedef function_node< ImageAndTime, ImageAndTime, rejecting > fnode_rejecting;
+  fnode_rejecting mcdwrite( g, serial, MemcachedWrite( config, verbose ? &std::cout : NULL ));
   
   // Connect the flow graph.
   make_edge( capture, diskwrite1 );
   if( config["memcached"].size() ){
-    make_edge( capture, mcdwrite );
+    make_edge( capture, limit );
+    make_edge( limit, mcdwrite );
   }
   if( config["width2"].empty() or config["height2"].empty() ){
     make_edge( diskwrite1, dbwrite );
