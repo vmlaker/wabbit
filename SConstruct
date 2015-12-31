@@ -107,6 +107,7 @@ sources = (
     'src/cpp/src/DBWrite.cpp',
     'src/cpp/src/DiskWrite.cpp',
     'src/cpp/src/Display.cpp',
+    'src/cpp/src/ImageAndTime.cpp',
     'src/cpp/src/MemcachedWrite.cpp',
     'src/cpp/src/Resize.cpp',
 )

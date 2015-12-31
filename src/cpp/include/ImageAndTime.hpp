@@ -9,15 +9,13 @@ namespace wabbit {
 // Contains the OpenCV image, coupled with the capture time and sequence number.
 struct ImageAndTime
 {
-  typedef std::chrono::time_point< std::chrono::high_resolution_clock > time_point;
-
   cv::Mat image;
+  typedef std::chrono::time_point< std::chrono::high_resolution_clock > time_point;
   time_point time;
   size_t sequence;
-  ImageAndTime(): image(), time(), sequence(0) {};
-  ImageAndTime(const cv::Mat& image, const time_point& time, const size_t sequence)
-    : image(image), time(time), sequence(sequence) {};
-  static size_t s_sequence;
+  ImageAndTime();
+  ImageAndTime(const ImageAndTime&);
+  ImageAndTime(const cv::Mat& image, const time_point& time, const size_t sequence);
 };
 
 }  // namespace wabbit

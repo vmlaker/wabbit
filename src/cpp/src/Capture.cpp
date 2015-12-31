@@ -106,6 +106,7 @@ bool Capture::operator()( wabbit::ImageAndTime& image_and_time )
     m_video_capture >> image_and_time.image;  // Read the image.
     elapsed = std::chrono::system_clock::now() - m_prev_time;
     image_and_time.time = m_prev_time;
+    image_and_time.sequence++;
     elapsed_ms = std::chrono::duration_cast<std::chrono::microseconds>( elapsed );
     if( elapsed_ms.count()/1000000. < m_min_read )
     {

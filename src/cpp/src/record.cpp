@@ -19,6 +19,7 @@
 #include "DBWrite.hpp"
 #include "MemcachedWrite.hpp"
 #include "Resize.hpp"
+#include "Sequence.hpp"
 
 using namespace tbb::flow;
 
@@ -89,18 +90,19 @@ int main( int argc, char** argv )
   /////////////////////////////////////////////////////////////////////
   //
   //  Assemble the image capture and processing pipeline.
+  //  Note the use of the sequencer nodes, denoted by *S*.
   //
   //  The default pipeline:
   //
-  //                +---> limit(1) ---> memcached_write (both optional)
+  //                +---> *S* ---> memcached_write (both optional)
   //               /
-  //   capture ---+---> disk_write -----> db_write
+  //   capture ---+---> disk_write ---> *S* ---> db_write
   //
   //  If resizing is enabled:
   //                
-  //                +---> limit(1) ---> memcached_write (both optional)
+  //                +---> *S* ---> memcached_write (both optional)
   //               /
-  //   capture ---+-----------------> disk_write -----+---> join ---> funnel ---> db_write
+  //   capture ---+-----------------> disk_write -----+---> join ---> funnel ---> *S* ---> db_write
   //               \                                 / 
   //                +---> resize ---> disk_write ---+
   //
@@ -110,7 +112,7 @@ int main( int argc, char** argv )
   typedef source_node< ImageAndTime > snode;
   snode capture( g, Capture( config, DURATION, verbose ? &std::cout : NULL ));
   typedef function_node< ImageAndTime, ImageAndTime > fnode;
-
+  
   fnode diskwrite1( g, unlimited, DiskWrite( config["pics_dir"] ));
   fnode resize( g, unlimited, Resize( config ));
   std::string suffix( config["width2"] + "x" + config["height2"] + "__" );
@@ -120,16 +122,16 @@ int main( int argc, char** argv )
     g, unlimited, []( const tuple< ImageAndTime, ImageAndTime > &t )
     -> const ImageAndTime& { return std::get<0>( t ); });
   fnode dbwrite( g, unlimited, DBWrite( config ));
+  fnode mcdwrite( g, unlimited, MemcachedWrite( config, verbose ? &std::cout : NULL ));
 
-  limiter_node< ImageAndTime > limit( g, 1 );
-  typedef function_node< ImageAndTime, ImageAndTime, rejecting > fnode_rejecting;
-  fnode_rejecting mcdwrite( g, serial, MemcachedWrite( config, verbose ? &std::cout : NULL ));
+  sequencer_node< ImageAndTime > sequence_mcdwrite( g, Sequence() );
+  sequencer_node< ImageAndTime > sequence_dbwrite( g, Sequence() );
   
   // Connect the flow graph.
   make_edge( capture, diskwrite1 );
   if( config["memcached"].size() ){
-    make_edge( capture, limit );
-    make_edge( limit, mcdwrite );
+    make_edge( capture, sequence_mcdwrite );
+    make_edge( sequence_mcdwrite, mcdwrite );
   }
   if( config["width2"].empty() or config["height2"].empty() ){
     make_edge( diskwrite1, dbwrite );
@@ -139,7 +141,8 @@ int main( int argc, char** argv )
     make_edge( diskwrite1, input_port<0>( join ));
     make_edge( diskwrite2, input_port<1>( join ));
     make_edge( join, funnel );
-    make_edge( funnel, dbwrite );
+    make_edge( funnel, sequence_dbwrite );
+    make_edge( sequence_dbwrite, dbwrite );
   }
   g.wait_for_all();
   return 0;
