@@ -54,6 +54,9 @@ class SocketHandler(websocket.WebSocketHandler):
             self.client_infos[self].prev_image_time = time
         self.client_infos[self].prev_message_time = now
 
+    def check_origin(self, origin):
+        return True
+
 template_folder = os.path.normpath(os.path.join(os.getcwd(), 'templates'))
 static_folder = os.path.normpath(os.path.join(os.getcwd(), 'static'))
 app = web.Application(
