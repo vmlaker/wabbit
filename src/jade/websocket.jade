@@ -7,24 +7,31 @@ html
 script.
   $(document).ready(function(){
     if ('WebSocket' in window) {
+
+      // Compose the Websocket URL path.
       var ws_path = 'ws://' + window.location.host + window.location.pathname;
-      if (ws_path.substr(-1) !== '/') {
-        ws_path += '/';
-      }
+      if (ws_path.substr(-1) !== '/') { ws_path += '/'; }
       ws_path += 'ws';
-      //alert(ws_path);
+
+      // Create the Websocket and register the callbacks.
       var ws = new WebSocket (ws_path);
-      //alert(ws);
       ws.onopen = function () {
-        ws.send(1);
+        ws.send(0);
       };
       ws.onmessage = function (msg) {
-        $('#cam').attr('src', 'data:image/jpg;base64,' + msg.data);
-        ws.send(1);
+        var data = JSON.parse(msg.data)
+        if ('image' in data) {
+          console.log('image');
+          $('#cam').one('load', function() {
+            setTimeout(function() { ws.send(1); }, data.timeout);
+          }).attr('src', 'data:image/jpg;base64,' + data.image);
+        }else{
+          setTimeout(function() { ws.send(1); }, data.timeout);
+        }
       };
       ws.onerror = function (e) {
         console.log(e);
-        ws.send(1);
+        ws.send(2);
       };
     } else {
       alert('WebSocket not supported');
