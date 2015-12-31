@@ -16,33 +16,43 @@ import coils
 
 port = int(sys.argv[1])
 
+class ClientInfo:
+    def __init__(self):
+        self.prev_message_time = datetime.now()
+        self.prev_image_time = None
+
 class IndexHandler(web.RequestHandler):
     def get(self):
         self.render('websocket.html')
 
 class SocketHandler(websocket.WebSocketHandler):
-    clients = defaultdict(str)
+    client_infos = defaultdict()
 
     def __init__(self, *args, **kwargs):
         super(SocketHandler, self).__init__(*args, **kwargs)
         servers = ['127.0.0.1:11211']
-        self._mc = Client(servers, debug=1)
+        self._mc = Client(servers)
 
     def open(self):
-        pass
+        self.client_infos[self] = ClientInfo()
+
+    def on_close(self):
+        del self.client_infos[self]
 
     def on_message(self, message):
+        now = datetime.now()
+        delta = now - self.client_infos[self].prev_message_time
+        # TODO: Restrict access based on delta.
+
         time = self._mc.get('time')
-        if self.clients[self] == time:
+        if self.client_infos[self].prev_image_time == time:
             self.write_message({'timeout': 50})
         else:
             image = self._mc.get('image')
             image = base64.b64encode(image)
             self.write_message({'image': image, 'timeout': 80})
-            self.clients[self] = time
-
-    def on_close(self):
-        del self.clients[self]
+            self.client_infos[self].prev_image_time = time
+        self.client_infos[self].prev_message_time = now
 
 template_folder = os.path.normpath(os.path.join(os.getcwd(), 'templates'))
 static_folder = os.path.normpath(os.path.join(os.getcwd(), 'static'))
