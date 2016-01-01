@@ -8,7 +8,8 @@ ImageAndTime::ImageAndTime()
 ImageAndTime::ImageAndTime(const ImageAndTime& image_and_time)
   : image(image_and_time.image),
     time(image_and_time.time),
-    sequence(image_and_time.sequence) {};
+    sequence(image_and_time.sequence),
+    framerate(image_and_time.framerate) {};
 
 ImageAndTime::ImageAndTime(const cv::Mat& image, const time_point& time, const size_t sequence)
   : image(image), time(time), sequence(sequence) {};

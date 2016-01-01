@@ -2,6 +2,7 @@
 #define WABBIT_IMAGEANDTIME_HPP_INCLUDED
 
 #include <chrono>
+#include <vector>
 #include <opencv2/opencv.hpp>
 
 namespace wabbit {
@@ -13,6 +14,7 @@ struct ImageAndTime
   typedef std::chrono::time_point< std::chrono::high_resolution_clock > time_point;
   time_point time;
   size_t sequence;
+  std::vector< float > framerate;
   ImageAndTime();
   ImageAndTime(const ImageAndTime&);
   ImageAndTime(const cv::Mat& image, const time_point& time, const size_t sequence);

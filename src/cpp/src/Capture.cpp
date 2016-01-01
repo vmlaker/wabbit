@@ -122,6 +122,7 @@ bool Capture::operator()( wabbit::ImageAndTime& image_and_time )
     // Set the framerate.
     auto fps = m_rate_ticker.tick();
     m_framerate.set( fps );
+    image_and_time.framerate = fps;
 
     // Optionally print the current framerate.
     if( m_output_stream ){

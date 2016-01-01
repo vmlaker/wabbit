@@ -59,6 +59,24 @@ MemcachedWrite::operator()( const wabbit::ImageAndTime& image_and_time )
     }
   }
 
+  std::string framerate;
+  for( auto item : image_and_time.framerate ){
+    std::stringstream ss;
+    ss << item;
+    framerate += std::string(ss.str()) + std::string(" ");
+  }
+
+  rc = memcached_set(
+    m_memc, "framerate", strlen("framerate"),
+    reinterpret_cast<const char*>(framerate.c_str()), framerate.size(),
+    0, 0
+    );
+  if( m_output_stream ){
+    if(rc != MEMCACHED_SUCCESS){
+      *m_output_stream << "Failed to set framerate: " << rc << " " << memcached_strerror(m_memc, rc) << std::endl;
+    }
+  }
+
   return image_and_time;
 } 
   
