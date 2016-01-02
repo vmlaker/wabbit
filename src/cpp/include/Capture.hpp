@@ -1,22 +1,18 @@
 #ifndef WABBIT_CAPTURE_HPP_INCLUDED
 #define WABBIT_CAPTURE_HPP_INCLUDED
 
-// Include standard headers.
 #include <vector>
-
-// Include 3rd party headers.
 #include <opencv2/opencv.hpp>
 #include <bites.hpp>
-
-// Include application headers.
 #include "ImageAndTime.hpp"
+#include "Node.hpp"
 
 namespace wabbit {
 
 /**
  *  Video capture stage.
  */
-class Capture
+class Capture : public Node
 {
 public:
 
@@ -52,9 +48,6 @@ private:
 
     // Duration for video capture.
     int m_duration;
-
-    // The output stream used for verbose output.
-    std::ostream* m_output_stream;
 
     // The current running framerate.
     bites::Mutexed <std::vector <float>> m_framerate;

@@ -15,9 +15,9 @@ namespace wabbit {
 Capture::Capture( bites::Config& config,
                   const int& duration,
                   std::ostream* output_stream )
-    : m_config( config ),
+    : Node( output_stream ),
+      m_config( config ),
       m_duration( duration ),
-      m_output_stream( output_stream ),
       m_video_capture(),
       m_rate_ticker({1, 5, 10})
 {
@@ -38,15 +38,12 @@ Capture::Capture( bites::Config& config,
         auto number = target.substr( length );
         device = std::stod( number );
     }
-    if( m_output_stream ){
-        *m_output_stream << "device: " << device << std::endl;
-    }
+    vout() << "device: " << device << std::endl;
 
     // Setup the OpenCV VideoCapture object.
     m_video_capture.open( device );
-    if( m_output_stream ){
-        *m_output_stream << "is opened: " << m_video_capture.isOpened() << std::endl;
-    }
+    vout() << "is opened: " << m_video_capture.isOpened() << std::endl;
+
     m_video_capture.set( 3, stod( m_config["width"] ));
     m_video_capture.set( 4, stod( m_config["height"] ));
 
@@ -65,9 +62,9 @@ Capture::Capture( bites::Config& config,
 }
 
 Capture::Capture( const Capture& capture ) 
-    : m_config( capture.m_config ),
+    : Node( capture ),
+      m_config( capture.m_config ),
       m_duration( capture.m_duration ),
-      m_output_stream( capture.m_output_stream ),
       m_video_capture( capture.m_video_capture ),
       m_rate_ticker( capture.m_rate_ticker ),
       m_prev_time( capture.m_prev_time ),
@@ -124,16 +121,12 @@ bool Capture::operator()( wabbit::ImageAndTime& image_and_time )
     m_framerate.set( fps );
     image_and_time.framerate = fps;
 
-    // Optionally print the current framerate.
-    if( m_output_stream ){
-        *m_output_stream << std::fixed << std::setw( 10 ) << std::setprecision( 6 ) 
-                         << elapsed_ms.count()/1000000.;
-        for(auto ii=begin( fps ); ii!=end( fps ); ++ii){
-            *m_output_stream << std::fixed << std::setw( 7 ) << std::setprecision( 2 ) 
-                             << *ii;
-        }
-        *m_output_stream << std::endl;
+    // Verbose-output the current framerate.
+    vout() << std::fixed << std::setw( 10 ) << std::setprecision( 6 ) << elapsed_ms.count()/1000000.;
+    for(auto ii=begin( fps ); ii!=end( fps ); ++ii){
+      vout() << std::fixed << std::setw( 7 ) << std::setprecision( 2 ) << *ii;
     }
+    vout() << std::endl;
 
     return true;
 }
