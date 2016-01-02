@@ -9,22 +9,20 @@ namespace wabbit {
 
 MemcachedWrite::MemcachedWrite( bites::Config& config,
                                 std::ostream* output_stream)
-  : m_config( config ),
-    m_memc( NULL ),
-    m_output_stream( output_stream )
+  : Node( output_stream ),
+    m_config( config ),
+    m_memc( NULL )
 {
   m_memc = memcached(config["memcached"].c_str(), config["memcached"].size());
-  if( m_output_stream ){
-    if(m_memc == NULL){
-      *m_output_stream << "Failed to allocate." << std::endl;
-    }
+  if(m_memc == NULL){
+    vout() << "Failed to allocate." << std::endl;
   }
 }
   
 MemcachedWrite::MemcachedWrite( const MemcachedWrite& memcached_write )
-  : m_config( memcached_write.m_config ),
-    m_memc( memcached_write.m_memc ),
-    m_output_stream( memcached_write.m_output_stream )
+  : Node( memcached_write ),
+    m_config( memcached_write.m_config ),
+    m_memc( memcached_write.m_memc )
 {}
   
 const wabbit::ImageAndTime& 
@@ -37,10 +35,8 @@ MemcachedWrite::operator()( const wabbit::ImageAndTime& image_and_time )
     reinterpret_cast<const char*>(&buf[0]), buf.size(),
     0, 0
     );
-  if( m_output_stream ){
-    if(rc != MEMCACHED_SUCCESS){
-      *m_output_stream << "Failed to set image: " << rc << " " << memcached_strerror(m_memc, rc) << std::endl;
-    }
+  if(rc != MEMCACHED_SUCCESS){
+    vout() << "Failed to set image: " << rc << " " << memcached_strerror(m_memc, rc) << std::endl;
   }
   using namespace date;
   auto tt = std::chrono::high_resolution_clock::to_time_t(image_and_time.time);
@@ -53,10 +49,8 @@ MemcachedWrite::operator()( const wabbit::ImageAndTime& image_and_time )
     reinterpret_cast<const char*>(sss.c_str()), sss.size(),
     0, 0
     );
-  if( m_output_stream ){
-    if(rc != MEMCACHED_SUCCESS){
-      *m_output_stream << "Failed to set time: " << rc << " " << memcached_strerror(m_memc, rc) << std::endl;
-    }
+  if(rc != MEMCACHED_SUCCESS){
+    vout() << "Failed to set time: " << rc << " " << memcached_strerror(m_memc, rc) << std::endl;
   }
 
   std::string framerate;
@@ -71,10 +65,8 @@ MemcachedWrite::operator()( const wabbit::ImageAndTime& image_and_time )
     reinterpret_cast<const char*>(framerate.c_str()), framerate.size(),
     0, 0
     );
-  if( m_output_stream ){
-    if(rc != MEMCACHED_SUCCESS){
-      *m_output_stream << "Failed to set framerate: " << rc << " " << memcached_strerror(m_memc, rc) << std::endl;
-    }
+  if(rc != MEMCACHED_SUCCESS){
+    vout() << "Failed to set framerate: " << rc << " " << memcached_strerror(m_memc, rc) << std::endl;
   }
 
   return image_and_time;

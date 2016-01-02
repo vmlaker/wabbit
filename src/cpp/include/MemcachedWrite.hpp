@@ -4,11 +4,12 @@
 #include <libmemcached/memcached.h>
 #include <bites.hpp>
 #include "ImageAndTime.hpp"
+#include "Node.hpp"
 
 namespace wabbit {
 
 //  Thread that writes to the Memcached.
-class MemcachedWrite
+class MemcachedWrite : public Node
 {
 public:
   //  Initialize the thread with parameters.
@@ -25,7 +26,6 @@ public:
 private:
   bites::Config& m_config;
   memcached_st* m_memc = NULL;
-  std::ostream* m_output_stream;
 };
 
 }  // namespace wabbit.
