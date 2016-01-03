@@ -1,7 +1,12 @@
+*.log
 *.o
 *.pyc
+*.zip
 .sconsign.dblite
 bin/
+bootstrap*
+deploy/*/*.runit
+deploy/*/*.service
 libodb/
 node_modules/
 python
