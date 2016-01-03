@@ -5,6 +5,8 @@ bin/
 libodb/
 node_modules/
 python
+static/images/
+static/js/
 templates/
 venv/
 wabbit.conf
