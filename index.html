@@ -66,10 +66,11 @@
         <h2 id="download"><i>1) Download</i></h2>
 
         <p>
-          Clone two repos:
+          Clone three repos:
         </p>
         <div class="code_block">
           git clone https://github.com/vmlaker/bites<br>
+          git clone https://github.com/vmlaker/date<br>
           git clone https://github.com/vmlaker/wabbit<br>
         </div>
 
@@ -83,7 +84,7 @@
           cd wabbit<br>
           make -j 2<br>
           bash src/bash/install-odb.sh -j 2<br>
-          scons bites=../bites -j 2<br>
+          scons bites=../bites date=../date -j 2<br>
         </div>
         <p>
           Make builds your Python virtualenv and Node.js environment,
@@ -109,11 +110,6 @@
         <div class="code_block">
           ./python src/py/create.py<br>
         </div>
-        <p>
-          If later you want to undo the above command,
-          run <code>./python src/py/drop.py</code>
-          to clean up what was created.
-        </p>
 
         <h2 id="test"><i>4) Test</i></h2>
 
@@ -148,15 +144,6 @@
           But you can still check the API at
           <a href="http://127.0.0.1:8000/info">http://127.0.0.1:8000/info</a>.
         </p>
-        <p>
-          If you want to delete the recording you just did,
-          run the Pruner to remove all images and
-          remove all database entries:
-        </p>
-        <div class="code_block">
-          ./python src/py/prune.py -60<br>
-          ./python src/py/dump.py<br>
-        </div>
 
         <h2 id="deploy"><i>5) Deploy</i></h2>
 
@@ -208,15 +195,8 @@
           sudo ./python deploy/systemd/install.py<br>
           sudo ./python deploy/systemd/start.py<br>
         </div>
-        <p>
-          To stop and uninstall the services, do:
-        </p>
-        <div class="code_block">
-          sudo ./python deploy/systemd/stop.py<br>
-          sudo ./python deploy/systemd/remove.py<br>
-        </div>
 
-        <h2 id="proxy">Appendix: Apache reverse proxy</h2>
+        <h2 id="proxy">Appendix A: Apache reverse proxy</h2>
 
         <p>
           If your Wabbit server is on a private network,
@@ -241,6 +221,32 @@
           &nbsp;&nbsp;&nbsp;&nbsp;Substitute "s|wabbit/|bunny/|ni"<br>
           &lt;/Location&gt;<br>
           RewriteRule ^/bunny$ bunny/ [R]
+        </div>
+
+        <h2 id="proxy">Appendix B: Teardown</h2>
+
+        <p>
+          To remove Wabbit from your system,
+          first stop and remove the services.
+          For Systemd:
+        </p>
+        <div class="code_block">
+          sudo ./python deploy/systemd/stop.py<br>
+          sudo ./python deploy/systemd/remove.py<br>
+        </div>
+        <p>
+          Or, for runit:
+        </p>
+        <div class="code_block">
+          sudo ./python deploy/runit/stop.py<br>
+          sudo ./python deploy/runit/remove.py<br>
+        </div>
+        <p>
+          Then, clear your achive and remove the database:
+        </p>
+        <div class="code_block">
+          ./python src/py/prune.py -60</br>
+          ./python src/py/drop.py</br>
         </div>
 
       </div>
@@ -505,6 +511,7 @@
               <li><a href="http://www.threadingbuildingblocks.org">Intel TBB</a> for C++ parallelism</li>
               <li><a href="http://vmlaker.github.io/mpipe">MPipe</a> for Python parallelism</li>
               <li><a href="http://www.codesynthesis.com/products/odb">ODB</a> for C++ ORM</li>
+              <li><a href="http://github.com/HowardHinnant/date">H. Hinnant's date library</a> for C++ date and time formatting</li>
               <li><a href="http://www.sqlalchemy.org">SQLAlchemy</a> for Python ORM</li>
               <li>MySQL for RDBMS</li>
               <li><a href="http://flask.pocoo.org">Flask</a> for web app</li>
