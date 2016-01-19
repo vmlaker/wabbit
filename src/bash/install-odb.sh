@@ -18,6 +18,7 @@ function usage {
     echo "Options:"
     echo "  -c | --clean      Run clean, deleting everything first"
     echo "  -j | --jobs       Number of make processes (default=1)"
+    echo "  -v | --verbose    Verbose mode (print every command)"
     echo "  -h | --help       Print this help"
     exit 1
 }
@@ -32,6 +33,8 @@ while [ "$1" != "" ]; do
         -j | --jobs )       shift
                             jobs=$1
                             ;;
+	-v | --verbose )    set -x
+			    ;;
         -h | --help )       usage
                             exit
                             ;;
@@ -43,7 +46,7 @@ done
 
 # This is the version of ODB to use.
 odb_ver_major="2"
-odb_ver_minor="3"
+odb_ver_minor="4"
 odb_ver_patch="0"
 odb_ver_mm="$odb_ver_major.$odb_ver_minor"
 odb_ver_full="$odb_ver_mm.$odb_ver_patch"
@@ -66,23 +69,14 @@ else
     exit
 fi
 
-# Determine whether we need to apply the fix in case GCC version is >= 4.9 .
-# (see http://www.codesynthesis.com/pipermail/odb-users/2014-May/001849.html)
-gcc_ver=`gcc -dumpversion`
-gcc_ver=`echo $gcc_ver | sed 's/\([0-9]*\.[0-9]*\).*/\1/'`
-fix=`echo "$gcc_ver>=4.9" | bc`
-if [[ $fix == 1 ]] ; then
-    echo Detected GCC version $gcc_ver, will apply fix.
-fi
-
 # Will download to, and build from, a temporary directory.
 mkdir -p libodb/temp
 cd libodb/temp
 
 # This is the version of libcutl to use.
 libcutl_ver_major="1"
-libcutl_ver_minor="8"
-libcutl_ver_patch="1"
+libcutl_ver_minor="9"
+libcutl_ver_patch="0"
 libcutl_ver_mm="$libcutl_ver_major.$libcutl_ver_minor"
 libcutl_ver_full="$libcutl_ver_mm.$odb_ver_patch"
 
@@ -91,9 +85,6 @@ wget -nc http://www.codesynthesis.com/download/odb/$odb_ver_mm/odb-$odb_ver_full
 wget -nc http://www.codesynthesis.com/download/odb/$odb_ver_mm/libodb-$odb_ver_full.tar.gz
 wget -nc http://www.codesynthesis.com/download/odb/$odb_ver_mm/libodb-mysql-$odb_ver_full.tar.gz
 wget -nc http://www.codesynthesis.com/download/libcutl/$libcutl_ver_mm/libcutl-$libcutl_ver_full.tar.gz
-if [[ $fix == 1 ]] ; then
-    wget -nc http://codesynthesis.com/~boris/tmp/odb/odb-$odb_ver_full-gcc-4.9.0.patch
-fi
     
 # Extract the tarballs.
 tar --skip-old-files -xzf odb-$odb_ver_full.tar.gz
@@ -135,19 +126,12 @@ cd ..
 # Build the ODB Compiler.
 #-------------------------------
 
-# First apply the patch to the source code.
-if [[ $fix == 1 ]] ; then
-    patch -p0 < odb-2.3.0-gcc-4.9.0.patch
-fi
-
 # Drop into the directory.
 cd odb-$odb_ver_full
 
 # Assemble and run the configure conmmand.
 cmd="./configure --prefix=`pwd`/../.. --with-libcutl=`pwd`/../libcutl-$libcutl_ver_full"
-if [[ $fix == 1 ]] ; then
-    cmd="env CXXFLAGS=\"-fno-devirtualize\" $cmd"
-fi
+cmd="env CXXFLAGS=\"-fno-devirtualize\" $cmd"
 eval $cmd
 
 if [ $? -gt 0 ]; then 
